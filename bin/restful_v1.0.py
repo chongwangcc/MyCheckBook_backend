@@ -12,9 +12,11 @@ version = "v1.0"
 def login():
     return 'login!'
 
+
 """
 #######################操作checkbook 接口#############################
 """
+
 
 @app.route('/checkbook/api/'+version+'/checkbooks', methods=['GET'])
 def get_checkbooks_list():
@@ -71,9 +73,11 @@ def makeup_checkbook_invitation():
 
     return 'checkbooks' + user_name+auth_code
 
+
 """
 #######################操作account 账户细数据 接口#############################
 """
+
 
 @app.route('/checkbook/api/'+version+'/account', methods=['GET'])
 def get_accounts_list():
@@ -110,9 +114,13 @@ def add_account():
     is_modify = request.args.get('isModify')
 
     return 'checkbooks' + user_name+auth_code
+
+
 """
 #######################操作account 账户细数据 接口#############################
 """
+
+
 @app.route('/checkbook/api/'+version+'/details', methods=['GET'])
 def get_details_list():
     user_name=request.args.get('user_name')
@@ -121,6 +129,7 @@ def get_details_list():
     month = request.args.get('month')
 
     return 'checkbooks' + user_name+auth_code
+
 
 @app.route('/checkbook/api/'+version+'/detail', methods=['GET'])
 def get_details_info():
@@ -138,6 +147,7 @@ def delete_detail():
     detail_id = request.args.get('detail_id')
 
     return 'checkbooks' + user_name+auth_code
+
 
 @app.route('/checkbook/api/'+version+'/detail', methods=['POST'])
 def add_detail():
