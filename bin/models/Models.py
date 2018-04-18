@@ -105,6 +105,6 @@ class UserCheckbookMap(Model):
     __table__ = "UserCheckbookMap"
     id = StringField(primary_key=True)
     user_id=StringField()
-    account_id = StringField()
+    checkbook_id = StringField()
     permission = IntegerField()
     description = StringField()

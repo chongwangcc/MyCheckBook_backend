@@ -4,7 +4,6 @@ from utils import orm,db
 import uuid
 import datetime
 import time
-db.create_engine(user='root', password='pwd123456', database='checkbook',host="139.129.230.162", port=3400)
 
 
 def checkPassword(user_name,password):
@@ -19,6 +18,23 @@ def checkPassword(user_name,password):
         return True
     else:
         return False
+
+
+def checkAuthCode(user_name,auth):
+    """
+    检查authcode有没有过期
+    :param user_name:
+    :param auth:
+    :return:
+    """
+    u = UserInfo.find_first("where name = ?", user_name);
+    if not u:
+        return False
+    auth = AuthCode.find_first("where auth_code = ? and user_id = ?",auth,u.id)
+    if not auth:
+        return False
+
+    return True
 
 
 def genAuthCode(user_name,days=30):
@@ -40,13 +56,13 @@ def genAuthCode(user_name,days=30):
     dataLong=int(time.mktime(time_end.timetuple()))
     print(dataLong)
     permission=1
-    auth = AuthCode(auth_code_id=auth_code_id,user_id=u.id,endDate=dataLong,permission=1)
+    auth = AuthCode(auth_code=auth_code_id,user_id=u.id,endDate=dataLong,permission=1)
 
     #3.保存到数据库
     auth.insert()
 
     #4.返回
-    return auth.auth_code_id
+    return auth.auth_code
 
 
 
@@ -63,4 +79,5 @@ def initUser():
 
 
 if __name__ == "__main__":
+    db.create_engine(user='root', password='pwd123456', database='checkbook', host="139.129.230.162", port=3400)
     genAuthCode("cc")

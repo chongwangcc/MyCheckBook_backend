@@ -10,8 +10,13 @@ class ReturnEntity:
     status=None
     data=None
 
+
 class LoginReturn:
     auth_code=""
+
+
+class CheckbookReturn:
+    checkbooks=[]
 
 
 def convert_to_builtin_type(obj):

@@ -1,11 +1,14 @@
 # -*- coding: UTF-8 -*-
 from flask import Flask , request,jsonify
-from utils import  LoginTools
+from utils import LoginTools, CheckbookTools
 from models import  ReturnEntity
 import json
 app = Flask(__name__)
 version = "v1.0"
 restful_port = 9080
+from utils import orm,db
+
+db.create_engine(user='root', password='pwd123456', database='checkbook',host="139.129.230.162", port=3400)
 
 """
 登陆接口
@@ -47,8 +50,26 @@ def login():
 def get_checkbooks_list():
     user_name=request.args.get('user_name')
     auth_code = request.args.get('auth_code')
+    #1. 准备返回值
+    status = ReturnEntity.ReturnStatus()
+    data = ReturnEntity.CheckbookReturn()
+    returnvalue = ReturnEntity.ReturnEntity()
+    returnvalue.status = status
+    #2. 获得checkbooks
+    b = LoginTools.checkAuthCode(user_name, auth_code)
+    checkbooks = CheckbookTools.getCheckbookListByUser(user_name)
+    if b and not checkbooks:
+        status.code = 0
+        status.msg = u"成功"
+        returnvalue.data=data
+        #TODO data值设置可能需要格式转换
+        data.checkbooks=checkbooks
+        pass
+    else:
+        status.code = 10500
+        status.msg = u"获取记账本失败"
 
-    return 'checkbooks' + user_name+auth_code
+    return json.dumps(returnvalue,ensure_ascii=False,default=ReturnEntity.convert_to_builtin_type)
 
 
 @app.route('/checkbook/api/'+version+'/checkbooks', methods=['POST'])
