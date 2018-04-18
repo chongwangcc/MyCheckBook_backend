@@ -1,7 +1,11 @@
+# -*- coding: UTF-8 -*-
 from flask import Flask , request,jsonify
-
+from utils import  LoginTools
+from models import  ReturnEntity
+import json
 app = Flask(__name__)
 version = "v1.0"
+restful_port = 9080
 
 """
 登陆接口
@@ -10,7 +14,28 @@ version = "v1.0"
 
 @app.route('/checkbook/api/'+version+'/login', methods=['GET'])
 def login():
-    return 'login!'
+    user_name = request.args.get('user_name')
+    password = request.args.get('password')
+    b = LoginTools.checkPassword(user_name,password)
+
+    status = ReturnEntity.ReturnStatus()
+    data = ReturnEntity.LoginReturn()
+    returnvalue = ReturnEntity.ReturnEntity()
+    returnvalue.status=status
+
+    code = LoginTools.genAuthCode(user_name)
+    if b and code:
+        status.code = 0
+        status.msg = u"成功"
+        data.auth_code=code
+        returnvalue.data = data
+    else:
+        status.code = 10500
+        status.msg = u"登陆失败，用户名或密码错误"
+
+        pass
+
+    return json.dumps(returnvalue,ensure_ascii=False,default=ReturnEntity.convert_to_builtin_type)
 
 
 """
@@ -160,4 +185,4 @@ def add_detail():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=9080, debug=True)
+    app.run(host='0.0.0.0', port=restful_port, debug=True)
