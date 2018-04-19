@@ -133,11 +133,21 @@ def get_checkbook_info():
     checkbook_id = request.args.get('checkbook_id')
     #1.准备返回值
     status = ReturnEntity.ReturnStatus()
-    data = ReturnEntity.CheckbookAddReturn()
+    data = ReturnEntity.CheckbookGetReturn()
     returnvalue = ReturnEntity.ReturnEntity()
     returnvalue.status = status
     #
-    return 'checkbooks' + user_name+auth_code
+    b = LoginTools.checkAuthCode(user_name, auth_code)
+    if b:
+        checkbook = CheckbookTools.getCheckbookByID(user_name,checkbook_id)
+        status.code = 0
+        status.msg = "成功"
+        returnvalue.data=data
+        data.checkbook=checkbook
+    else:
+        status.code = 10500
+        status.msg = u"失败"
+    return json.dumps(returnvalue,ensure_ascii=False,default=ReturnEntity.convert_to_builtin_type)
 
 
 @app.route('/checkbook/api/'+version+'/checkbook/invitation', methods=['GET'])
@@ -145,8 +155,24 @@ def join_checkbook_by_invitation():
     user_name=request.args.get('user_name')
     auth_code = request.args.get('auth_code')
     invitation_code = request.args.get('invitation_code')
-
-    return 'checkbooks' + user_name+auth_code
+    # 1.准备返回值
+    status = ReturnEntity.ReturnStatus()
+    data = ReturnEntity.CheckbookGetReturn()
+    returnvalue = ReturnEntity.ReturnEntity()
+    returnvalue.status = status
+    #
+    b = LoginTools.checkAuthCode(user_name, auth_code)
+    if b:
+        checkbook = CheckbookTools.joinCheckbooks(user_name,invitation_code,)
+        status.code = 0
+        status.msg = "成功"
+        returnvalue.data = data
+        data.checkbook = checkbook
+        pass
+    else:
+        status.code = 10500
+        status.msg = u"失败"
+    return json.dumps(returnvalue, ensure_ascii=False, default=ReturnEntity.convert_to_builtin_type)
 
 
 @app.route('/checkbook/api/'+version+'/checkbook/invitation', methods=['POST'])
@@ -156,12 +182,29 @@ def makeup_checkbook_invitation():
     checkbook_id = request.args.get('checkbook_id')
     nums = request.args.get('nums')
     permission = request.args.get('permission')
-
+    # 1.准备返回值
+    status = ReturnEntity.ReturnStatus()
+    data = ReturnEntity.CheckbookInvitationReturn()
+    returnvalue = ReturnEntity.ReturnEntity()
+    returnvalue.status = status
+    #
+    b = LoginTools.checkAuthCode(user_name, auth_code)
+    if b:
+        inviatation = CheckbookTools.makeupInvitation(user_name,auth_code,checkbook_id,nums,permission)
+        status.code = 0
+        status.msg = "成功"
+        returnvalue.data = data
+        data.invitation_code = inviatation
+        pass
+    else:
+        status.code = 10500
+        status.msg = u"失败"
+    return json.dumps(returnvalue, ensure_ascii=False, default=ReturnEntity.convert_to_builtin_type)
     return 'checkbooks' + user_name+auth_code
 
 
 """
-#######################操作account 账户细数据 接口#############################
+#######################操作account 账户 接口#############################
 """
 
 

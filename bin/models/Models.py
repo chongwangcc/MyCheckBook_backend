@@ -94,7 +94,7 @@ class Invitation(Model):
     invitation_code=StringField(primary_key=True)
     checkbook_id = StringField()
     permission = IntegerField()
-    total_memeber_nums = IntegerField()
+    total_member_nums = IntegerField()
     used_member_nums = IntegerField()
 
 

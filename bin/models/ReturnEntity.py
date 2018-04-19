@@ -17,8 +17,15 @@ class LoginReturn:
 
 class CheckbookListReturn:
     checkbooks=[]
+
 class CheckbookAddReturn:
     checkbook_id=""
+
+class CheckbookGetReturn:
+    checkbook = None
+
+class CheckbookInvitationReturn:
+    invitation_code = None
 
 def convert_to_builtin_type(obj):
     # Convert objects to a dictionary of their representation

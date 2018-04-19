@@ -1,10 +1,6 @@
 # -*- coding: UTF-8 -*-
-from models.Models import UserInfo,AuthCode,UserCheckbookMap,CheckbookInfo
-import base64
-from utils import orm,db
-import uuid
-import datetime
-import time
+from models.Models import UserInfo,UserCheckbookMap,CheckbookInfo,Invitation
+
 from utils import zaTools
 
 def getCheckbookListByUser(user_name):
@@ -24,17 +20,8 @@ def getCheckbookListByUser(user_name):
     #3.转换格式
     restfulCHeckbook = []
     for ucm in checkbookList:
-        dict_temp = {}
-        dict_temp["checkbook_id"] = ucm.checkbook_id
-        c = CheckbookInfo.find_first("where id=?",ucm.checkbook_id)
-        dict_temp["name"] = c.name
-        dict_temp["description"] = c.description
-        dict_temp["is_local"] = c.islocal
-        dict_temp["image_base64"] = c.coverImage
-        ucMap = UserCheckbookMap.find_first("where user_id=? and checkbook_id=? and permission>0 ", u.id, c.id)
-        dict_temp["permission"] = ucMap.permission
-        #TODO 添加其他成员的名称
-        dict_temp["other_member"] = []
+        c = CheckbookInfo.find_first("where id=?", ucm.checkbook_id)
+        dict_temp= convertCheckbookFromMysqlToRestful(u,c)
         restfulCHeckbook.append(dict_temp)
     return restfulCHeckbook
 
@@ -89,4 +76,96 @@ def deleteCheckbook(checkbook_id):
     return True
 
 
+def getCheckbookByID(user_name,checkbook_id):
+    """
+    通过id获得checkbook结构
+    :param user_name:
+    :param checkbook_id:
+    :return:
+    """
+    checkbook=None
+    #1. 检查user有没有此项id的操作权限
+    u = UserInfo.find_first("where name = ?", user_name);
+    if not u:
+        return checkbook
+    ucMap = UserCheckbookMap.find_first("where user_id=? and checkbook_id=? and permission>0 ", u.id, checkbook_id)
+    if not ucMap:
+        return checkbook
+    checkbook = CheckbookInfo.find_first("where id=?", checkbook_id)
+    resutlf =convertCheckbookFromMysqlToRestful(u,checkbook)
+    return resutlf
+
+
+def convertCheckbookFromMysqlToRestful(user_info,checkbook_mysql):
+    """
+    转化数据格式
+    :param user_info:
+    :param checkbook_mysql:
+    :return:
+    """
+    dict_temp = {}
+    dict_temp["checkbook_id"] = checkbook_mysql.id
+    dict_temp["name"] = checkbook_mysql.name
+    dict_temp["description"] = checkbook_mysql.description
+    dict_temp["is_local"] = checkbook_mysql.islocal
+    dict_temp["image_base64"] = checkbook_mysql.coverImage
+    ucMap = UserCheckbookMap.find_first("where user_id=? and checkbook_id=? and permission>0 ", user_info.id, checkbook_mysql.id)
+    dict_temp["permission"] = ucMap.permission
+    # TODO 添加其他成员的名称
+    dict_temp["other_member"] = []
+    return dict_temp
+
+
+def makeupInvitation(user_name,auth_code,checkbook_id,nums,permission):
+    """
+    生成邀请码
+    :return:
+    """
+    #1.检查是否有创建的权限
+    invitation=None
+    u = UserInfo.find_first("where name = ?", user_name);
+    if not u:
+        return invitation
+    ucMap = UserCheckbookMap.find_first("where user_id=? and checkbook_id=? and permission>0 ", u.id, checkbook_id)
+    if not ucMap:
+        return invitation
+    #2.生成Invitation 保存
+    inv = Invitation(invitation_code=zaTools.genID(),checkbook_id=checkbook_id,permission=permission,total_member_nums=nums,used_member_nums=0)
+    inv.insert()
+    return inv.invitation_code
+
+
+def joinCheckbooks(user_name,invitation):
+    """
+    使用邀请码加入一个checkbook中
+    :param invitation:
+    :param user_name:
+    :return:
+    """
+    checkbook=None
+    u = UserInfo.find_first("where name = ?", user_name);
+    if not u:
+        return checkbook
+    invi = Invitation.find_first("where invitation_code=?",invitation)
+    if not invi:
+        return checkbook
+    invi.used_member_nums=invi.used_member_nums+1
+    if invi.used_member_nums>invi.total_member_nums:
+        return checkbook
+
+    ucMap = UserCheckbookMap.find_first("where user_id=? and checkbook_id=? and permission>0 ", u.id, invi.checkbook_id)
+    if not ucMap:
+        ucMap = UserCheckbookMap(id=zaTools.genID(), user_id=u.id, checkbook_id=invi.checkbook_id, permission=invi.permission,
+                                 description="")
+    try:
+        ucMap.insert()
+    except Exception as e:
+        print(e)
+        ucMap.update()
+    try:
+        invi.insert()
+    except Exception as e:
+        print(e)
+        invi.update()
+    return getCheckbookByID(user_name,invi.checkbook_id)
 
