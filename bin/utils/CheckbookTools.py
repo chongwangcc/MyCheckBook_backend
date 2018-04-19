@@ -28,15 +28,15 @@ def getCheckbookListByUser(user_name):
 
 def addCheckbook(user_name, checkbook_json):
     """新增一个记账本"""
-    checkbook_id = checkbook_json.get("checkbook_id", zaTools.genID()),
-    name = checkbook_json.get("name", ""),
-    description = checkbook_json.get("description", ""),
-    permission= checkbook_json.get("permission", 1),
-    image_base64 =  checkbook_json.get("image_base64", ""),
-    is_local = checkbook_json.get("is_local", 0),
+    checkbook_id = checkbook_json.get("checkbook_id", zaTools.genID())
+    name = checkbook_json.get("name", "")
+    description = checkbook_json.get("description", "")
+    permission= checkbook_json.get("permission", 1)
+    image_base64 =  checkbook_json.get("image_base64", "")
+    is_local = checkbook_json.get("is_local", 0)
     members = checkbook_json.get("other_member", [])
 
-    u = UserInfo.find_first("where name = ?", user_name);
+    u = UserInfo.find_first("where name = ?", user_name)
     if not u:
         return None
 

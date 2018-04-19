@@ -1,13 +1,13 @@
 # -*- coding: UTF-8 -*-
-from flask import Flask , request,jsonify
-from utils import LoginTools, CheckbookTools
-from models import  ReturnEntity
+from flask import Flask, request, jsonify
+from utils import LoginTools, CheckbookTools, AccountTools
+from models import ReturnEntity
 
 import json
 app = Flask(__name__)
 version = "v1.0"
 restful_port = 9080
-from utils import orm,db
+from utils import orm, db
 
 db.create_engine(user='root', password='pwd123456', database='checkbook',host="139.129.230.162", port=3400)
 
@@ -200,7 +200,6 @@ def makeup_checkbook_invitation():
         status.code = 10500
         status.msg = u"失败"
     return json.dumps(returnvalue, ensure_ascii=False, default=ReturnEntity.convert_to_builtin_type)
-    return 'checkbooks' + user_name+auth_code
 
 
 """
@@ -213,8 +212,24 @@ def get_accounts_list():
     user_name=request.args.get('user_name')
     auth_code = request.args.get('auth_code')
     checkbook_id = request.args.get('checkbook_id')
-
-    return 'checkbooks' + user_name+auth_code
+    # 1.准备返回值
+    status = ReturnEntity.ReturnStatus()
+    data = ReturnEntity.AccountListReturn()
+    returnvalue = ReturnEntity.ReturnEntity()
+    returnvalue.status = status
+    #
+    b = LoginTools.checkAuthCode(user_name, auth_code)
+    if b:
+        accountList = AccountTools.getAccountList(checkbook_id)
+        status.code = 0
+        status.msg = "成功"
+        returnvalue.data = data
+        data.accounts = accountList
+        pass
+    else:
+        status.code = 10500
+        status.msg = u"失败"
+    return json.dumps(returnvalue, ensure_ascii=False, default=ReturnEntity.convert_to_builtin_type)
 
 
 @app.route('/checkbook/api/'+version+'/account/info', methods=['GET'])
@@ -223,7 +238,22 @@ def get_account_info():
     auth_code = request.args.get('auth_code')
     account_id = request.args.get('account_id')
 
-    return 'checkbooks' + user_name+auth_code
+    # 1.准备返回值
+    status = ReturnEntity.ReturnStatus()
+    returnvalue = ReturnEntity.ReturnEntity()
+    returnvalue.status = status
+    #
+    b = LoginTools.checkAuthCode(user_name, auth_code)
+    if b:
+        accountInfo = AccountTools.getAccountInfo(account_id)
+        status.code = 0
+        status.msg = "成功"
+        returnvalue.data = accountInfo
+        pass
+    else:
+        status.code = 10500
+        status.msg = u"失败"
+    return json.dumps(returnvalue, ensure_ascii=False, default=ReturnEntity.convert_to_builtin_type)
 
 
 @app.route('/checkbook/api/'+version+'/account', methods=['DELETE'])
@@ -231,18 +261,50 @@ def delete_account():
     user_name=request.args.get('user_name')
     auth_code = request.args.get('auth_code')
     account_id = request.args.get('account_id')
-
-    return 'checkbooks' + user_name+auth_code
+    # 1.准备返回值
+    status = ReturnEntity.ReturnStatus()
+    returnvalue = ReturnEntity.ReturnEntity()
+    data = ReturnEntity.AccountDeleteReturn()
+    returnvalue.status = status
+    #
+    b = LoginTools.checkAuthCode(user_name, auth_code)
+    if b:
+        AccountTools.deleteAccountInfo(account_id)
+        status.code = 0
+        status.msg = "成功"
+        returnvalue.data = data
+        data.account_id=account_id
+        pass
+    else:
+        status.code = 10500
+        status.msg = u"失败"
+    return json.dumps(returnvalue, ensure_ascii=False, default=ReturnEntity.convert_to_builtin_type)
 
 
 @app.route('/checkbook/api/'+version+'/account', methods=['POST'])
 def add_account():
     user_name=request.args.get('user_name')
     auth_code = request.args.get('auth_code')
-    account_id = request.args.get('account')
-    is_modify = request.args.get('isModify')
-
-    return 'checkbooks' + user_name+auth_code
+    account = request.get_json()
+    checkbook_id = request.args.get('checkbook_id')
+    # 1.准备返回值
+    status = ReturnEntity.ReturnStatus()
+    returnvalue = ReturnEntity.ReturnEntity()
+    data = ReturnEntity.AccountDeleteReturn()
+    returnvalue.status = status
+    #
+    b = LoginTools.checkAuthCode(user_name, auth_code)
+    if b:
+        account = AccountTools.addAccountInfo(checkbook_id,account)
+        status.code = 0
+        status.msg = "成功"
+        returnvalue.data = data
+        data.account_id = account.account_id
+        pass
+    else:
+        status.code = 10500
+        status.msg = u"失败"
+    return json.dumps(returnvalue, ensure_ascii=False, default=ReturnEntity.convert_to_builtin_type)
 
 
 """

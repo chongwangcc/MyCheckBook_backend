@@ -83,7 +83,7 @@ class CheckbookAccountMap(Model):
     __table__ = "CheckbookAccountMap"
     id=StringField(primary_key=True)
     checkbook_id=StringField()
-    user_id = StringField()
+    account_id = StringField()
 
 
 class Invitation(Model):
