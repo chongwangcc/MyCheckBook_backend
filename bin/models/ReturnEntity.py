@@ -37,6 +37,8 @@ class AccountListReturn:
 class AccountDeleteReturn:
     account_id=""
 
+class DetailAddReturn:
+    detail_id=""
 
 def convert_to_builtin_type(obj):
     # Convert objects to a dictionary of their representation

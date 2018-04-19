@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-from models.Models import CheckbookAccountMap,AccountInfo,CheckbookInfo,Invitation
+from models.Models import CheckbookAccountMap,AccountInfo
 
 from utils import zaTools
 

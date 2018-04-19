@@ -46,7 +46,7 @@ class DetailsInfo(Model):
     """
     记账明细信息
     """
-    __table__ = "CheckDetails"
+    __table__ = "DetailsInfo"
     id = StringField(primary_key=True)
     checkbook_id = StringField()
     account_id = StringField()

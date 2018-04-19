@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 from flask import Flask, request, jsonify
-from utils import LoginTools, CheckbookTools, AccountTools
+from utils import LoginTools, CheckbookTools, AccountTools,DetailsTools
 from models import ReturnEntity
 
 import json
@@ -344,10 +344,25 @@ def delete_detail():
 def add_detail():
     user_name=request.args.get('user_name')
     auth_code = request.args.get('auth_code')
-    detail_id = request.args.get('detail')
-    is_modify = request.args.get('isModify')
-
-    return 'checkbooks' + user_name+auth_code
+    detail_json = request.get_json()
+    # 1.准备返回值
+    status = ReturnEntity.ReturnStatus()
+    returnvalue = ReturnEntity.ReturnEntity()
+    data = ReturnEntity.DetailAddReturn()
+    returnvalue.status = status
+    #
+    b = LoginTools.checkAuthCode(user_name, auth_code)
+    if b:
+        details = DetailsTools.addDetails(user_name, detail_json)
+        status.code = 0
+        status.msg = "成功"
+        returnvalue.data = data
+        data.detail_id = details.id
+        pass
+    else:
+        status.code = 10500
+        status.msg = u"失败"
+    return json.dumps(returnvalue, ensure_ascii=False, default=ReturnEntity.convert_to_builtin_type)
 
 
 if __name__ == '__main__':
