@@ -327,8 +327,24 @@ def get_details_info():
     user_name=request.args.get('user_name')
     auth_code = request.args.get('auth_code')
     detail_id = request.args.get('detail_id')
-
-    return 'checkbooks' + user_name+auth_code
+    # 1.准备返回值
+    status = ReturnEntity.ReturnStatus()
+    returnvalue = ReturnEntity.ReturnEntity()
+    data = ReturnEntity.DetailAddReturn()
+    returnvalue.status = status
+    #
+    b = LoginTools.checkAuthCode(user_name, auth_code)
+    if b:
+        DetailsTools.deleteDetail(user_name, detail_id)
+        status.code = 0
+        status.msg = "成功"
+        returnvalue.data = data
+        data.detail_id = detail_id
+        pass
+    else:
+        status.code = 10500
+        status.msg = u"失败"
+    return json.dumps(returnvalue, ensure_ascii=False, default=ReturnEntity.convert_to_builtin_type)
 
 
 @app.route('/checkbook/api/'+version+'/detail', methods=['DELETE'])
@@ -336,8 +352,24 @@ def delete_detail():
     user_name=request.args.get('user_name')
     auth_code = request.args.get('auth_code')
     detail_id = request.args.get('detail_id')
-
-    return 'checkbooks' + user_name+auth_code
+    # 1.准备返回值
+    status = ReturnEntity.ReturnStatus()
+    returnvalue = ReturnEntity.ReturnEntity()
+    data = ReturnEntity.DetailAddReturn()
+    returnvalue.status = status
+    #
+    b = LoginTools.checkAuthCode(user_name, auth_code)
+    if b:
+        DetailsTools.deleteDetail(user_name,detail_id)
+        status.code = 0
+        status.msg = "成功"
+        returnvalue.data = data
+        data.detail_id = detail_id
+        pass
+    else:
+        status.code = 10500
+        status.msg = u"失败"
+    return json.dumps(returnvalue, ensure_ascii=False, default=ReturnEntity.convert_to_builtin_type)
 
 
 @app.route('/checkbook/api/'+version+'/detail', methods=['POST'])

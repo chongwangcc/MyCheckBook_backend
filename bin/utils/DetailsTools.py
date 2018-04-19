@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-from models.Models import CheckbookAccountMap,UserInfo,DetailsInfo
+from models.Models import UserCheckbookMap,UserInfo,DetailsInfo
 
 from utils import zaTools
 
@@ -56,6 +56,34 @@ def addDetails(user_name,detail_json):
         pass
     return dInfo_new
 
+def deleteDetail(user_name,detail_id):
+    """
+    删除一条明细
+    :param user_name:
+    :param detail_id:
+    :return:
+    """
+    #1.读出来明细
+    detail = getDetailInfo(detail_id)
+    if not detail:
+        return True
+    #2.读出明细对应的记账本
+    ucMap = UserCheckbookMap.find_first("where user_id=? and checkbook_id=? and permission>0 ", u.id, checkbook_id)
+    #3. 判断记账本id有没有user_name
+    if not ucMap:
+        return False
+    detail.delete()
+    return True
+
+def getDetailInfo(detail_id):
+    """
+    获得一条明细的名字
+    :param detail_id:
+    :return:
+    """
+    detail=DetailsInfo.find_first("where id=?",detail_id)
+    return detail
+
 
 def compareDetails(details_old,detail_new):
     """
@@ -64,4 +92,5 @@ def compareDetails(details_old,detail_new):
     :param detail_new:
     :return:
     """
+    #TODO
     return  True
