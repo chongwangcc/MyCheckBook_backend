@@ -15,9 +15,10 @@ class LoginReturn:
     auth_code=""
 
 
-class CheckbookReturn:
+class CheckbookListReturn:
     checkbooks=[]
-
+class CheckbookAddReturn:
+    checkbook_id=""
 
 def convert_to_builtin_type(obj):
     # Convert objects to a dictionary of their representation

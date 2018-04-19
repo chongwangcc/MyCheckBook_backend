@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 from models.Models import UserInfo,AuthCode
 from utils import orm,db
-import uuid
+from utils import zaTools
 import datetime
 import time
 
@@ -33,7 +33,9 @@ def checkAuthCode(user_name,auth):
     auth = AuthCode.find_first("where auth_code = ? and user_id = ?",auth,u.id)
     if not auth:
         return False
-
+    time_now = int(time.mktime(datetime.datetime.now().timetuple()))
+    if int(auth.endDate)<time_now:
+        return False
     return True
 
 
@@ -50,7 +52,7 @@ def genAuthCode(user_name,days=30):
         return None
 
     #2.构造Auth对象
-    auth_code_id = str(uuid.uuid1()).replace("-","")
+    auth_code_id = zaTools.genID()
     time_now = datetime.datetime.now()
     time_end=time_now+datetime.timedelta(days=days)
     dataLong=int(time.mktime(time_end.timetuple()))
@@ -71,9 +73,9 @@ def initUser():
     初始化cc ,mm的默认账户
     :return:
     """
-    u = UserInfo(id=str(uuid.uuid1()).replace("-",""),name="cc",password="lovemiao",description="cc的个人账号")
+    u = UserInfo(id=zaTools.genID(),name="cc",password="lovemiao",description="cc的个人账号")
     u.insert()
-    u = UserInfo(id=str(uuid.uuid1()).replace("-", ""), name="mm", password="lovechong", description="mm的个人账号")
+    u = UserInfo(id=zaTools.genID(), name="mm", password="lovechong", description="mm的个人账号")
     u.insert();
     pass
 
