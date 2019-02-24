@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 
 from models.Models import UserInfo
-from utils import orm,db
+from tools import orm,db
 import uuid
 
 

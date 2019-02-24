@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 from models.Models import UserCheckbookMap,UserInfo,DetailsInfo
 
-from utils import zaTools
+from tools import zaTools
 
 
 def addDetails(user_name,detail_json):

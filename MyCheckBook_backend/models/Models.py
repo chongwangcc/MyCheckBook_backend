@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 
-from utils.orm import Model,StringField,IntegerField,FloatField,TextField
+from tools.orm import Model,StringField,IntegerField,FloatField,TextField
 
 
 class UserInfo(Model):

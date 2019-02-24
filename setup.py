@@ -20,11 +20,11 @@ with open("requirements.txt", mode="r", encoding="utf8") as f:
     for line in f.readlines():
         requires.append(line.strip())
 
-setup(name='person_time_manage_system',
+setup(name='mycheckbook_backend',
 
       version='0.1',
 
-      url='https://github.com/chongwangcc/person_time_manage_system',
+      url='https://github.com/chongwangcc/MyCheckBook_backstage',
 
       license='MIT',
 
@@ -32,9 +32,9 @@ setup(name='person_time_manage_system',
 
       author_email='chongwangcc@gmail.com',
 
-      description='analysis where is you  time spent?',
+      description='record and analysis where is you  money spent?',
 
-      packages=find_packages(exclude=['person_time_manage_system']),
+      packages=find_packages(exclude=['mycheckbook_backend']),
 
       include_package_data=True,
 
@@ -44,5 +44,5 @@ setup(name='person_time_manage_system',
 
       setup_requires=requires,
 
-       package_dir={'': 'person_time_manage_system'}
+       package_dir={'': 'mycheckbook_backend'}
       )

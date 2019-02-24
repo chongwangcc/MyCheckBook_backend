@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 from models.Models import UserInfo,UserCheckbookMap,CheckbookInfo,Invitation
 
-from utils import zaTools
+from tools import zaTools
 
 def getCheckbookListByUser(user_name):
     """
