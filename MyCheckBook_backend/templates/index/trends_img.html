@@ -23,234 +23,149 @@
 									<option value="021">CM工作室记账本</option>
 								</select>
 							</div>
-							<div class="layui-inline">
-								<select name="states" lay-filter="status">
-									<option value="">选择月份</option>
-									<option value="010">2018-01</option>
-									<option value="021">2018-02</option>
-									<option value="0571">2018-03</option>
-								</select>
-							</div>
-							<button class="layui-btn layui-btn-normal" lay-submit="search">查看明细</button>
-							<div class="layui-inline tool-btn">
-								<button class="layui-btn layui-btn-small layui-btn-normal addBtn" data-url="article-add.html"><i class="layui-icon">&#xe654;</i></button>
-								<button class="layui-btn layui-btn-small layui-btn-warm listOrderBtn hidden-xs" data-url="article-add.html"><i class="iconfont">&#xe656;</i></button>
-							</div>
+							<button class="layui-btn layui-btn-normal" lay-submit="search">查看</button>
 						</div>
 				</form>
-				<div class="layui-form" id="table-list">
-					<table class="layui-table" lay-even lay-skin="nob">
-						<colgroup>
-							<col width="50">
-						<thead>
-							<tr>
-								<th></th>
-								<th >日期</th>
-								<th >类别</th>
-								<th >金额</th>
-								<th >备注</th>
-								<th>现金/信用卡</th>
-								<th>收入/支出/流入/流出</th>
-								<th>所属记账本</th>
-								<th>所属账户</th>
-								<th>所属子账户</th>
-								<th >记录者</th>
-								<th>操作</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td><input type="checkbox" name="" lay-skin="primary" data-id="1"></td>
-								<td class="hidden-xs">2019.2.28</td>
-								<td class="hidden-xs">娱乐</td>
-								<td>19</td>
-								<td class="hidden-xs">买游戏光盘</td>
-								<td class="hidden-xs">信用卡</td>
-								<td><button class="layui-btn layui-btn-mini layui-btn-warm">支出</button></td>
-								<td class="hidden-xs">CM家庭记账本</td>
-								<td class="hidden-xs">花销账户</td>
-								<td class="hidden-xs">doodads账户</td>
-								<td class="hidden-xs">CC</td>
-								<td>
-									<div class="layui-inline">
-										<button class="layui-btn layui-btn-small layui-btn-normal go-btn" data-id="1" data-url="article-detail.html"><i class="layui-icon">&#xe642;</i></button>
-										<button class="layui-btn layui-btn-small layui-btn-danger del-btn" data-id="1" data-url="article-detail.html"><i class="layui-icon">&#xe640;</i></button>
-									</div>
-								</td>
-							</tr>
-							<tr>
-									<td><input type="checkbox" name="" lay-skin="primary" data-id="1"></td>
-									<td class="hidden-xs">2019.2.28</td>
-									<td class="hidden-xs">娱乐</td>
-									<td>19</td>
-									<td class="hidden-xs">买游戏光盘</td>
-									<td class="hidden-xs">信用卡</td>
-									<td><button class="layui-btn layui-btn-mini layui-btn-warm">支出</button></td>
-									<td class="hidden-xs">CM家庭记账本</td>
-									<td class="hidden-xs">花销账户</td>
-									<td class="hidden-xs">doodads账户</td>
-									<td class="hidden-xs">CC</td>
-									<td>
-										<div class="layui-inline">
-											<button class="layui-btn layui-btn-small layui-btn-normal go-btn" data-id="1" data-url="article-detail.html"><i class="layui-icon">&#xe642;</i></button>
-											<button class="layui-btn layui-btn-small layui-btn-danger del-btn" data-id="1" data-url="article-detail.html"><i class="layui-icon">&#xe640;</i></button>
-										</div>
-									</td>
-								</tr>
-							<tr>
-									<td><input type="checkbox" name="" lay-skin="primary" data-id="1"></td>
-									<td class="hidden-xs">2019.2.28</td>
-									<td class="hidden-xs">娱乐</td>
-									<td>19</td>
-									<td class="hidden-xs">买游戏光盘</td>
-									<td class="hidden-xs">信用卡</td>
-									<td><button class="layui-btn layui-btn-mini layui-btn-warm">支出</button></td>
-									<td class="hidden-xs">CM家庭记账本</td>
-									<td class="hidden-xs">花销账户</td>
-									<td class="hidden-xs">doodads账户</td>
-									<td class="hidden-xs">CC</td>
-									<td>
-										<div class="layui-inline">
-											<button class="layui-btn layui-btn-small layui-btn-normal go-btn" data-id="1" data-url="article-detail.html"><i class="layui-icon">&#xe642;</i></button>
-											<button class="layui-btn layui-btn-small layui-btn-danger del-btn" data-id="1" data-url="article-detail.html"><i class="layui-icon">&#xe640;</i></button>
-										</div>
-									</td>
-								</tr>
-							<tr>
-									<td><input type="checkbox" name="" lay-skin="primary" data-id="1"></td>
-									<td class="hidden-xs">2019.2.28</td>
-									<td class="hidden-xs">娱乐</td>
-									<td>19</td>
-									<td class="hidden-xs">买游戏光盘</td>
-									<td class="hidden-xs">信用卡</td>
-									<td><button class="layui-btn layui-btn-mini layui-btn-warm">支出</button></td>
-									<td class="hidden-xs">CM家庭记账本</td>
-									<td class="hidden-xs">花销账户</td>
-									<td class="hidden-xs">doodads账户</td>
-									<td class="hidden-xs">CC</td>
-									<td>
-										<div class="layui-inline">
-											<button class="layui-btn layui-btn-small layui-btn-normal go-btn" data-id="1" data-url="article-detail.html"><i class="layui-icon">&#xe642;</i></button>
-											<button class="layui-btn layui-btn-small layui-btn-danger del-btn" data-id="1" data-url="article-detail.html"><i class="layui-icon">&#xe640;</i></button>
-										</div>
-									</td>
-								</tr>
-							<tr>
-									<td><input type="checkbox" name="" lay-skin="primary" data-id="1"></td>
-									<td class="hidden-xs">2019.2.28</td>
-									<td class="hidden-xs">娱乐</td>
-									<td>19</td>
-									<td class="hidden-xs">买游戏光盘</td>
-									<td class="hidden-xs">信用卡</td>
-									<td><button class="layui-btn layui-btn-mini layui-btn-warm">支出</button></td>
-									<td class="hidden-xs">CM家庭记账本</td>
-									<td class="hidden-xs">花销账户</td>
-									<td class="hidden-xs">doodads账户</td>
-									<td class="hidden-xs">CC</td>
-									<td>
-										<div class="layui-inline">
-											<button class="layui-btn layui-btn-small layui-btn-normal go-btn" data-id="1" data-url="article-detail.html"><i class="layui-icon">&#xe642;</i></button>
-											<button class="layui-btn layui-btn-small layui-btn-danger del-btn" data-id="1" data-url="article-detail.html"><i class="layui-icon">&#xe640;</i></button>
-										</div>
-									</td>
-								</tr>
-							<tr>
-									<td><input type="checkbox" name="" lay-skin="primary" data-id="1"></td>
-									<td class="hidden-xs">2019.2.28</td>
-									<td class="hidden-xs">娱乐</td>
-									<td>19</td>
-									<td class="hidden-xs">买游戏光盘</td>
-									<td class="hidden-xs">信用卡</td>
-									<td><button class="layui-btn layui-btn-mini layui-btn-warm">支出</button></td>
-									<td class="hidden-xs">CM家庭记账本</td>
-									<td class="hidden-xs">花销账户</td>
-									<td class="hidden-xs">doodads账户</td>
-									<td class="hidden-xs">CC</td>
-									<td>
-										<div class="layui-inline">
-											<button class="layui-btn layui-btn-small layui-btn-normal go-btn" data-id="1" data-url="article-detail.html"><i class="layui-icon">&#xe642;</i></button>
-											<button class="layui-btn layui-btn-small layui-btn-danger del-btn" data-id="1" data-url="article-detail.html"><i class="layui-icon">&#xe640;</i></button>
-										</div>
-									</td>
-								</tr>
-							<tr>
-									<td><input type="checkbox" name="" lay-skin="primary" data-id="1"></td>
-									<td class="hidden-xs">2019.2.28</td>
-									<td class="hidden-xs">娱乐</td>
-									<td>19</td>
-									<td class="hidden-xs">买游戏光盘</td>
-									<td class="hidden-xs">信用卡</td>
-									<td><button class="layui-btn layui-btn-mini layui-btn-warm">支出</button></td>
-									<td class="hidden-xs">CM家庭记账本</td>
-									<td class="hidden-xs">花销账户</td>
-									<td class="hidden-xs">doodads账户</td>
-									<td class="hidden-xs">CC</td>
-									<td>
-										<div class="layui-inline">
-											<button class="layui-btn layui-btn-small layui-btn-normal go-btn" data-id="1" data-url="article-detail.html"><i class="layui-icon">&#xe642;</i></button>
-											<button class="layui-btn layui-btn-small layui-btn-danger del-btn" data-id="1" data-url="article-detail.html"><i class="layui-icon">&#xe640;</i></button>
-										</div>
-									</td>
-								</tr>
-							<tr>
-									<td><input type="checkbox" name="" lay-skin="primary" data-id="1"></td>
-									<td class="hidden-xs">2019.2.28</td>
-									<td class="hidden-xs">娱乐</td>
-									<td>19</td>
-									<td class="hidden-xs">买游戏光盘</td>
-									<td class="hidden-xs">信用卡</td>
-									<td><button class="layui-btn layui-btn-mini layui-btn-warm">支出</button></td>
-									<td class="hidden-xs">CM家庭记账本</td>
-									<td class="hidden-xs">花销账户</td>
-									<td class="hidden-xs">doodads账户</td>
-									<td class="hidden-xs">CC</td>
-									<td>
-										<div class="layui-inline">
-											<button class="layui-btn layui-btn-small layui-btn-normal go-btn" data-id="1" data-url="article-detail.html"><i class="layui-icon">&#xe642;</i></button>
-											<button class="layui-btn layui-btn-small layui-btn-danger del-btn" data-id="1" data-url="article-detail.html"><i class="layui-icon">&#xe640;</i></button>
-										</div>
-									</td>
-								</tr>
-							<tr>
-									<td><input type="checkbox" name="" lay-skin="primary" data-id="1"></td>
-									<td class="hidden-xs">2019.2.28</td>
-									<td class="hidden-xs">娱乐</td>
-									<td>19</td>
-									<td class="hidden-xs">买游戏光盘</td>
-									<td class="hidden-xs">信用卡</td>
-									<td><button class="layui-btn layui-btn-mini layui-btn-warm">支出</button></td>
-									<td class="hidden-xs">CM家庭记账本</td>
-									<td class="hidden-xs">花销账户</td>
-									<td class="hidden-xs">doodads账户</td>
-									<td class="hidden-xs">CC</td>
-									<td>
-										<div class="layui-inline">
-											<button class="layui-btn layui-btn-small layui-btn-normal go-btn" data-id="1" data-url="article-detail.html"><i class="layui-icon">&#xe642;</i></button>
-											<button class="layui-btn layui-btn-small layui-btn-danger del-btn" data-id="1" data-url="article-detail.html"><i class="layui-icon">&#xe640;</i></button>
-										</div>
-									</td>
-								</tr>
-
-						</tbody>
-					</table>
-					<div class="page-wrap">
-						<ul class="pagination">
-							<li class="disabled"><span>«</span></li>
-							<li class="active"><span>1</span></li>
-							<li>
-								<a href="#">2</a>
-							</li>
-							<li>
-								<a href="#">»</a>
-							</li>
-						</ul>
-					</div>
+				<!--图表-->
+				<div class="chart-panel panel panel-default">
+					<div class="panel-body" id="income_echart" style="height: 376px;"></div>
+				</div>
+				<div class="chart-panel panel panel-default">
+					<div class="panel-body" id="assert_echart" style="height: 376px;"></div>
 				</div>
 			</div>
 		</div>
 		<script src="../../static/admin/layui/layui.js" type="text/javascript" charset="utf-8"></script>
 		<script src="../../static/admin/js/common.js" type="text/javascript" charset="utf-8"></script>
-
+		<script src="../../static/admin/lib/echarts/echarts.js"></script>
+		<script type="text/javascript">
+			layui.use(['layer','jquery'], function(){
+				var layer 	= layui.layer;
+				var $=layui.jquery;
+				//图表
+				var myChart;
+				require.config({
+				    paths: {
+				        echarts: '../../static/admin/lib/echarts'
+				    }
+				});
+				require(
+				    [
+				        'echarts',
+				        'echarts/chart/bar',
+				        'echarts/chart/line',
+				        'echarts/chart/map'
+				    ],
+				    function (ec) {
+				        //--- 折柱 ---
+				        myChart = ec.init(document.getElementById('income_echart'));
+				        myChart.setOption(
+				            {title: {
+						        text: "收入-支出-流入-流出走势图",
+						        textStyle: {
+						            color: "rgb(85, 85, 85)",
+						            fontSize: 18,
+						            fontStyle: "normal",
+						            fontWeight: "normal"
+						        }
+						    },
+						    tooltip: {
+						        trigger: "axis"
+						    },
+						    legend: {
+						        data: ["收入", "支出", "流入","流出"],
+						        selectedMode: false,
+						    },
+						    toolbox: {
+						        show: true,
+						        feature: {
+						            dataView: {
+						                show: false,
+						                readOnly: true
+						            },
+						            magicType: {
+						                show: false,
+						                type: ["line", "bar", "stack", "tiled"]
+						            },
+						            restore: {
+						                show: true
+						            },
+						            saveAsImage: {
+						                show: true
+						            },
+						            mark: {
+						                show: false
+						            }
+						        }
+						    },
+						    calculable: false,
+						    xAxis: [
+						        {
+						            type: "category",
+						            boundaryGap: false,
+						            data: ["2019-01", "周二", "周三", "周四", "周五", "周六", "周日"]
+						        }
+						    ],
+						    yAxis: [
+						        {
+						            type: "value"
+						        }
+						    ],
+						     grid: {
+						        x2: 30,
+						        x: 50
+						    },
+						    series: [
+						        {
+						            name: "会员",
+						            type: "line",
+						            smooth: true,
+						            itemStyle: {
+						                normal: {
+						                    areaStyle: {
+						                        type: "default"
+						                    }
+						                }
+						            },
+						            data: [10, 12, 21, 54, 260, 830, 710]
+						        },
+						        {
+						            name: "文章",
+						            type: "line",
+						            smooth: true,
+						            itemStyle: {
+						                normal: {
+						                    areaStyle: {
+						                        type: "default"
+						                    }
+						                }
+						            },
+						            data: [30, 182, 434, 791, 390, 30, 10]
+						        },
+						        {
+						            name: "评论",
+						            type: "line",
+						            smooth: true,
+						            itemStyle: {
+						                normal: {
+						                    areaStyle: {
+						                        type: "default"
+						                    },
+						                    color: "rgb(110, 211, 199)"
+						                }
+						            },
+						            data: [1320, 1132, 601, 234, 120, 90, 20]
+						        }
+						    ]
+						}
+				        );
+					}
+				);
+				$(window).resize(function(){
+					myChart.resize();
+				})
+			});
+		</script>
 	</body>
 
 </html>
