@@ -106,6 +106,10 @@ class TrendsAPI(Resource):
     """
     趋势走势图 的获得API
     """
+    # 添加认证信息
+    decorators = [login_required]
+
+    # url参数解析器
     get_parser = reqparse.RequestParser()
     get_parser.add_argument('month_nums', type=int, location='args', required=True)
 
@@ -114,21 +118,9 @@ class TrendsAPI(Resource):
         args = TrendsAPI.get_parser.parse_args()
         id = args.get('month_nums')
         print(id)
-        pass
+        return jsonify({"checkbbok_id":checkbook_id,
+                        "month_nums":id})
 
 
 api.add_resource(TrendsAPI, '/api/v1/trends/all/<checkbook_id>', endpoint='trends')
 
-# @app.route("/api/v1/trends/all/<checkbook_id>?month_nums=12", methods=["GET"])
-# @login_required
-# def weekly_statistics1(checkbook_id):
-#     """
-#     获得每周相关的统计信息、每周概览的统计信息从这个一个API调用
-#     :param date_str:
-#     :return:
-#     """
-#     # 1.构造缓存查询任务
-#     result = {}
-#
-#     # 3. 构造返回JSON
-#     return jsonify(result)
