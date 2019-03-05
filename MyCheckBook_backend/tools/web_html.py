@@ -10,7 +10,7 @@ from flask_login import (current_user, login_required, login_user, logout_user, 
 from tools.app import app
 from tools import SqlTools
 
-@app.route("/index1", methods=["GET"])
+@app.route("/", methods=["GET"])
 @login_required
 def index():
     """
@@ -117,7 +117,7 @@ def login():
                 # 登陆成功
                 login_user(m_user, remember=True)
                 # 跳转
-                return redirect("index1")
+                return redirect("/")
             else:
                 # 登陆失败，弹出消息框
                 return render_template('./index/login.html')
