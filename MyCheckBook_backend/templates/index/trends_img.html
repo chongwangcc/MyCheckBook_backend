@@ -61,7 +61,7 @@
 				        myChart = ec.init(document.getElementById('income_echart'));
 				        myChart.setOption(
 				            {title: {
-						        text: "收入-支出-流入-流出走势图",
+						        text: "收入-支出/流入-流出  走势图",
 						        textStyle: {
 						            color: "rgb(85, 85, 85)",
 						            fontSize: 18,
@@ -103,7 +103,7 @@
 						        {
 						            type: "category",
 						            boundaryGap: false,
-						            data: ["2019-01", "周二", "周三", "周四", "周五", "周六", "周日"]
+						            data: ["2019-01", "2019-02", "2019-03", "2019-04", "2019-05", "2019-06", "2019-07"]
 						        }
 						    ],
 						    yAxis: [
@@ -117,8 +117,8 @@
 						    },
 						    series: [
 						        {
-						            name: "会员",
-						            type: "line",
+						            name: "收入",
+						            type: "bar",
 						            smooth: true,
 						            itemStyle: {
 						                normal: {
@@ -127,11 +127,11 @@
 						                    }
 						                }
 						            },
-						            data: [10, 12, 21, 54, 260, 830, 710]
+						            data: [10, 12, 21, 54, 260, 830, -710]
 						        },
 						        {
-						            name: "文章",
-						            type: "line",
+						            name: "支出",
+						            type: "bar",
 						            smooth: true,
 						            itemStyle: {
 						                normal: {
@@ -143,18 +143,32 @@
 						            data: [30, 182, 434, 791, 390, 30, 10]
 						        },
 						        {
-						            name: "评论",
-						            type: "line",
+						            name: "流入",
+						            type: "bar",
 						            smooth: true,
 						            itemStyle: {
 						                normal: {
 						                    areaStyle: {
 						                        type: "default"
 						                    },
-						                    color: "rgb(110, 211, 199)"
+						                    color: "rgb(110, 0, 199)"
 						                }
 						            },
 						            data: [1320, 1132, 601, 234, 120, 90, 20]
+						        },
+														        {
+						            name: "流出",
+						            type: "bar",
+						            smooth: true,
+						            itemStyle: {
+						                normal: {
+						                    areaStyle: {
+						                        type: "default"
+						                    },
+						                    color: "rgb(0, 211, 199)"
+						                }
+						            },
+						            data: [1200, 1100, 1450, 320, 80, 100, 200]
 						        }
 						    ]
 						}
