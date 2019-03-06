@@ -9,10 +9,15 @@
 		<title>明细管理</title>
 		<link rel="stylesheet" type="text/css" href="../../static/admin/layui/css/layui.css" />
 		<link rel="stylesheet" type="text/css" href="../../static/admin/css/admin.css" />
+
+        <script src="../../static/admin/layui/layui.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../../static/admin/js/common.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../../static/admin/lib/echarts/echarts.js"></script>
+		<script src="../../static/admin/js/detail_manage.js"></script>
 	</head>
 
 	<body>
-		<div class="wrap-container clearfix">
+		<div class="layui-container wrap-container clearfix">
 			<div class="column-content-detail">
 				<form class="layui-form" action="">
 						<div class="layui-form-item">
@@ -38,6 +43,14 @@
 							</div>
 						</div>
 				</form>
+				<div class="layui-row chart-panel panel panel-default">
+                    <div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+                        <div class="panel-body" id="income_echart" style="height: 376px;"></div>
+                    </div>
+                    <div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+                        <div class=" panel-body" id="spend_echart" style="height: 376px;"></div>
+                    </div>
+				</div>
 				<div class="layui-form" id="table-list">
 					<table class="layui-table" lay-even lay-skin="nob">
 						<colgroup>
@@ -248,8 +261,11 @@
 				</div>
 			</div>
 		</div>
-		<script src="../../static/admin/layui/layui.js" type="text/javascript" charset="utf-8"></script>
-		<script src="../../static/admin/js/common.js" type="text/javascript" charset="utf-8"></script>
+
+
+
+
+
 
 	</body>
 
