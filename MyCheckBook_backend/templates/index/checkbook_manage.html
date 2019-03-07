@@ -15,20 +15,21 @@
 	<body>
 		<div class="wrap-container clearfix">
 			<div class="column-content-detail">
-			    <table class="layui-hide" lay-even lay-skin="nob" lay-filter="checkbook_table" id="checkbook_table"></table>
+			    <table class="table-list layui-hide" lay-even lay-skin="nob" lay-filter="checkbook_table" id="checkbook_table"></table>
 			</div>
 		</div>
         <script src="../../static/admin/layui/layui.js" type="text/javascript" charset="utf-8"></script>
 		<script src="../../static/admin/js/common.js" type="text/javascript" charset="utf-8"></script>
         <script src="../../static/admin/js/checkbook_manage.js" type="text/javascript" charset="utf-8"></script>
 		<script type="text/html" id="OperaTools">
-            <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
-            <a class="layui-btn layui-btn-xs" lay-event="edit">邀请</a>
-		    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+            <a class="layui-btn layui-btn-primary layui-btn-xs edit-btn" lay-event="detail" data-id="1" data-url="checkbook_manage">查看</a>
+            <a class="layui-btn layui-btn-xs" lay-event="invitation" data-id="1" data-url="checkbook_manage">邀请码</a>
+		    <a class="layui-btn layui-btn-danger layui-btn-xs del-btn" lay-event="del" data-id="1" data-url="checkbook_manage">删除</a>
 		</script>
         <script type="text/html" id="toolbarDemo">
           <div class="layui-btn-container">
-            <button class="layui-btn layui-btn-sm" lay-event="getCheckData">创建新记账本</button>
+              <button class="layui-btn layui-btn-sm" lay-event="create_check_book" data-title="创建新记账本" >创建新记账本</button>
+              <button class="layui-btn layui-btn-sm" lay-event="join_by_code"  data-title="邀请码加入" >邀请码加入</button>
           </div>
         </script>
 

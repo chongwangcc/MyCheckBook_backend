@@ -40,6 +40,16 @@ def checkbook_manage():
     return render_template('./index/checkbook_manage.html')
 
 
+@app.route("/checkbook_add", methods=["GET"])
+@login_required
+def checkbook_add():
+    """
+    记账本管理界面
+    :return:
+    """
+    return render_template('./index/checkbook-add.html')
+
+
 @app.route("/detail_manage", methods=["GET"])
 @login_required
 def detail_manage():

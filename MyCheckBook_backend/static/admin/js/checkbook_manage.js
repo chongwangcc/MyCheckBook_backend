@@ -1,7 +1,7 @@
-layui.use('table', function(){
-  var table = layui.table;
-
-  table.render({
+layui.use(['table', "jquery"], function(){
+    var table = layui.table;
+  	$ = layui.jquery;
+  	table.render({
       elem: '#checkbook_table'
       ,url:'/api/v1/checkbooks'
       ,toolbar: '#toolbarDemo'
@@ -21,64 +21,99 @@ layui.use('table', function(){
     ]]
   });
 
-  //头工具栏事件
-  table.on('toolbar(test)', function(obj){
-    var checkStatus = table.checkStatus(obj.config.id); //获取选中行状态
+  //监听行工具事件
+  table.on('tool(checkbook_table)', function(obj){
+    var data = obj.data;
+    //console.log(obj)
+    if(obj.event === 'del'){
+        layer.confirm('真的删除记账本【'+obj.data.checkbook_name+'】么', function(index){
+            // 同步服务器删除 记账本
+            $.ajax({
+                url:"/api/v1/checkbooks/"+obj.data.checkbook_id,
+                type:'DELETE',
+                dataType:'json',
+                success:function(){ // http code 200
+                    obj.del();
+                    layer.close(index);
+                },
+                error:function(XMLHttpRequest, textStatus, errorThrown){
+                       layer.msg('删除失败，您无权删除此记账本，请练习本记账本 创建者');
+                }
+            })
+
+        });
+    }
+    else if(obj.event === 'detail'){
+        var data = obj.data;
+        console.log(data)
+        //TODO 打开记账本详情编辑页
+        layer.prompt({
+            formType: 2
+            ,value: data.email
+        }, function(value, index){
+            obj.update({
+                email: value
+            });
+            layer.close(index);
+        });
+    }
+    else if(obj.event == "invitation"){
+        // 调用服务器接口，生成邀请码
+        var data = obj.data;
+        console.log(data)
+        var code=""
+         $.ajax({
+              url:"/api/v1/CheckbookInvitationCode?checkbook_id="+obj.data.checkbook_id,
+                type:'GET',
+                dataType:'json',
+                async:false,
+                success:function(json){ // http code 200
+                    code=json["invationCode"]
+                },
+                error:function(XMLHttpRequest, textStatus, errorThrown){
+                       layer.msg('生成邀请码失败，请稍后再试');
+              }
+         });
+         //弹窗 展示邀请码
+        layer.alert(code,{title:'邀请码'});
+    }
+  });
+
+    //头工具栏事件
+  table.on('toolbar(checkbook_table)', function(obj){
+    var checkStatus = table.checkStatus(obj.config.id);
     switch(obj.event){
-      case 'getCheckData':
-        var data = checkStatus.data;  //获取选中行数据
-        layer.alert(JSON.stringify(data));
+      case 'join_by_code':
+          layer.prompt({
+              formType: 2
+              ,value: ""
+              ,title:"输入邀请码"
+                },
+              function(value, index){
+              // 调用接口 加入记账本
+              $.ajax({
+                url:"/api/v1/CheckbookInvitationCode?code="+value,
+                type:'POST',
+                data:{"code":value},
+                dataType:'json',
+                success:function(){ // http code 200
+                    layer.msg('加入记账本成功');
+                },
+                error:function(XMLHttpRequest, textStatus, errorThrown){
+                       layer.msg('加入记账本失败');
+                }
+            })
+            layer.close(index);
+        });
       break;
+      case 'create_check_book':
+          //TODO
+          var url="checkbook_add";
+          var title="创建记账本"
+          var iframeObj = $(window.frameElement).attr('name');
+          parent.page(title, url, iframeObj, w = "1200", h = "620px");
+      break;
+
     };
   });
 });
-
-				// <!--<colgroup>-->
-				// 	<!--<col width="50">-->
-				// <!--<thead>-->
-				// 	<!--<tr>-->
-				// 		<!--<th></th>-->
-				// 		<!--<th >记账本名称</th>-->
-				// 		<!--<th >创建日期</th>-->
-				// 		<!--<th >最后更新时间</th>-->
-				// 		<!--<th >描述</th>-->
-				// 		<!--<th>参与人</th>-->
-				// 		<!--<th>状态</th>-->
-				// 		<!--<th>模板规则</th>-->
-				// 		<!--<th>操作</th>-->
-				// 	<!--</tr>-->
-				// <!--</thead>-->
-				// <!--<tbody>-->
-				// 	<!--<tr>-->
-				// 		<!--<td><input type="radio" name="" lay-skin="primary" data-id="1"></td>-->
-				// 		<!--<td class="hidden-xs">CM家庭记账本</td>-->
-				// 		<!--<td class="hidden-xs">2019.2.28</td>-->
-				// 		<!--<td>1989-10-14</td>-->
-				// 		<!--<td class="hidden-xs">家庭记账本</td>-->
-				// 		<!--<td class="hidden-xs">CC,MM</td>-->
-				// 		<!--<td><button class="layui-btn layui-btn-mini layui-btn-normal">正常</button></td>-->
-				// 		<!--<td class="hidden-xs">收入分配 1:2:7</td>-->
-				// 		<!--<td>-->
-				// 			<!--<div class="layui-inline">-->
-				// 				<!--<button class="layui-btn layui-btn-small layui-btn-normal go-btn" data-id="1" data-url="article-detail.html"><i class="layui-icon">&#xe642;</i></button>-->
-				// 				<!--<button class="layui-btn layui-btn-small layui-btn-danger del-btn" data-id="1" data-url="article-detail.html"><i class="layui-icon">&#xe640;</i></button>-->
-				// 			<!--</div>-->
-				// 		<!--</td>-->
-				// 	<!--</tr>-->
-				// 						<!--<tr>-->
-				// 		<!--<td><input type="radio" name="" lay-skin="primary" data-id="1"></td>-->
-				// 		<!--<td class="hidden-xs">CM家庭记账本</td>-->
-				// 		<!--<td class="hidden-xs">2019.2.28</td>-->
-				// 		<!--<td>1989-10-14</td>-->
-				// 		<!--<td class="hidden-xs">家庭记账本</td>-->
-				// 		<!--<td class="hidden-xs">CC,MM</td>-->
-				// 		<!--<td><button class="layui-btn layui-btn-mini layui-btn-normal">正常</button></td>-->
-				// 		<!--<td class="hidden-xs">收入分配 1:2:7</td>-->
-				// 		<!--<td>-->
-				// 			<!--<div class="layui-inline">-->
-				// 				<!--<button class="layui-btn layui-btn-small layui-btn-normal go-btn" data-id="1" data-url="article-detail.html"><i class="layui-icon">&#xe642;</i></button>-->
-				// 				<!--<button class="layui-btn layui-btn-small layui-btn-danger del-btn" data-id="1" data-url="article-detail.html"><i class="layui-icon">&#xe640;</i></button>-->
-				// 			<!--</div>-->
-				// 		<!--</td>-->
-				// 	<!--</tr>-->
-				// <!--</tbody>-->

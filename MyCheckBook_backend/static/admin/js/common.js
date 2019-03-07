@@ -6,9 +6,9 @@ layui.config({
 
 layui.use(['form', 'jquery', 'laydate', 'layer', 'laypage', 'dialog',   'element'], function() {
 	var form = layui.form,
-		layer = layui.layer,
-		$ = layui.jquery,
-		dialog = layui.dialog;
+	layer = layui.layer,
+	$ = layui.jquery,
+	dialog = layui.dialog;
 	//获取当前iframe的name值
 	var iframeObj = $(window.frameElement).attr('name');
 	//全选
@@ -24,8 +24,10 @@ layui.use(['form', 'jquery', 'laydate', 'layer', 'laypage', 'dialog',   'element
 	//顶部添加
 	$('.addBtn').click(function() {
 		var url=$(this).attr('data-url');
+		// var title=$(this).attr('data-title');
+		var title="菜单舒心"
 		//将iframeObj传递给父级窗口,执行操作完成刷新
-		parent.page("菜单添加", url, iframeObj, w = "700px", h = "620px");
+		parent.page(title, url, iframeObj, w = "700px", h = "620px");
 		return false;
 
 	}).mouseenter(function() {

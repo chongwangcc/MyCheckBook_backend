@@ -74,21 +74,68 @@ class CheckbookListAPI(Resource):
         return jsonify(result)
 
 
+class CheckbookInvitationCodeAPI(Resource):
+    """
+    记账本邀请码的使用
+    """
+    decorators = [login_required]
+    get_parser = reqparse.RequestParser()
+    get_parser.add_argument('checkbook_id', type=str, location='args', required=True, default=12)
+    invateMap={}
+
+    code_parser = reqparse.RequestParser()
+    code_parser.add_argument('code', type=str, location='args', required=True, default=12)
+
+
+    def get(self):
+        args = CheckbookInvitationCodeAPI.get_parser.parse_args()
+        checkbook_id = args.get('checkbook_id')
+        # 生成邀请码
+        invationCode="fdasjkljkn"
+        CheckbookInvitationCodeAPI.invateMap[invationCode]={
+            "checkbook_id":checkbook_id,
+            "creator":current_user.id
+        };
+        print(CheckbookInvitationCodeAPI.invateMap)
+        return jsonify({"invationCode":invationCode})
+
+
+    def post(self):
+        # 使用邀请码加入记账组
+        try:
+            args = CheckbookInvitationCodeAPI.code_parser.parse_args()
+            code = args.get('code')
+            print(code)
+            checkbook_id = CheckbookInvitationCodeAPI.invateMap.get(code)
+
+            print(checkbook_id)
+            if checkbook_id is None:
+                raise Exception("error id")
+
+            return jsonify({"checkbook_id":checkbook_id})
+        except:
+            pass
+        return jsonify({"error":"ered"})
+
+
+
 class CheckbookAPI(Resource):
     """
     对记账本 操作 的API
     """
 
-    def get(self, id):
+    def get(self, checkbook_id):
         pass
 
-    def put(self, id):
+    def put(self, checkbook_id):
         pass
 
     def post(self):
         pass
 
-    def delete(self, id):
+    def delete(self, checkbook_id):
+        print(checkbook_id)
+        return jsonify({}),500
         pass
 
 
@@ -266,5 +313,7 @@ class TrendsAPI(Resource):
 
 
 api.add_resource(TrendsAPI, '/api/v1/trends/checkbooks/<checkbook_id>', endpoint='trends')
-api.add_resource(CheckbookListAPI, "/api/v1/checkbooks", endpoint="checkbook")
+api.add_resource(CheckbookListAPI, "/api/v1/checkbooks", endpoint="checkbookList")
+api.add_resource(CheckbookAPI, '/api/v1/checkbooks/<checkbook_id>', endpoint='checkbook')
+api.add_resource(CheckbookInvitationCodeAPI, '/api/v1/CheckbookInvitationCode', endpoint='CheckbookInvitationCode')
 
