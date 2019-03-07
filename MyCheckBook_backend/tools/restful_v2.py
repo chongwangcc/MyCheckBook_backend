@@ -33,6 +33,47 @@ class DetailsAPI(Resource):
         pass
 
 
+class CheckbookListAPI(Resource):
+    """
+    获得记账本列表
+    """
+    def get(self):
+        checkbook_list=[
+            {
+                "checkbook_id": "1",
+                "checkbook_name": "CM家庭记账本",
+                "create_time": "2018-01-02 12:20:40",
+                "last_update_time": "2018-01-02 12:45:23",
+                "description": "CM家庭记账本，计算家庭收支情况",
+                "partner": "cc, mm",
+                "my_role": "创建者",
+                "my_permission":"读、写、邀请",
+                "status":"正常",
+                "rules":"子账户：消费、投资、储蓄：7：2：1",
+            },
+            {
+                "checkbook_id": "2",
+                "checkbook_name": "CM工作室记账本",
+                "create_time": "2018-01-02 12:20:40",
+                "last_update_time": "2018-01-02 12:45:23",
+                "description": "CM家庭记账本，计算家庭收支情况",
+                "partner": "cc, mm",
+                "my_role": "创建者",
+                "my_permission": "读、写、邀请",
+                "status": "正常",
+                "rules": "子账户：消费、投资、储蓄：7：2：1",
+            }
+        ]
+        result={
+            "code":0,
+            "msg":"",
+            "count":len(checkbook_list),
+            "data":checkbook_list,
+        }
+
+        return jsonify(result)
+
+
 class CheckbookAPI(Resource):
     """
     对记账本 操作 的API
@@ -224,5 +265,6 @@ class TrendsAPI(Resource):
         return jsonify(result)
 
 
-api.add_resource(TrendsAPI, '/api/v1/trends/all/<checkbook_id>', endpoint='trends')
+api.add_resource(TrendsAPI, '/api/v1/trends/checkbooks/<checkbook_id>', endpoint='trends')
+api.add_resource(CheckbookListAPI, "/api/v1/checkbooks", endpoint="checkbook")
 
