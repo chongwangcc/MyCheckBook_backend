@@ -91,27 +91,27 @@ layui.use(['table', "jquery"], function(){
                 },
               function(value, index){
               // 调用接口 加入记账本
-              $.ajax({
-                url:"/api/v1/CheckbookInvitationCode?code="+value,
-                type:'POST',
-                data:{"code":value},
-                dataType:'json',
-                success:function(){ // http code 200
-                    layer.msg('加入记账本成功');
-                },
-                error:function(XMLHttpRequest, textStatus, errorThrown){
-                       layer.msg('加入记账本失败');
-                }
-            })
-            layer.close(index);
-        });
+                  $.ajax({
+                    url:"/api/v1/CheckbookInvitationCode?code="+value,
+                    type:'POST',
+                    data:{"code":value},
+                    dataType:'json',
+                    success:function(){ // http code 200
+                        layer.msg('加入记账本成功');
+                    },
+                    error:function(XMLHttpRequest, textStatus, errorThrown){
+                           layer.msg('加入记账本失败');
+                    }
+                    })
+                layer.close(index);
+            });
       break;
       case 'create_check_book':
           //TODO
           var url="checkbook_add";
           var title="创建记账本"
           var iframeObj = $(window.frameElement).attr('name');
-          parent.page(title, url, iframeObj, w = "1200", h = "620px");
+          parent.page(title, url, iframeObj, w = "700", h = "620px");
       break;
 
     };

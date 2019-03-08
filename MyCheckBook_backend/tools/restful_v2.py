@@ -37,38 +37,39 @@ class CheckbookListAPI(Resource):
     """
     获得记账本列表
     """
+    checkbook_list = [
+        {
+            "checkbook_id": "1",
+            "checkbook_name": "CM家庭记账本",
+            "create_time": "2018-01-02 12:20:40",
+            "last_update_time": "2018-01-02 12:45:23",
+            "description": "CM家庭记账本，计算家庭收支情况",
+            "partner": "cc, mm",
+            "my_role": "创建者",
+            "my_permission": "读、写、邀请",
+            "status": "正常",
+            "rules": "子账户：消费、投资、储蓄：7：2：1",
+        },
+        {
+            "checkbook_id": "2",
+            "checkbook_name": "CM工作室记账本",
+            "create_time": "2018-01-02 12:20:40",
+            "last_update_time": "2018-01-02 12:45:23",
+            "description": "CM家庭记账本，计算家庭收支情况",
+            "partner": "cc, mm",
+            "my_role": "创建者",
+            "my_permission": "读、写、邀请",
+            "status": "正常",
+            "rules": "子账户：消费、投资、储蓄：7：2：1",
+        }
+    ]
     def get(self):
-        checkbook_list=[
-            {
-                "checkbook_id": "1",
-                "checkbook_name": "CM家庭记账本",
-                "create_time": "2018-01-02 12:20:40",
-                "last_update_time": "2018-01-02 12:45:23",
-                "description": "CM家庭记账本，计算家庭收支情况",
-                "partner": "cc, mm",
-                "my_role": "创建者",
-                "my_permission":"读、写、邀请",
-                "status":"正常",
-                "rules":"子账户：消费、投资、储蓄：7：2：1",
-            },
-            {
-                "checkbook_id": "2",
-                "checkbook_name": "CM工作室记账本",
-                "create_time": "2018-01-02 12:20:40",
-                "last_update_time": "2018-01-02 12:45:23",
-                "description": "CM家庭记账本，计算家庭收支情况",
-                "partner": "cc, mm",
-                "my_role": "创建者",
-                "my_permission": "读、写、邀请",
-                "status": "正常",
-                "rules": "子账户：消费、投资、储蓄：7：2：1",
-            }
-        ]
+
         result={
             "code":0,
             "msg":"",
-            "count":len(checkbook_list),
-            "data":checkbook_list,
+            "count":len(self.checkbook_list),
+            "data":self.checkbook_list,
         }
 
         return jsonify(result)
@@ -118,20 +119,30 @@ class CheckbookInvitationCodeAPI(Resource):
         return jsonify({"error":"ered"})
 
 
-
 class CheckbookAPI(Resource):
     """
     对记账本 操作 的API
     """
 
     def get(self, checkbook_id):
-        pass
+        for value in CheckbookListAPI.checkbook_list:
+            if value["checkbook_id"] == checkbook_id:
+                return jsonify(value)
+
+        return jsonify({})
 
     def put(self, checkbook_id):
         pass
 
     def post(self):
-        pass
+        # 添加一个记账本
+        get_parser = reqparse.RequestParser()
+        get_parser.add_argument('name', type=str,  required=False)
+        get_parser.add_argument('description', type=str,  required=False)
+        get_parser.add_argument('owner', type=str,  required=False)
+        args = get_parser.parse_args()
+        print(args)
+        return jsonify({})
 
     def delete(self, checkbook_id):
         print(checkbook_id)
@@ -314,6 +325,6 @@ class TrendsAPI(Resource):
 
 api.add_resource(TrendsAPI, '/api/v1/trends/checkbooks/<checkbook_id>', endpoint='trends')
 api.add_resource(CheckbookListAPI, "/api/v1/checkbooks", endpoint="checkbookList")
-api.add_resource(CheckbookAPI, '/api/v1/checkbooks/<checkbook_id>', endpoint='checkbook')
+api.add_resource(CheckbookAPI, '/api/v1/checkbook', endpoint='checkbook')
 api.add_resource(CheckbookInvitationCodeAPI, '/api/v1/CheckbookInvitationCode', endpoint='CheckbookInvitationCode')
 
