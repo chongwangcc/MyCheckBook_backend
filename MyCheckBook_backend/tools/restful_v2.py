@@ -12,9 +12,364 @@ from flask import Flask, render_template, jsonify, request, redirect
 from flask_restful import Api, Resource,reqparse
 
 from tools.app import app
+from random import choice
 
 api = Api(app)
 
+
+class DetailsListAPI(Resource):
+    """
+    按照记账本，月份，获得所有明细
+    """
+
+    def __init__(self):
+        self.get_parser = reqparse.RequestParser()
+        self.get_parser.add_argument('checkbook_id', type=str, location='args', required=True)
+        self.get_parser.add_argument('month_str', type=str, location='args', required=True)
+        self.get_parser.add_argument('lite', type=str, location='args', required=False, default=False)
+        self.get_parser.add_argument('category', type=str, location='args', required=False, default=None)
+        self.get_parser.add_argument('type', type=str, location='args', required=False, default=None)
+        self.get_parser.add_argument('account_name', type=str, location='args', required=False, default=None)
+        self.get_parser.add_argument('seconds_account_name', type=str, location='args', required=False, default=None)
+        self.get_parser.add_argument('seconds_account_name', type=str, location='args', required=False, default=None)
+        self.get_parser.add_argument('page', type=int, location='args', required=False, default=1)
+        self.get_parser.add_argument('limit', type=int, location='args', required=False, default=10)
+        self.all_details = []
+        self.all_details_lite = []
+
+        for i in range(0,100):
+            t_details={}
+            t_details["date"] = "2019.2.28"
+            t_details["category"] = choice(["零食", "社交","餐饮","住房","医疗","工资"])
+            t_details["money"] = choice([12,13,59,100,400])
+            t_details["remark"] = choice(["买酸奶", "交话费","海贼王","仙剑4","随便吧","DMCC"])
+            t_details["isCash"] = choice(["现金", "信用卡"])
+            t_details["type"] = choice(["收入", "支出", "流入", "流出"])
+            t_details["checkbook_name"] = "CM家庭记账本"
+            t_details["account_name"] = choice(["花销账户","投资账户","储蓄账户"])
+            t_details["seconds_account_name"] = choice(["生活费账户", "doodads账户","教育账户","风险备付金","住房基金"])
+            t_details["updater"] = choice(["MM","CC"])
+
+            self.all_details.append(t_details)
+        pass
+
+    def get(self):
+        args = self.get_parser.parse_args()
+        checkbook_id = args.get('checkbook_id')
+        month_str = args.get('month_str')
+        lite = args.get('lite')
+        account_name = args.get('account_name')
+        type = args.get('type')
+        category = args.get('category')
+        account_name = args.get('account_name')
+        seconds_account_name = args.get('seconds_account_name')
+        data = self.all_details
+        if category is not  None:
+            data = self.all_details[0:5]
+        if account_name is not None:
+            data = self.all_details[0:10]
+
+
+
+
+        result={
+            "code":0,
+            "msg":"",
+            "count":len(data),
+            "data":data
+        }
+
+        return jsonify(result)
+
+        pass
+
+
+class DetailsSumAPI(Resource):
+    """
+    获得记账本的统计信息
+    """
+    def __init__(self):
+        self.get_parser = reqparse.RequestParser()
+        self.get_parser.add_argument('checkbook_id', type=str, location='args', required=True)
+        self.get_parser.add_argument('month_str', type=str, location='args', required=True)
+        self.all_details = []
+        self.all_details_lite = []
+
+        for i in range(0,100):
+            t_details={}
+            t_details["date"] = "2019.2.28"
+            t_details["category"] = choice(["零食", "社交","餐饮","住房","医疗","工资"])
+            t_details["money"] = choice([12,13,59,100,400])
+            t_details["remark"] = choice(["买酸奶", "交话费","海贼王","仙剑4","随便吧","DMCC"])
+            t_details["isCash"] = choice(["现金", "信用卡"])
+            t_details["type"] = choice(["收入", "支出", "流入", "流出"])
+            t_details["checkbook_name"] = "CM家庭记账本"
+            t_details["account_name"] = choice(["花销账户","投资账户","储蓄账户"])
+            t_details["seconds_account_name"] = choice(["生活费账户", "doodads账户","教育账户","风险备付金","住房基金"])
+            t_details["updater"] = choice(["MM","CC"])
+
+            self.all_details.append(t_details)
+        pass
+
+    def get(self):
+        result={}
+        result["income_category"] = {
+            "legend":["生活费", "零食", "购物", "运动", "娱乐"],
+            "sumType":"总收入",
+            "sumValue":200,
+            "data":[{
+                "value": 3661,
+                "name": '生活费'
+            }, {
+                "value": 5713,
+                "name": '零食'
+            }, {
+                "value": 9938,
+                "name": '购物'
+            }, {
+                "value": 17623,
+                "name": '运动'
+            }, {
+                "value": 3299,
+                "name": '娱乐'
+            }]
+        }
+        result["income_account"] = {
+            "legend":["投资账户", "花销账户", "储蓄账户", "生活费账户", "doodads账户", "风险备付金", "住房账户","教育基金"],
+            "sumType":"总收入",
+            "sumValue":200,
+            "data1": [{
+                "value": 3661,
+                "name": '投资账户'
+            }, {
+                "value": 5713,
+                "name": '花销账户'
+            }, {
+                "value": 9938,
+                "name": '储蓄账户'
+            }],
+            "data2": [{
+                "value": 3661,
+                "name": 'doodads账户'
+            }, {
+                "value": 5713,
+                "name": '生活费账户'
+            }, {
+                "value": 9938,
+                "name": '风险备付金'
+            }, {
+                "value": 9938,
+                "name": '住房账户'
+            }, {
+                "value": 9938,
+                "name": '教育基金'
+            }, {
+                "value": 9938,
+                "name": '投资-现金'
+            }, {
+                "value": 9938,
+                "name": '投资股票'
+            }, {
+                "value": 9938,
+                "name": '储蓄现金'
+            }, {
+                "value": 9938,
+                "name": '储蓄烂账'
+            }]
+        }
+        result["spent_category"] = {
+            "legend":["生活费", "零食", "购物", "运动", "娱乐"],
+            "sumType":"总支出",
+            "sumValue":200,
+            "data":[{
+                "value": 3661,
+                "name": '生活费'
+            }, {
+                "value": 5713,
+                "name": '零食'
+            }, {
+                "value": 9938,
+                "name": '购物'
+            }, {
+                "value": 17623,
+                "name": '运动'
+            }, {
+                "value": 3299,
+                "name": '娱乐'
+            }]
+        }
+        result["spent_account"] = {
+            "legend":["投资账户", "花销账户", "储蓄账户", "生活费账户", "doodads账户", "风险备付金", "住房账户","教育基金"],
+            "sumType":"总支出",
+            "sumValue":200,
+            "data1": [{
+                "value": 3661,
+                "name": '投资账户'
+            }, {
+                "value": 5713,
+                "name": '花销账户'
+            }, {
+                "value": 9938,
+                "name": '储蓄账户'
+            }],
+            "data2": [{
+                "value": 3661,
+                "name": 'doodads账户'
+            }, {
+                "value": 5713,
+                "name": '生活费账户'
+            }, {
+                "value": 9938,
+                "name": '风险备付金'
+            }, {
+                "value": 9938,
+                "name": '住房账户'
+            }, {
+                "value": 9938,
+                "name": '教育基金'
+            }, {
+                "value": 9938,
+                "name": '投资-现金'
+            }, {
+                "value": 9938,
+                "name": '投资股票'
+            }, {
+                "value": 9938,
+                "name": '储蓄现金'
+            }, {
+                "value": 9938,
+                "name": '储蓄烂账'
+            }]
+        }
+        result["inflow_category"] = {
+            "legend":["生活费", "零食", "购物", "运动", "娱乐"],
+            "sumType":"总流入",
+            "sumValue":200,
+            "data":[{
+                "value": 3661,
+                "name": '生活费'
+            }, {
+                "value": 5713,
+                "name": '零食'
+            }, {
+                "value": 9938,
+                "name": '购物'
+            }, {
+                "value": 17623,
+                "name": '运动'
+            }, {
+                "value": 3299,
+                "name": '娱乐'
+            }]
+        }
+        result["inflow_account"] = {
+            "legend":["投资账户", "花销账户", "储蓄账户", "生活费账户", "doodads账户", "风险备付金", "住房账户","教育基金"],
+            "sumType":"总流入",
+            "sumValue":200,
+            "data1": [{
+                "value": 3661,
+                "name": '投资账户'
+            }, {
+                "value": 5713,
+                "name": '花销账户'
+            }, {
+                "value": 9938,
+                "name": '储蓄账户'
+            }],
+            "data2": [{
+                "value": 3661,
+                "name": 'doodads账户'
+            }, {
+                "value": 5713,
+                "name": '生活费账户'
+            }, {
+                "value": 9938,
+                "name": '风险备付金'
+            }, {
+                "value": 9938,
+                "name": '住房账户'
+            }, {
+                "value": 9938,
+                "name": '教育基金'
+            }, {
+                "value": 9938,
+                "name": '投资-现金'
+            }, {
+                "value": 9938,
+                "name": '投资股票'
+            }, {
+                "value": 9938,
+                "name": '储蓄现金'
+            }, {
+                "value": 9938,
+                "name": '储蓄烂账'
+            }]
+        }
+        result["outflow_category"] = {
+            "legend":["生活费", "零食", "购物", "运动", "娱乐"],
+            "sumType":"总流出",
+            "sumValue":200,
+            "data":[{
+                "value": 3661,
+                "name": '生活费'
+            }, {
+                "value": 5713,
+                "name": '零食'
+            }, {
+                "value": 9938,
+                "name": '购物'
+            }, {
+                "value": 17623,
+                "name": '运动'
+            }, {
+                "value": 3299,
+                "name": '娱乐'
+            }]
+        }
+        result["outflow_account"] = {
+            "legend":["投资账户", "花销账户", "储蓄账户", "生活费账户", "doodads账户", "风险备付金", "住房账户","教育基金"],
+            "sumType":"总流出",
+            "sumValue":200,
+            "data1": [{
+                "value": 3661,
+                "name": '投资账户'
+            }, {
+                "value": 5713,
+                "name": '花销账户'
+            }, {
+                "value": 9938,
+                "name": '储蓄账户'
+            }],
+            "data2": [{
+                "value": 3661,
+                "name": 'doodads账户'
+            }, {
+                "value": 5713,
+                "name": '生活费账户'
+            }, {
+                "value": 9938,
+                "name": '风险备付金'
+            }, {
+                "value": 9938,
+                "name": '住房账户'
+            }, {
+                "value": 9938,
+                "name": '教育基金'
+            }, {
+                "value": 9938,
+                "name": '投资-现金'
+            }, {
+                "value": 9938,
+                "name": '投资股票'
+            }, {
+                "value": 9938,
+                "name": '储蓄现金'
+            }, {
+                "value": 9938,
+                "name": '储蓄烂账'
+            }]
+        }
+        return jsonify(result)
 
 class DetailsAPI(Resource):
     """
@@ -327,4 +682,6 @@ api.add_resource(TrendsAPI, '/api/v1/trends/checkbooks/<checkbook_id>', endpoint
 api.add_resource(CheckbookListAPI, "/api/v1/checkbooks", endpoint="checkbookList")
 api.add_resource(CheckbookAPI, '/api/v1/checkbook', endpoint='checkbook')
 api.add_resource(CheckbookInvitationCodeAPI, '/api/v1/CheckbookInvitationCode', endpoint='CheckbookInvitationCode')
+api.add_resource(DetailsListAPI, '/api/v1/details', endpoint='details')
+api.add_resource(DetailsSumAPI, '/api/v1/detailsum', endpoint='detailsum')
 
