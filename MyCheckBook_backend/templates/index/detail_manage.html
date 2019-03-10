@@ -82,8 +82,8 @@
 
 		<script type="text/html" id="OperaTools">
             <div class="layui-inline">
-                <button class="layui-btn layui-btn-small layui-btn-normal go-btn" data-id="1" data-url="article-detail.html"><i class="layui-icon">&#xe642;</i></button>
-                <button class="layui-btn layui-btn-small layui-btn-danger del-btn" data-id="1" data-url="article-detail.html"><i class="layui-icon">&#xe640;</i></button>
+                <button class="layui-btn layui-btn-small layui-btn-normal" data-id="1" lay-event="detail"><i class="layui-icon">&#xe642;</i></button>
+                <button class="layui-btn layui-btn-small layui-btn-danger" data-id="2" lay-event="delete"><i class="layui-icon">&#xe640;</i></button>
             </div>
 		</script>
 
@@ -96,8 +96,8 @@
 			<div class="layui-inline">
         		<input type="text" class="layui-input" id="month_selector" placeholder="yyyy-MM">
 			</div>
-			<button class="layui-btn layui-btn-normal" lay-submit="search">查看明细</button>
-			<button class="layui-btn layui-btn-normal" lay-submit="add-details">记一笔</button>
+			<button class="layui-btn layui-btn-normal" lay-event="look-details">查看明细</button>
+			<button class="layui-btn layui-btn-normal" lay-event="add-details">记一笔</button>
         </script>
 
 

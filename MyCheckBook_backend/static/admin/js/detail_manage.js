@@ -230,8 +230,6 @@ function init_pie2(mychart, mdata, type){
             init_pie2(inflow_account_echart, json["inflow_account"], type="流入")
             init_pie1(outflow_category_echart, json["outflow_category"], type="流出")
             init_pie2(outflow_account_echart, json["outflow_account"], type="流出")
-
-
         }
     })
 
@@ -263,5 +261,61 @@ function init_pie2(mychart, mdata, type){
         }
 
     })
+
+        //头工具栏事件
+  table.on('toolbar(detail-table)', function(obj){
+    var checkStatus = table.checkStatus(obj.config.id);
+    switch(obj.event){
+      case 'look-details':
+
+      break;
+      case 'add-details':
+          console.log("add-details")
+          var url="detail_add";
+          var title="创建记账本"
+          var iframeObj = $(window.frameElement).attr('name');
+          parent.page(title, url, iframeObj, w = "700", h = "620px");
+      break;
+
+    };
+  });
+
+      //监听行工具事件
+  table.on('tool(detail-table)', function(obj){
+    var data = obj.data;
+    //console.log(obj)
+    if(obj.event === 'delete'){
+        layer.confirm('真的删除明细【'+obj.data.checkbook_name+'】么', function(index){
+            // 同步服务器删除 记账本
+            $.ajax({
+                url:"/api/v1/checkbooks/"+obj.data.checkbook_id,
+                type:'DELETE',
+                dataType:'json',
+                success:function(){ // http code 200
+                    obj.del();
+                    layer.close(index);
+                },
+                error:function(XMLHttpRequest, textStatus, errorThrown){
+                       layer.msg('删除失败，您无权删除此记账本，请练习本记账本 创建者');
+                }
+            })
+
+        });
+    }
+    else if(obj.event === 'detail'){
+        var data = obj.data;
+        console.log(data)
+        //TODO 打开记账本详情编辑页
+        layer.prompt({
+            formType: 2
+            ,value: data.email
+        }, function(value, index){
+            obj.update({
+                email: value
+            });
+            layer.close(index);
+        });
+    }
+  });
 
 });
