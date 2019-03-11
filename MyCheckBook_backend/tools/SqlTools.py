@@ -16,27 +16,35 @@ set_db_name(g_sqlite3_path)
 
 def fetch_user_info(user_name):
     """
-    TODO 获得用户信息类
+    获得用户信息
     :param user_name:
     :return:
     """
     try:
-        userinfo = User_Info()
-        userinfo.user_name = "cc"
-        userinfo.password = "123456"
-        userinfo.active = 1
-        userinfo.auth_token_file = r"./data/.credentials/cc_calendar.json"
-        userinfo.calender_server = "google"
-        userinfo.calender_name = "时间日志"
+        userinfo = UserInfo.get(user_name=user_name)
         return userinfo
     except:
         pass
     return None
 
 
+def fetch_all_checkbooks(user_id):
+    """
+    根据用户id，获得所有的记账本
+    :param user_id:
+    :return:
+    """
+    try:
+        checkbooks = Checkbook.gets(operator="like", partners="%user_id-"+str(user_id)+"%")
+        return checkbooks
+    except:
+        pass
+    return []
+
 if __name__ == "__main__":
     pass
-    print(User_Info.is_user_exist())
+    checkbooks = fetch_all_checkbooks(user_id=1)
+    print(checkbooks)
 
 
 

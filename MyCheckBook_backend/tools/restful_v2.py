@@ -17,6 +17,126 @@ from random import choice
 api = Api(app)
 
 
+class CheckbookListAPI(Resource):
+    """
+    获得记账本列表
+    """
+    decorators = [login_required]
+    checkbook_list = [
+        {
+            "checkbook_id": "1",
+            "checkbook_name": "CM家庭记账本",
+            "create_time": "2018-01-02 12:20:40",
+            "last_update_time": "2018-01-02 12:45:23",
+            "description": "CM家庭记账本，计算家庭收支情况",
+            "partner": "cc, mm",
+            "my_role": "创建者",
+            "my_permission": "读、写、邀请",
+            "status": "正常",
+            "rules": "子账户：消费、投资、储蓄：7：2：1",
+        },
+        {
+            "checkbook_id": "2",
+            "checkbook_name": "CM工作室记账本",
+            "create_time": "2018-01-02 12:20:40",
+            "last_update_time": "2018-01-02 12:45:23",
+            "description": "CM家庭记账本，计算家庭收支情况",
+            "partner": "cc, mm",
+            "my_role": "创建者",
+            "my_permission": "读、写、邀请",
+            "status": "正常",
+            "rules": "子账户：消费、投资、储蓄：7：2：1",
+        }
+    ]
+    def get(self):
+        #  获得用户名下所有的记账本
+
+
+        result={
+            "code":0,
+            "msg":"",
+            "count":len(self.checkbook_list),
+            "data":self.checkbook_list,
+        }
+
+        return jsonify(result)
+
+
+class CheckbookInvitationCodeAPI(Resource):
+    """
+    记账本邀请码的使用
+    """
+    decorators = [login_required]
+    get_parser = reqparse.RequestParser()
+    get_parser.add_argument('checkbook_id', type=str, location='args', required=True, default=12)
+    invateMap={}
+
+    code_parser = reqparse.RequestParser()
+    code_parser.add_argument('code', type=str, location='args', required=True, default=12)
+
+
+    def get(self):
+        args = CheckbookInvitationCodeAPI.get_parser.parse_args()
+        checkbook_id = args.get('checkbook_id')
+        # 生成邀请码
+        invationCode="fdasjkljkn"
+        CheckbookInvitationCodeAPI.invateMap[invationCode]={
+            "checkbook_id":checkbook_id,
+            "creator":current_user.id
+        };
+        print(CheckbookInvitationCodeAPI.invateMap)
+        return jsonify({"invationCode":invationCode})
+
+
+    def post(self):
+        # 使用邀请码加入记账组
+        try:
+            args = CheckbookInvitationCodeAPI.code_parser.parse_args()
+            code = args.get('code')
+            print(code)
+            checkbook_id = CheckbookInvitationCodeAPI.invateMap.get(code)
+
+            print(checkbook_id)
+            if checkbook_id is None:
+                raise Exception("error id")
+
+            return jsonify({"checkbook_id":checkbook_id})
+        except:
+            pass
+        return jsonify({"error":"ered"})
+
+
+class CheckbookAPI(Resource):
+    """
+    对记账本 操作 的API
+    """
+
+    def get(self, checkbook_id):
+        for value in CheckbookListAPI.checkbook_list:
+            if value["checkbook_id"] == checkbook_id:
+                return jsonify(value)
+
+        return jsonify({})
+
+    def put(self, checkbook_id):
+        pass
+
+    def post(self):
+        # 添加一个记账本
+        get_parser = reqparse.RequestParser()
+        get_parser.add_argument('name', type=str,  required=False)
+        get_parser.add_argument('description', type=str,  required=False)
+        get_parser.add_argument('owner', type=str,  required=False)
+        args = get_parser.parse_args()
+        print(args)
+        return jsonify({})
+
+    def delete(self, checkbook_id):
+        print(checkbook_id)
+        return jsonify({}),500
+        pass
+
+
 class DetailsListAPI(Resource):
     """
     按照记账本，月份，获得所有明细
@@ -24,7 +144,6 @@ class DetailsListAPI(Resource):
 
     def __init__(self):
         self.get_parser = reqparse.RequestParser()
-
         self.get_parser.add_argument('checkbook_id', type=str, location='args', required=True)
         self.get_parser.add_argument('month_str', type=str, location='args', required=True)
         self.get_parser.add_argument('lite', type=str, location='args', required=False, default=False)
@@ -32,27 +151,8 @@ class DetailsListAPI(Resource):
         self.get_parser.add_argument('type', type=str, location='args', required=False, default=None)
         self.get_parser.add_argument('account_name', type=str, location='args', required=False, default=None)
         self.get_parser.add_argument('seconds_account_name', type=str, location='args', required=False, default=None)
-        self.get_parser.add_argument('seconds_account_name', type=str, location='args', required=False, default=None)
         self.get_parser.add_argument('page', type=int, location='args', required=False, default=1)
         self.get_parser.add_argument('limit', type=int, location='args', required=False, default=10)
-        self.all_details = []
-        self.all_details_lite = []
-
-        for i in range(0,100):
-            t_details={}
-            t_details["detail_id"] = i
-            t_details["date"] = "2019.2.28"
-            t_details["category"] = choice(["零食", "社交","餐饮","住房","医疗","工资"])
-            t_details["money"] = choice([12,13,59,100,400])
-            t_details["remark"] = choice(["买酸奶", "交话费","海贼王","仙剑4","随便吧","DMCC"])
-            t_details["isCash"] = choice(["现金", "信用卡"])
-            t_details["type"] = choice(["收入", "支出", "流入", "流出"])
-            t_details["checkbook_name"] = "CM家庭记账本"
-            t_details["account_name"] = choice(["花销账户","投资账户","储蓄账户"])
-            t_details["seconds_account_name"] = choice(["生活费账户", "doodads账户","教育账户","风险备付金","住房基金"])
-            t_details["updater"] = choice(["MM","CC"])
-
-            self.all_details.append(t_details)
         pass
 
     def get(self):
@@ -413,123 +513,6 @@ class DetailsAPI(Resource):
         pass
 
 
-class CheckbookListAPI(Resource):
-    """
-    获得记账本列表
-    """
-    checkbook_list = [
-        {
-            "checkbook_id": "1",
-            "checkbook_name": "CM家庭记账本",
-            "create_time": "2018-01-02 12:20:40",
-            "last_update_time": "2018-01-02 12:45:23",
-            "description": "CM家庭记账本，计算家庭收支情况",
-            "partner": "cc, mm",
-            "my_role": "创建者",
-            "my_permission": "读、写、邀请",
-            "status": "正常",
-            "rules": "子账户：消费、投资、储蓄：7：2：1",
-        },
-        {
-            "checkbook_id": "2",
-            "checkbook_name": "CM工作室记账本",
-            "create_time": "2018-01-02 12:20:40",
-            "last_update_time": "2018-01-02 12:45:23",
-            "description": "CM家庭记账本，计算家庭收支情况",
-            "partner": "cc, mm",
-            "my_role": "创建者",
-            "my_permission": "读、写、邀请",
-            "status": "正常",
-            "rules": "子账户：消费、投资、储蓄：7：2：1",
-        }
-    ]
-    def get(self):
-
-        result={
-            "code":0,
-            "msg":"",
-            "count":len(self.checkbook_list),
-            "data":self.checkbook_list,
-        }
-
-        return jsonify(result)
-
-
-class CheckbookInvitationCodeAPI(Resource):
-    """
-    记账本邀请码的使用
-    """
-    decorators = [login_required]
-    get_parser = reqparse.RequestParser()
-    get_parser.add_argument('checkbook_id', type=str, location='args', required=True, default=12)
-    invateMap={}
-
-    code_parser = reqparse.RequestParser()
-    code_parser.add_argument('code', type=str, location='args', required=True, default=12)
-
-
-    def get(self):
-        args = CheckbookInvitationCodeAPI.get_parser.parse_args()
-        checkbook_id = args.get('checkbook_id')
-        # 生成邀请码
-        invationCode="fdasjkljkn"
-        CheckbookInvitationCodeAPI.invateMap[invationCode]={
-            "checkbook_id":checkbook_id,
-            "creator":current_user.id
-        };
-        print(CheckbookInvitationCodeAPI.invateMap)
-        return jsonify({"invationCode":invationCode})
-
-
-    def post(self):
-        # 使用邀请码加入记账组
-        try:
-            args = CheckbookInvitationCodeAPI.code_parser.parse_args()
-            code = args.get('code')
-            print(code)
-            checkbook_id = CheckbookInvitationCodeAPI.invateMap.get(code)
-
-            print(checkbook_id)
-            if checkbook_id is None:
-                raise Exception("error id")
-
-            return jsonify({"checkbook_id":checkbook_id})
-        except:
-            pass
-        return jsonify({"error":"ered"})
-
-
-class CheckbookAPI(Resource):
-    """
-    对记账本 操作 的API
-    """
-
-    def get(self, checkbook_id):
-        for value in CheckbookListAPI.checkbook_list:
-            if value["checkbook_id"] == checkbook_id:
-                return jsonify(value)
-
-        return jsonify({})
-
-    def put(self, checkbook_id):
-        pass
-
-    def post(self):
-        # 添加一个记账本
-        get_parser = reqparse.RequestParser()
-        get_parser.add_argument('name', type=str,  required=False)
-        get_parser.add_argument('description', type=str,  required=False)
-        get_parser.add_argument('owner', type=str,  required=False)
-        args = get_parser.parse_args()
-        print(args)
-        return jsonify({})
-
-    def delete(self, checkbook_id):
-        print(checkbook_id)
-        return jsonify({}),500
-        pass
-
-
 class ReportAPI(Resource):
     """
     对财报操作 的API
@@ -703,11 +686,13 @@ class TrendsAPI(Resource):
         return jsonify(result)
 
 
-api.add_resource(TrendsAPI, '/api/v1/trends/checkbooks/<checkbook_id>', endpoint='trends')
 api.add_resource(CheckbookListAPI, "/api/v1/checkbooks", endpoint="checkbookList")
 api.add_resource(CheckbookAPI, '/api/v1/checkbook', endpoint='checkbook')
 api.add_resource(CheckbookInvitationCodeAPI, '/api/v1/CheckbookInvitationCode', endpoint='CheckbookInvitationCode')
+
 api.add_resource(DetailsListAPI, '/api/v1/details', endpoint='details')
 api.add_resource(DetailsSumAPI, '/api/v1/detailsum', endpoint='detailsum')
 api.add_resource(DetailsAPI, '/api/v1/detail', endpoint='detail')
+
+api.add_resource(TrendsAPI, '/api/v1/trends/checkbooks/<checkbook_id>', endpoint='trends')
 

@@ -14,16 +14,13 @@ from flask_login import UserMixin, AnonymousUserMixin
 
 # SQLite 数据库中 实体结构定义---------------------------
 
-class User_Info(Model, UserMixin):
+class UserInfo(Model, UserMixin):
     """
     用户信息表
     """
     user_name = CharField(128)
     password = CharField(128)
     active = IntegerField()
-    auth_token_file = CharField(256)
-    calender_server = CharField(128)
-    calender_name = CharField(128)
     email = CharField(128)
 
     def get_id(self):
@@ -31,7 +28,7 @@ class User_Info(Model, UserMixin):
 
     def get_by_id(self, user_name):
         try:
-            userinfo = User_Info.get(user_name=user_name)
+            userinfo = UserInfo.get(user_name=user_name)
             return userinfo
         except:
             pass
@@ -47,7 +44,7 @@ class User_Info(Model, UserMixin):
         return dict_my
 
     @staticmethod
-    def is_user_exist():
+    def is_empty():
         """
         判断user_info表是否为空
         :return:
@@ -59,43 +56,96 @@ class User_Info(Model, UserMixin):
             execute_sql(cu, sql)
             rows = cu.fetchall()
             if len(rows) >= 1 :
-                return True
+                return False
         except:
             lock.release()
             pass
-        return False
+        return True
 
 
-if __name__ == "__main__":
+class Checkbook(Model):
+    """
+    一个记账本记录
+    """
+    checkbook_name = CharField(128)  # 记账本描述
+    create_time = CharField(20)  # 创建时间
+    last_update_time = CharField(20)  # 最后更新时间
+    description = CharField(128)  # 记账本描述
+    partners = CharField(128)  # 参与者，共同编辑者
+    status = CharField(128)  # 状态：正常、封账、禁用
+    rules = CharField()  # 规则描述json串
+    accounts=CharField()  # 账户描述串
+    creator = ForeignKey(UserInfo)  # 创建者
 
-    g_sqlite3_path = "./data/sqlit3.db"
-    set_db_name(g_sqlite3_path)
-    userinfo = User_Info()
-    userinfo.user_name="cc"
-    userinfo.password="123456"
-    userinfo.active=1
-    userinfo.auth_token_file = r".\data\.credentials\cc_calendar.json"
-    userinfo.calender_server = "google"
-    userinfo.calender_name = "时间日志"
-    userinfo.save()
+    def __str__(self):
+        return str(self.to_dict())
 
-    userinfo = User_Info()
-    userinfo.user_name="mm"
-    userinfo.password="123456"
-    userinfo.active=1
-    userinfo.auth_token_file = r".\data\.credentials\mm_calendar.json"
-    userinfo.calender_server = "google"
-    userinfo.calender_name = "时间日志"
-    userinfo.save()
+    def to_dict(self):
+        dict_my = {}
+        for key, value in zip(self.field_names,self.field_values):
+            dict_my[key.replace("`", "")] = value.replace("'", "")
+        return dict_my
+
+    @staticmethod
+    def is_empty():
+        """
+        判断user_info表是否为空
+        :return:
+        """
+        try:
+            sql = "select * from %s limit 1" \
+                  % (__class__.__name__.lower())
+            cu = get_cursor()
+            execute_sql(cu, sql)
+            rows = cu.fetchall()
+            if len(rows) >= 1 :
+                return False
+        except:
+            lock.release()
+            pass
+        return True
 
 
-    # userinfo = User_Info.get(user_name="cc")
-    # userinfo.delete()
-    # userinfo = User_Info.get(user_name="mm")
-    # userinfo.delete()
-    # print(userinfo)
+class DetailInfo(Model):
+    """
+    一条明细记录
+    """
+    date = CharField(128)  # 日期
+    money = FloatField()  # 金额
+    category = CharField(16)  # 类别
+    remark = CharField(128)  # 备注
+    isCash = CharField(16)  # 是否是现金
+    type = CharField(16)  # 支出/收入/流入/流出
+    checkbook = ForeignKey(Checkbook) # 记账本
+    account_name = CharField(128) # 账户名
+    seconds_account_name = CharField(128) # 二级账户名
+    updater = ForeignKey(UserInfo) # 创建者
 
-    userinfo = User_Info.get(user_name="cc")
-    print(userinfo.to_dict())
-    print(userinfo)
+    def __str__(self):
+        return str(self.to_dict())
+
+    def to_dict(self):
+        dict_my = {}
+        for key, value in zip(self.field_names,self.field_values):
+            dict_my[key.replace("`", "")] = value.replace("'", "")
+        return dict_my
+
+    @staticmethod
+    def is_empty():
+        """
+        判断user_info表是否为空
+        :return:
+        """
+        try:
+            sql = "select * from %s limit 1" \
+                  % (__class__.__name__.lower())
+            cu = get_cursor()
+            execute_sql(cu, sql)
+            rows = cu.fetchall()
+            if len(rows) >= 1 :
+                return False
+        except:
+            lock.release()
+            pass
+        return True
 
