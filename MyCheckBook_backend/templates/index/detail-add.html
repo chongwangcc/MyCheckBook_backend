@@ -11,114 +11,122 @@
 	</head>
 	<body>
 	<form class="layui-form column-content-detail">
-        <div class="layui-tab">
-            <ul class="layui-tab-title">
-                <li class="layui-this">记一笔</li>
-            </ul>
-            <div class="layui-tab-content">
-                <div class="layui-tab-item layui-show">
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">所属记账本：</label>
-                        <div class="layui-inline">
-                            <select name="states" lay-filter="status" id="checkbook_selector">
-                                <option value="010">CM家庭记账本</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">日期：</label>
-                        <div class="layui-input-block">
-                            <input type="text" class="layui-input" id="day_selector" placeholder="yyyy-MM-dd">
-                        </div>
-                    </div>
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">明细类型：</label>
-                        <div class="layui-inline">
-                            <select name="states" lay-filter="status" id="detail_type_selector">
-                                <option value="010">收入</option>
-                                 <option value="010">支出</option>
-                                 <option value="010">流入</option>
-                                 <option value="010">流出</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">所属账户：</label>
-                        <div class="layui-inline">
-                            <select name="states" lay-filter="status" id="detail_account_selector">
-                                <option value="010">花销账户</option>
-                                 <option value="010">投资账户</option>
-                                 <option value="010">储蓄账户</option>
-                                 <option value="010">花销账户-生活费账户</option>
-                                <option value="010">花销账户-doodads账户</option>
-                                <option value="010">花销账户-住房账户</option>
-                                <option value="010">花销账户-教育账户</option>
-                                <option value="010">花销账户-风险备付金</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">金额：</label>
-                        <div class="layui-input-block">
-                            <input type="text" name="owner" required lay-verify="required" value="0.0" autocomplete="off" onkeyup="checknum(this);" class="layui-input">
-                        </div>
-                    </div>
-                    <div class="layui-form-item">
-                         <div class="layui-input-block">
-                            <input  type="checkbox" name="owner" required lay-verify="required" value="CC" autocomplete="off" class="layui-input"> 是信用卡吗？
-                         </div>
-                    </div>
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">记录者：</label>
-                        <div class="layui-input-block">
-                            <input type="text" name="owner" readonly="readonly"  required lay-verify="required" value="CC" autocomplete="off" class="layui-input">
-                        </div>
-                    </div>
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">类别：</label>
-                        <div class="layui-input-block">
-
-                        </div>
-                    </div>
-                </div>
-             </div>
-            <div class="layui-form-item" style="padding-left: 10px;">
-                <div class="layui-input-block">
-                    <button class="layui-btn layui-btn-normal" lay-submit lay-filter="checkbookform">记一笔</button>
+            <div class="layui-form-item">
+                <label class="layui-form-label">所属记账本：</label>
+                <div class="layui-inline">
+                    <select name="checkbook_id" lay-filter="status" id="checkbook_selector">
+                        <option value="010">CM家庭记账本</option>
+                    </select>
                 </div>
             </div>
-        </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">日期：</label>
+                <div class="layui-input-block">
+                    <input  name="date" type="text" class="layui-input" id="day_selector" placeholder="yyyy-MM-dd">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">明细类型：</label>
+                <div class="layui-inline">
+                    <select name="type" lay-filter="status" id="detail_type_selector">
+                        <option value="收入">收入</option>
+                         <option value="支出">支出</option>
+                         <option value="流入">流入</option>
+                         <option value="流出">流出</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">所属账户：</label>
+                <div class="layui-inline">
+                    <select name="account_name" lay-filter="status" id="detail_account_selector">
+                        <option value="花销账户">花销账户</option>
+                         <option value="投资账户">投资账户</option>
+                         <option value="储蓄账户">储蓄账户</option>
+                         <option value="花销账户-生活费账户">花销账户-生活费账户</option>
+                        <option value="花销账户-doodads账户">花销账户-doodads账户</option>
+                        <option value="花销账户-住房账户">花销账户-住房账户</option>
+                        <option value="花销账户-教育账户">花销账户-教育账户</option>
+                        <option value="花销账户-风险备付金">花销账户-风险备付金</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">金额：</label>
+                <div class="layui-input-block">
+                    <input type="text" id="detail_money" name="money" required lay-verify="required" value="" autocomplete="off" onkeyup="checknum(this);" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">是否现金：</label>
+                 <div class="layui-input-block">
+                     <input type="checkbox" id="detail_iscash" checked="" name="isCash" lay-skin="switch" lay-filter="switchTest" lay-text="现金|信用卡">
+                 </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">记录者：</label>
+                <div class="layui-input-block">
+                    <input type="text" name="updater" id="detail_updater" readonly="readonly"  required lay-verify="required" value="CC" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">类别：</label>
+                <div class="layui-input-block">
+                   <select name="category" lay-filter="status" id="detail_category_selector">
+                        <option value="零食">零食</option>
+                         <option value="餐饮">餐饮</option>
+                         <option value="住房">住房</option>
+                         <option value="通讯">通讯</option>
+                        <option value="娱乐">娱乐</option>
+                        <option value="社交">社交</option>
+                        <option value="黑瞳">黑瞳</option>
+                        <option value="运动">运动</option>
+                    </select>
+                </div>
+
+            </div>
+        <div class="layui-form-item">
+                <label class="layui-form-label">备注：</label>
+                <div class="layui-input-block">
+                    <input type="text" name="remark" id="detail_remark" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item" style="padding-left: 10px;">
+                <div class="layui-input-block">
+                    <button class="layui-btn layui-btn-normal" lay-submit lay-filter="detailform">记一笔</button>
+                </div>
+            </div>
     </form>
 	<script src="../../static/admin/layui/layui.js" type="text/javascript" charset="utf-8"></script>
 	<script src="../../static/admin/js/common.js" type="text/javascript" charset="utf-8"></script>
 	<script>
 		layui.use(['form', 'jquery',"laydate"], function() {
-            var form = layui.form,
-					layer = layui.layer,
-					$ = layui.jquery
-             var now = new Date();
+            var form = layui.form;
+            var	layer = layui.layer;
+            var	$ = layui.jquery;
             var laydate = layui.laydate;
-                // 月份选择器
-                laydate.render({
-                    elem: document.getElementById('day_selector')
-                    ,value: now.getFullYear() + '-' + lay.digit(now.getMonth() + 1)+ '-'+ lay.digit(now.getDay() + 1)
-                });
+
+            // 日期选择器
+            var now = new Date();
+            laydate.render({
+                elem: document.getElementById('day_selector')
+                ,value: now.getFullYear() + '-' + lay.digit(now.getMonth() + 1)+ '-'+ lay.digit(now.getDay() + 1)
+            });
 
             // 获得
-            form.on("submit(checkbookform)", function(data){
+            form.on("submit(detailform)", function(data){
                 console.log(data.field)
                 $.ajax({
-                    url:"/api/v1/checkbook",
+                    url:"/api/v1/detail",
                     method:"post",
                     data:data.field,
                     dataType:"JSON",
                     async:"false",
                     success:function(){ // http code 200
-                        layer.msg('创建记账本成功');
                          parent.layer.closeAll();
                     },
                     error:function(XMLHttpRequest, textStatus, errorThrown){
-                       layer.msg('创建记账本失败');
+                       layer.msg('添加明细失败');
                     }
                 });
 

@@ -267,12 +267,46 @@ function init_pie2(mychart, mdata, type){
     var checkStatus = table.checkStatus(obj.config.id);
     switch(obj.event){
       case 'look-details':
+          var checkbook_id = $("#checkbook_selector option:selected").val();
+          var month_str = $("#month_selector").val();
+          console.log(checkbook_id)
+          console.log(month_str)
+          //填写pie图
+          $.ajax({
+            url:"/api/v1/detailsum?checkbook_id="+checkbook_id+"&month_str="+month_str,
+            type:'GET',
+            dataType:'json',
+            async:false,
+            success:function(json){ // http code 200
+                init_pie1(income_category_echart, json["income_category"], type="收入")
+                init_pie2(income_account_echart, json["income_account"], type="收入")
+                init_pie1(spent_category_echart, json["spent_category"], type="支出")
+                init_pie2(spent_account_echart, json["spent_account"], type="支出")
+                init_pie1(inflow_category_echart, json["inflow_category"], type="流入")
+                init_pie2(inflow_account_echart, json["inflow_account"], type="流入")
+                init_pie1(outflow_category_echart, json["outflow_category"], type="流出")
+                init_pie2(outflow_account_echart, json["outflow_account"], type="流出")
+            }
+          })
+
+          //更新表格
+          table.reload("detail-table-id",{
+                  url: "/api/v1/details?checkbook_id="+checkbook_id+"&month_str="+month_str
+                  ,where: { }
+          })
+
+          // 月份选择器
+        laydate.render({
+            elem: document.getElementById('month_selector')
+            ,type: 'month'
+            ,value: month_str
+        });
+
 
       break;
       case 'add-details':
-          console.log("add-details")
           var url="detail_add";
-          var title="创建记账本"
+          var title="记一笔"
           var iframeObj = $(window.frameElement).attr('name');
           parent.page(title, url, iframeObj, w = "700", h = "620px");
       break;
@@ -283,12 +317,12 @@ function init_pie2(mychart, mdata, type){
       //监听行工具事件
   table.on('tool(detail-table)', function(obj){
     var data = obj.data;
-    //console.log(obj)
-    if(obj.event === 'delete'){
-        layer.confirm('真的删除明细【'+obj.data.checkbook_name+'】么', function(index){
+     switch(obj.event){
+         case 'delete':
+             layer.confirm('真的删除明细【'+obj.data.category+ "-"+obj.data.money+'元】么', function(index){
             // 同步服务器删除 记账本
             $.ajax({
-                url:"/api/v1/checkbooks/"+obj.data.checkbook_id,
+                url:"/api/v1/detail?detail_id="+obj.data.detail_id,
                 type:'DELETE',
                 dataType:'json',
                 success:function(){ // http code 200
@@ -296,26 +330,51 @@ function init_pie2(mychart, mdata, type){
                     layer.close(index);
                 },
                 error:function(XMLHttpRequest, textStatus, errorThrown){
-                       layer.msg('删除失败，您无权删除此记账本，请练习本记账本 创建者');
+                       layer.msg('删除失败!!');
                 }
             })
 
         });
-    }
-    else if(obj.event === 'detail'){
-        var data = obj.data;
-        console.log(data)
-        //TODO 打开记账本详情编辑页
-        layer.prompt({
-            formType: 2
-            ,value: data.email
-        }, function(value, index){
-            obj.update({
-                email: value
-            });
-            layer.close(index);
-        });
-    }
+             break;
+         case "edit":
+             var url="detail_add";
+             // var title="记一笔"
+             // var iframeObj = $(window.frameElement).attr('name');
+             // parent.page(title, url, iframeObj, w = "700", h = "620px");
+             layer.open({
+                 type: 2,
+                 content: 'detail_add',
+                 area: ['700px', '620px'],
+                 success:function (layero,index) {
+                     var body = layer.getChildFrame("body", index);
+                     var iframeWin = window[layero.find('iframe')[0]['name']]; //得到iframe页的窗口对象
+                     iframeWin.document.getElementById("checkbook_selector").value=data.checkbook_id
+                     iframeWin.document.getElementById("day_selector").value=data.date
+                     iframeWin.document.getElementById("detail_type_selector").value=data.type
+                     iframeWin.document.getElementById("detail_account_selector").value=data.account_name
+                     iframeWin.document.getElementById("detail_money").value=data.money
+                     iframeWin.document.getElementById("detail_iscash").value=data.isCash
+                     iframeWin.document.getElementById("detail_updater").value=data.updater
+                     iframeWin.document.getElementById("detail_category_selector").value=data.category
+                     iframeWin.document.getElementById("detail_remark").value=data.remark
+
+                     console.log(body.find(".detail_money"))
+                     console.log(body.find(".detail_money")[0])
+                     // body.find(".detail_money").text(data.money)
+                     // console.log(typeof body)
+                     // console.log(document.getElementById("detail_money").html())
+                     // body.find("#checkbook_selector").text(data.checkbook_name)
+                     // body.find("#day_selector").text(data.date)
+                     // body.find("#detail_type_selector").text(data.type)
+                     // body.find("#detail_account_selector").text(data.account_name)
+                     //
+                     // body.find("#detail_iscash").text(data.isCash)
+                     // body.find("#detail_updater").text(data.updater)
+                     // body.find("#detail_category_selector").text(data.category)
+                 }
+             })
+             break
+     }
   });
 
 });

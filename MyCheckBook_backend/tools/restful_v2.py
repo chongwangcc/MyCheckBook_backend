@@ -24,6 +24,7 @@ class DetailsListAPI(Resource):
 
     def __init__(self):
         self.get_parser = reqparse.RequestParser()
+
         self.get_parser.add_argument('checkbook_id', type=str, location='args', required=True)
         self.get_parser.add_argument('month_str', type=str, location='args', required=True)
         self.get_parser.add_argument('lite', type=str, location='args', required=False, default=False)
@@ -39,6 +40,7 @@ class DetailsListAPI(Resource):
 
         for i in range(0,100):
             t_details={}
+            t_details["detail_id"] = i
             t_details["date"] = "2019.2.28"
             t_details["category"] = choice(["零食", "社交","餐饮","住房","医疗","工资"])
             t_details["money"] = choice([12,13,59,100,400])
@@ -371,6 +373,7 @@ class DetailsSumAPI(Resource):
         }
         return jsonify(result)
 
+
 class DetailsAPI(Resource):
     """
     记账本明细 的操作API
@@ -378,13 +381,35 @@ class DetailsAPI(Resource):
     def get(self, id):
         pass
 
-    def put(self, id):
+    def put(self,id):
         pass
 
     def post(self):
+        """TODO 添加一个记账明细"""
+        get_parser = reqparse.RequestParser()
+        get_parser.add_argument('checkbook_id', type=str, required=True)
+        get_parser.add_argument('date', type=str, required=True)
+        get_parser.add_argument('type', type=str, required=True)
+        get_parser.add_argument('money', type=float, required=True)
+        get_parser.add_argument('isCash', type=str, required=True)
+        get_parser.add_argument('updater', type=str, required=True)
+        get_parser.add_argument('category', type=str, required=True)
+        get_parser.add_argument('account_name', type=str, required=True)
+        args = get_parser.parse_args()
+        print(args)
+
+        # 检查一下 格式是否正确
+
+        # 构造一条记账明细
+
+        # 把记账明细返回
         pass
 
-    def delete(self, id):
+    def delete(self):
+        get_parser = reqparse.RequestParser()
+        get_parser.add_argument('detail_id', type=str, required=True)
+        args = get_parser.parse_args()
+        print(args)
         pass
 
 
@@ -684,4 +709,5 @@ api.add_resource(CheckbookAPI, '/api/v1/checkbook', endpoint='checkbook')
 api.add_resource(CheckbookInvitationCodeAPI, '/api/v1/CheckbookInvitationCode', endpoint='CheckbookInvitationCode')
 api.add_resource(DetailsListAPI, '/api/v1/details', endpoint='details')
 api.add_resource(DetailsSumAPI, '/api/v1/detailsum', endpoint='detailsum')
+api.add_resource(DetailsAPI, '/api/v1/detail', endpoint='detail')
 
