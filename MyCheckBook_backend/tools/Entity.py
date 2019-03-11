@@ -113,6 +113,7 @@ class DetailInfo(Model):
     date = CharField(128)  # 日期
     money = FloatField()  # 金额
     category = CharField(16)  # 类别
+    month_str = CharField(7)
     remark = CharField(128)  # 备注
     isCash = CharField(16)  # 是否是现金
     type = CharField(16)  # 支出/收入/流入/流出
@@ -129,6 +130,10 @@ class DetailInfo(Model):
         for key, value in zip(self.field_names,self.field_values):
             dict_my[key.replace("`", "")] = value.replace("'", "")
         return dict_my
+
+    @staticmethod
+    def get_table_name():
+        return __class__.__name__.lower()
 
     @staticmethod
     def is_empty():

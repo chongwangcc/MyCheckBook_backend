@@ -182,33 +182,31 @@ class DetailsListAPI(Resource):
         self.get_parser = reqparse.RequestParser()
         self.get_parser.add_argument('checkbook_id', type=str, location='args', required=True)
         self.get_parser.add_argument('month_str', type=str, location='args', required=True)
-        self.get_parser.add_argument('lite', type=str, location='args', required=False, default=False)
         self.get_parser.add_argument('category', type=str, location='args', required=False, default=None)
         self.get_parser.add_argument('type', type=str, location='args', required=False, default=None)
         self.get_parser.add_argument('account_name', type=str, location='args', required=False, default=None)
-        self.get_parser.add_argument('seconds_account_name', type=str, location='args', required=False, default=None)
         self.get_parser.add_argument('page', type=int, location='args', required=False, default=1)
         self.get_parser.add_argument('limit', type=int, location='args', required=False, default=10)
         pass
 
     def get(self):
+        # 获得参数
         args = self.get_parser.parse_args()
         checkbook_id = args.get('checkbook_id')
         month_str = args.get('month_str')
-        lite = args.get('lite')
         account_name = args.get('account_name')
         type = args.get('type')
         category = args.get('category')
-        account_name = args.get('account_name')
-        seconds_account_name = args.get('seconds_account_name')
+        page = args.get('page')
+        limit = args.get('limit')
+
+        # 判断构造查询语句
+
         data = self.all_details
         if category is not  None:
             data = self.all_details[0:5]
         if account_name is not None:
             data = self.all_details[0:10]
-
-
-
 
         result={
             "code":0,

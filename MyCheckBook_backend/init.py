@@ -77,6 +77,7 @@ def random_insert_details():
         print(i)
         t_detailInfo = DetailInfo()
         t_detailInfo.date = choice(["2019-02-28", "2018-02-02", "2019-03-01", "2019-03-15", "2019-02-15"])
+        t_detailInfo.month_str = t_detailInfo.date[:7]
         t_detailInfo.money = choice([12, 13, 59, 100, 400])
         t_detailInfo.category = choice(["零食", "社交", "餐饮", "住房", "医疗", "工资"])
         t_detailInfo.remark =choice(["买酸奶", "交话费", "海贼王", "仙剑4", "随便吧", "DMCC"])

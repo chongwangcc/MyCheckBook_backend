@@ -41,10 +41,45 @@ def fetch_all_checkbooks(user_id):
         pass
     return []
 
+
+def get_Details(checkbook_id, month_str, account_name=None, type=None, category=None):
+    """
+    根据条件获得记账本明细，按照时间排序
+    :param checkbook_id:
+    :param month_str:
+    :param account_name:
+    :param type:
+    :param category:
+    :return:
+    """
+    conn = sqlite3.connect(g_sqlite3_path)
+    sql = "select * from " + DetailInfo.get_table_name()
+    sql += " where "
+    sql += " checkbook == " + str(checkbook_id) + " and "
+    sql += " month_str == " + str(month_str)
+    if account_name is not None:
+        account1, account2 = account_name, None
+        if "-" in str(account_name):
+            account1, account2 = str(account_name).split("-")
+        if account1 is not None:
+            sql += " and "+" account_name == " + str(account1) + " "
+        if account2 is not None:
+            sql += " and "+" seconds_account_name == " + str(account2) + " "
+    if type is not None:
+        sql += " and " + " type == " + str(type) + " "
+    if category is not None:
+        sql += " and " + " category == " + str(category) + " "
+
+    sql += " ORDER BY date DESC, id ASC "
+
+    df = pd.read_sql_query(sql, conn)
+    return df
+
+
 if __name__ == "__main__":
     pass
-    checkbooks = fetch_all_checkbooks(user_id=1)
-    print(checkbooks)
+    detias = get_Details(checkbook_id=1, month_str="2019-02")
+    print(detias)
 
 
 
