@@ -116,10 +116,10 @@ class DetailInfo(Model):
     remark = CharField(128)  # 备注
     isCash = CharField(16)  # 是否是现金
     type = CharField(16)  # 支出/收入/流入/流出
-    checkbook = ForeignKey(Checkbook) # 记账本
-    account_name = CharField(128) # 账户名
-    seconds_account_name = CharField(128) # 二级账户名
-    updater = ForeignKey(UserInfo) # 创建者
+    checkbook = ForeignKey(Checkbook)  # 归属记账本
+    account_name = CharField(128)  # 账户名
+    seconds_account_name = CharField(128)  # 二级账户名
+    updater = ForeignKey(UserInfo)  # 创建者
 
     def __str__(self):
         return str(self.to_dict())

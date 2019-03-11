@@ -12,12 +12,11 @@ layui.use(['table', "jquery"], function(){
       ,{field:'description', title: '描述'}
       ,{field:'rules', width:150, title: '内置规则约束'}
       ,{field:'partner', width:150, title: '参与人'}
-      ,{field:'my_role', width:150, title: '我的角色', sort: true,}
-      ,{field:'my_permission', width:150, title: '我的权限', sort: true,}
+      ,{field:'my_permission', width:120, title: '我的权限', sort: true,}
       ,{field:'status', width:80, title: '状态', sort: true, }
-      ,{field:'create_time', width:170, title: '创建日期', sort: true}
-      ,{field:'last_update_time', width:170, title: '最后更新时间', sort: true}
-      ,{fixed:'right', width:200, title: '操作',toolbar: '#OperaTools'}
+      ,{field:'create_time', width:160, title: '创建日期', sort: true}
+      ,{field:'last_update_time', width:160, title: '最后更新时间', sort: true}
+      ,{fixed:'right', width:150, title: '操作',toolbar: '#OperaTools'}
     ]]
   });
 
@@ -29,7 +28,7 @@ layui.use(['table', "jquery"], function(){
         layer.confirm('真的删除记账本【'+obj.data.checkbook_name+'】么', function(index){
             // 同步服务器删除 记账本
             $.ajax({
-                url:"/api/v1/checkbooks/"+obj.data.checkbook_id,
+                url:"/api/v1/checkbook?checkbook_id="+obj.data.checkbook_id,
                 type:'DELETE',
                 dataType:'json',
                 success:function(){ // http code 200
@@ -37,7 +36,7 @@ layui.use(['table', "jquery"], function(){
                     layer.close(index);
                 },
                 error:function(XMLHttpRequest, textStatus, errorThrown){
-                       layer.msg('删除失败，您无权删除此记账本，请练习本记账本 创建者');
+                       layer.msg('删除失败，您无权删除此记账本，请联系本记账本 创建者');
                 }
             })
 
@@ -107,11 +106,23 @@ layui.use(['table', "jquery"], function(){
             });
       break;
       case 'create_check_book':
-          //TODO
-          var url="checkbook_add";
-          var title="创建记账本"
-          var iframeObj = $(window.frameElement).attr('name');
-          parent.page(title, url, iframeObj, w = "700", h = "620px");
+          // var url="checkbook_add";
+          // var title="创建记账本"
+          // var iframeObj = $(window.frameElement).attr('name');
+          // parent.page(title, url, iframeObj, w = "700", h = "620px");
+          layer.open({
+              type: 2,
+              content: "checkbook_add",
+              area: ['700px', '620px'],
+              end:function () {
+                  table.reload("checkbook_table",{
+                  url: "/api/v1/checkbooks"
+                  ,where: {
+                }
+            })
+
+              }
+          })
       break;
 
     };

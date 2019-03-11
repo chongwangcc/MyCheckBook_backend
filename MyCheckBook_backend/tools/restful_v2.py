@@ -10,9 +10,14 @@
 from flask_login import (current_user, login_required, login_user, logout_user, confirm_login, fresh_login_required)
 from flask import Flask, render_template, jsonify, request, redirect
 from flask_restful import Api, Resource,reqparse
+import json
+from datetime import datetime
+from random import choice
 
 from tools.app import app
-from random import choice
+from tools.SqlTools import *
+from tools.utils import id_generator
+
 
 api = Api(app)
 
@@ -22,41 +27,36 @@ class CheckbookListAPI(Resource):
     获得记账本列表
     """
     decorators = [login_required]
-    checkbook_list = [
-        {
-            "checkbook_id": "1",
-            "checkbook_name": "CM家庭记账本",
-            "create_time": "2018-01-02 12:20:40",
-            "last_update_time": "2018-01-02 12:45:23",
-            "description": "CM家庭记账本，计算家庭收支情况",
-            "partner": "cc, mm",
-            "my_role": "创建者",
-            "my_permission": "读、写、邀请",
-            "status": "正常",
-            "rules": "子账户：消费、投资、储蓄：7：2：1",
-        },
-        {
-            "checkbook_id": "2",
-            "checkbook_name": "CM工作室记账本",
-            "create_time": "2018-01-02 12:20:40",
-            "last_update_time": "2018-01-02 12:45:23",
-            "description": "CM家庭记账本，计算家庭收支情况",
-            "partner": "cc, mm",
-            "my_role": "创建者",
-            "my_permission": "读、写、邀请",
-            "status": "正常",
-            "rules": "子账户：消费、投资、储蓄：7：2：1",
-        }
-    ]
+
     def get(self):
         #  获得用户名下所有的记账本
+        checkbooks = fetch_all_checkbooks(current_user.id)
+        # 转换成 web需要的格式
+        checkbook_list = []
+        for checkbook in checkbooks:
+            t_check = {}
+            t_check["checkbook_id"] = checkbook.id
+            t_check["checkbook_name"] = checkbook.checkbook_name
+            t_check["create_time"] = checkbook.create_time
+            t_check["last_update_time"] = checkbook.last_update_time
+            t_check["description"] = checkbook.description
+            t_check["status"] = checkbook.status
+            t_check["rules"] = checkbook.rules
+            t_check["partner"] = []
+            user_ids = json.loads(checkbook.partners)
+            for user_id, permission in user_ids.items():
+                t_user = UserInfo.get(id=user_id.replace("user_id-",""))
+                t_check["partner"].append(t_user.user_name)
+                if t_user.id == current_user.id:
+                    t_check["my_permission"] = permission
 
+            checkbook_list.append(t_check)
 
         result={
             "code":0,
             "msg":"",
-            "count":len(self.checkbook_list),
-            "data":self.checkbook_list,
+            "count":len(checkbook_list),
+            "data":checkbook_list,
         }
 
         return jsonify(result)
@@ -67,23 +67,29 @@ class CheckbookInvitationCodeAPI(Resource):
     记账本邀请码的使用
     """
     decorators = [login_required]
-    get_parser = reqparse.RequestParser()
-    get_parser.add_argument('checkbook_id', type=str, location='args', required=True, default=12)
-    invateMap={}
+    invateMap = {}
 
-    code_parser = reqparse.RequestParser()
-    code_parser.add_argument('code', type=str, location='args', required=True, default=12)
+    def __init__(self):
+        self.get_parser = reqparse.RequestParser()
+        self.get_parser.add_argument('checkbook_id', type=str, location='args', required=True, default=12)
 
+        self.code_parser = reqparse.RequestParser()
+        self.code_parser.add_argument('code', type=str, location='args', required=True, default=12)
 
     def get(self):
-        args = CheckbookInvitationCodeAPI.get_parser.parse_args()
+        args = self.get_parser.parse_args()
         checkbook_id = args.get('checkbook_id')
+        # TODO 检查权限
+
         # 生成邀请码
-        invationCode="fdasjkljkn"
+        invationCode=id_generator(size=16)
+        while invationCode in CheckbookInvitationCodeAPI.invateMap:
+            invationCode = id_generator(size=16)
         CheckbookInvitationCodeAPI.invateMap[invationCode]={
             "checkbook_id":checkbook_id,
             "creator":current_user.id
         };
+        # 返回
         print(CheckbookInvitationCodeAPI.invateMap)
         return jsonify({"invationCode":invationCode})
 
@@ -91,12 +97,22 @@ class CheckbookInvitationCodeAPI(Resource):
     def post(self):
         # 使用邀请码加入记账组
         try:
-            args = CheckbookInvitationCodeAPI.code_parser.parse_args()
+            #获得邀请码
+            args = self.code_parser.parse_args()
             code = args.get('code')
-            print(code)
-            checkbook_id = CheckbookInvitationCodeAPI.invateMap.get(code)
+            checkbook_id = CheckbookInvitationCodeAPI.invateMap.get(code)["checkbook_id"]
+            user_id = current_user.id
+            # TODO 检查权限、是否过期
 
-            print(checkbook_id)
+            # 加入到数据库中
+            checkbooks = Checkbook.get(id=checkbook_id)
+            old_parter = json.loads(checkbooks.partners)
+            old_parter["user_id-"+str(user_id)]="all" # TODO 替换成相关权限
+            checkbooks.partners = json.dumps(old_parter)
+            checkbooks.save()
+
+            # 返回
+            print(old_parter)
             if checkbook_id is None:
                 raise Exception("error id")
 
@@ -110,31 +126,51 @@ class CheckbookAPI(Resource):
     """
     对记账本 操作 的API
     """
+    decorators = [login_required]
 
-    def get(self, checkbook_id):
-        for value in CheckbookListAPI.checkbook_list:
-            if value["checkbook_id"] == checkbook_id:
-                return jsonify(value)
+    def __init__(self):
+        self.delete_parser = reqparse.RequestParser()
+        self.delete_parser.add_argument('checkbook_id', type=str, location='args', required=True)
 
+    def get(self):
         return jsonify({})
 
-    def put(self, checkbook_id):
+    def put(self):
         pass
 
     def post(self):
-        # 添加一个记账本
+        #  解析参数
         get_parser = reqparse.RequestParser()
         get_parser.add_argument('name', type=str,  required=False)
         get_parser.add_argument('description', type=str,  required=False)
         get_parser.add_argument('owner', type=str,  required=False)
         args = get_parser.parse_args()
-        print(args)
+
+        # 创建记账本，保存数据库
+        checkbook = Checkbook()
+        checkbook.checkbook_name = args["name"]
+        checkbook.create_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        checkbook.last_update_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        checkbook.description = args["description"]
+        checkbook.status = "正常"
+        checkbook.partners = {}
+        checkbook.partners["user_id-" + str(current_user.id)] = "all"
+        checkbook.partners = json.dumps(checkbook.partners)
+        checkbook.creator = current_user.id
+        checkbook.save()
+
+        # 返回成功
         return jsonify({})
 
-    def delete(self, checkbook_id):
-        print(checkbook_id)
-        return jsonify({}),500
-        pass
+    def delete(self):
+        args = self.delete_parser.parse_args()
+        checkbook_id = args["checkbook_id"]
+        checkbook = Checkbook.get(id=checkbook_id)
+        # 检查权限，只有创建者可是删除
+        if checkbook.creator.id == current_user.id:
+            checkbook.delete()
+            return jsonify({})
+        raise Exception("无权删除记账本")
 
 
 class DetailsListAPI(Resource):
