@@ -404,11 +404,19 @@ class DetailsAPI(Resource):
         pass
 
     def delete(self):
+        # 0 .取参数
         get_parser = reqparse.RequestParser()
         get_parser.add_argument('detail_id', type=str, required=True)
         args = get_parser.parse_args()
-        print(args)
-        pass
+        detail_id= int(args["detail_id"])
+
+        # 1.删除
+        # TODO 如果需要同步的化，要变成“标记删除”
+        detail_info = DetailInfo.get(id=detail_id)
+        detail_info.delete()
+
+        # 2.返回值
+        return jsonify({"msg":"success"})
 
 
 class ReportAPI(Resource):
