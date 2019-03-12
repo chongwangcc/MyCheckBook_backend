@@ -113,7 +113,13 @@
                 ,value: now.getFullYear() + '-' + lay.digit(now.getMonth() + 1)+ '-'+ lay.digit(now.getDay() + 1)
             });
 
-            // 获得
+            //TODO 记账本 selector 填充
+
+            //TODO 类别填充
+
+            //TODO 所属账户填充
+
+            // 提交表单获得
             form.on("submit(detailform)", function(data){
                 console.log(data.field)
                 $.ajax({
