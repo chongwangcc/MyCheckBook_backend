@@ -7,7 +7,7 @@ layui.use(['layer', 'jquery',"table", "laydate", "element"], function () {
     element.init();
     var now = new Date();
 
-    var checkbook_id = "12dafds"
+    var checkbook_id = "1"
     var month_str=now.getFullYear() + '-' + lay.digit(now.getMonth() + 1)
 function init_pie1(mychart, mdata, type) {
     var myoption = {
@@ -194,7 +194,7 @@ function init_pie2(mychart, mdata, type){
       ,url:"/api/v1/details?checkbook_id="+checkbook_id+"&month_str="+month_str
       ,cols: [[
           {type:'radio',fixed: 'left'}
-          ,{field:'date', width:100, title: '日期', sort: true, fixed: 'left'}
+          ,{field:'date', width:110, title: '日期', sort: true, fixed: 'left'}
           ,{field:'category',width:80, title: '类别', sort: true}
           ,{field:'money', width:80, title: '金额', sort: true}
           ,{field:'remark', title: '备注'}

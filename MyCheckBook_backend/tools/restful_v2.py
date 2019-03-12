@@ -195,23 +195,41 @@ class DetailsListAPI(Resource):
         checkbook_id = args.get('checkbook_id')
         month_str = args.get('month_str')
         account_name = args.get('account_name')
-        type = args.get('type')
+        mtype = args.get('type')
         category = args.get('category')
         page = args.get('page')
         limit = args.get('limit')
 
         # 判断构造查询语句
+        detail_df = get_Details(checkbook_id, month_str, account_name, mtype, category)
+        start_index = (page-1)*limit
+        end_index =len(detail_df) if page*limit > len(detail_df) else page*limit;
+        all_nums = len(detail_df)
+        detail_df = detail_df[start_index:end_index]
+        detail_df.sort_values(by=["date"], ascending=False)
 
-        data = self.all_details
-        if category is not  None:
-            data = self.all_details[0:5]
-        if account_name is not None:
-            data = self.all_details[0:10]
+        # 构造返回结果
+        data = []
+        checkbook_info = Checkbook.get(id=checkbook_id)
+        for index,row in detail_df.iterrows():
+            t_detail = {}
+            t_detail["detail_id"] = row["id"]
+            t_detail["date"] = row["date"]
+            t_detail["money"] = row["money"]
+            t_detail["category"] = row["category"]
+            t_detail["remark"] = row["remark"]
+            t_detail["isCash"] = row["isCash"]
+            t_detail["type"] = row["type"]
+            t_detail["account_name"] = row["account_name"]
+            t_detail["seconds_account_name"] = row["seconds_account_name"]
+            t_detail["updater"] = UserTools.gen_id_to_name(row["updater"])
+            t_detail["checkbook_name"] = checkbook_info.checkbook_name
+            data.append(t_detail)
 
         result={
             "code":0,
             "msg":"",
-            "count":len(data),
+            "count":all_nums,
             "data":data
         }
 
@@ -228,283 +246,130 @@ class DetailsSumAPI(Resource):
         self.get_parser = reqparse.RequestParser()
         self.get_parser.add_argument('checkbook_id', type=str, location='args', required=True)
         self.get_parser.add_argument('month_str', type=str, location='args', required=True)
-        self.all_details = []
-        self.all_details_lite = []
-
-        for i in range(0,100):
-            t_details={}
-            t_details["date"] = "2019.2.28"
-            t_details["category"] = choice(["零食", "社交","餐饮","住房","医疗","工资"])
-            t_details["money"] = choice([12,13,59,100,400])
-            t_details["remark"] = choice(["买酸奶", "交话费","海贼王","仙剑4","随便吧","DMCC"])
-            t_details["isCash"] = choice(["现金", "信用卡"])
-            t_details["type"] = choice(["收入", "支出", "流入", "流出"])
-            t_details["checkbook_name"] = "CM家庭记账本"
-            t_details["account_name"] = choice(["花销账户","投资账户","储蓄账户"])
-            t_details["seconds_account_name"] = choice(["生活费账户", "doodads账户","教育账户","风险备付金","住房基金"])
-            t_details["updater"] = choice(["MM","CC"])
-
-            self.all_details.append(t_details)
         pass
 
     def get(self):
-        result={}
-        result["income_category"] = {
-            "legend":["生活费", "零食", "购物", "运动", "娱乐"],
-            "sumType":"总收入",
-            "sumValue":200,
-            "data":[{
-                "value": 3661,
-                "name": '生活费'
-            }, {
-                "value": 5713,
-                "name": '零食'
-            }, {
-                "value": 9938,
-                "name": '购物'
-            }, {
-                "value": 17623,
-                "name": '运动'
-            }, {
-                "value": 3299,
-                "name": '娱乐'
-            }]
+        args = self.get_parser.parse_args()
+        checkbook_id = args.get('checkbook_id')
+        month_str = args.get('month_str')
+
+        # 1. 获得明细数据
+        detail_df = get_Details(checkbook_id, month_str, None, None, None)
+
+        # 2. 聚合 获得结果
+        category_sum = detail_df.groupby(['type', 'category'])["money"].sum().reset_index()
+        account_sum = detail_df.groupby(['type', 'account_name','seconds_account_name'])["money"].sum().reset_index()
+        # 3.构造返回结果
+        result={
+            "income_category":{
+                "legend":[],
+                "sumType": "总收入",
+                "sumValue": 0,
+                "data": []
+            },
+            "income_account": {
+                "legend": [],
+                "sumType": "总收入",
+                "sumValue": 0,
+                "data1": [],
+                "data2": []
+            },
+            "spent_category": {
+                "legend": [],
+                "sumType": "总支出",
+                "sumValue": 0,
+                "data": []
+            },
+            "spent_account": {
+                "legend": [],
+                "sumType": "总支出",
+                "sumValue": 0,
+                "data1": [],
+                "data2": []
+            },
+            "inflow_category": {
+                "legend": [],
+                "sumType": "总流入",
+                "sumValue": 0,
+                "data": []
+            },
+            "inflow_account": {
+                "legend": [],
+                "sumType": "总流入",
+                "sumValue": 0,
+                "data1": [],
+                "data2": []
+            },
+            "outflow_category": {
+                "legend": [],
+                "sumType": "总流出",
+                "sumValue": 0,
+                "data": []
+            },
+            "outflow_account": {
+                "legend": [],
+                "sumType": "总流出",
+                "sumValue": 0,
+                "data1": [],
+                "data2": []
+            },
+
         }
-        result["income_account"] = {
-            "legend":["投资账户", "花销账户", "储蓄账户", "生活费账户", "doodads账户", "风险备付金", "住房账户","教育基金"],
-            "sumType":"总收入",
-            "sumValue":200,
-            "data1": [{
-                "value": 3661,
-                "name": '投资账户'
-            }, {
-                "value": 5713,
-                "name": '花销账户'
-            }, {
-                "value": 9938,
-                "name": '储蓄账户'
-            }],
-            "data2": [{
-                "value": 3661,
-                "name": 'doodads账户'
-            }, {
-                "value": 5713,
-                "name": '生活费账户'
-            }, {
-                "value": 9938,
-                "name": '风险备付金'
-            }, {
-                "value": 9938,
-                "name": '住房账户'
-            }, {
-                "value": 9938,
-                "name": '教育基金'
-            }, {
-                "value": 9938,
-                "name": '投资-现金'
-            }, {
-                "value": 9938,
-                "name": '投资股票'
-            }, {
-                "value": 9938,
-                "name": '储蓄现金'
-            }, {
-                "value": 9938,
-                "name": '储蓄烂账'
-            }]
-        }
-        result["spent_category"] = {
-            "legend":["生活费", "零食", "购物", "运动", "娱乐"],
-            "sumType":"总支出",
-            "sumValue":200,
-            "data":[{
-                "value": 3661,
-                "name": '生活费'
-            }, {
-                "value": 5713,
-                "name": '零食'
-            }, {
-                "value": 9938,
-                "name": '购物'
-            }, {
-                "value": 17623,
-                "name": '运动'
-            }, {
-                "value": 3299,
-                "name": '娱乐'
-            }]
-        }
-        result["spent_account"] = {
-            "legend":["投资账户", "花销账户", "储蓄账户", "生活费账户", "doodads账户", "风险备付金", "住房账户","教育基金"],
-            "sumType":"总支出",
-            "sumValue":200,
-            "data1": [{
-                "value": 3661,
-                "name": '投资账户'
-            }, {
-                "value": 5713,
-                "name": '花销账户'
-            }, {
-                "value": 9938,
-                "name": '储蓄账户'
-            }],
-            "data2": [{
-                "value": 3661,
-                "name": 'doodads账户'
-            }, {
-                "value": 5713,
-                "name": '生活费账户'
-            }, {
-                "value": 9938,
-                "name": '风险备付金'
-            }, {
-                "value": 9938,
-                "name": '住房账户'
-            }, {
-                "value": 9938,
-                "name": '教育基金'
-            }, {
-                "value": 9938,
-                "name": '投资-现金'
-            }, {
-                "value": 9938,
-                "name": '投资股票'
-            }, {
-                "value": 9938,
-                "name": '储蓄现金'
-            }, {
-                "value": 9938,
-                "name": '储蓄烂账'
-            }]
-        }
-        result["inflow_category"] = {
-            "legend":["生活费", "零食", "购物", "运动", "娱乐"],
-            "sumType":"总流入",
-            "sumValue":200,
-            "data":[{
-                "value": 3661,
-                "name": '生活费'
-            }, {
-                "value": 5713,
-                "name": '零食'
-            }, {
-                "value": 9938,
-                "name": '购物'
-            }, {
-                "value": 17623,
-                "name": '运动'
-            }, {
-                "value": 3299,
-                "name": '娱乐'
-            }]
-        }
-        result["inflow_account"] = {
-            "legend":["投资账户", "花销账户", "储蓄账户", "生活费账户", "doodads账户", "风险备付金", "住房账户","教育基金"],
-            "sumType":"总流入",
-            "sumValue":200,
-            "data1": [{
-                "value": 3661,
-                "name": '投资账户'
-            }, {
-                "value": 5713,
-                "name": '花销账户'
-            }, {
-                "value": 9938,
-                "name": '储蓄账户'
-            }],
-            "data2": [{
-                "value": 3661,
-                "name": 'doodads账户'
-            }, {
-                "value": 5713,
-                "name": '生活费账户'
-            }, {
-                "value": 9938,
-                "name": '风险备付金'
-            }, {
-                "value": 9938,
-                "name": '住房账户'
-            }, {
-                "value": 9938,
-                "name": '教育基金'
-            }, {
-                "value": 9938,
-                "name": '投资-现金'
-            }, {
-                "value": 9938,
-                "name": '投资股票'
-            }, {
-                "value": 9938,
-                "name": '储蓄现金'
-            }, {
-                "value": 9938,
-                "name": '储蓄烂账'
-            }]
-        }
-        result["outflow_category"] = {
-            "legend":["生活费", "零食", "购物", "运动", "娱乐"],
-            "sumType":"总流出",
-            "sumValue":200,
-            "data":[{
-                "value": 3661,
-                "name": '生活费'
-            }, {
-                "value": 5713,
-                "name": '零食'
-            }, {
-                "value": 9938,
-                "name": '购物'
-            }, {
-                "value": 17623,
-                "name": '运动'
-            }, {
-                "value": 3299,
-                "name": '娱乐'
-            }]
-        }
-        result["outflow_account"] = {
-            "legend":["投资账户", "花销账户", "储蓄账户", "生活费账户", "doodads账户", "风险备付金", "住房账户","教育基金"],
-            "sumType":"总流出",
-            "sumValue":200,
-            "data1": [{
-                "value": 3661,
-                "name": '投资账户'
-            }, {
-                "value": 5713,
-                "name": '花销账户'
-            }, {
-                "value": 9938,
-                "name": '储蓄账户'
-            }],
-            "data2": [{
-                "value": 3661,
-                "name": 'doodads账户'
-            }, {
-                "value": 5713,
-                "name": '生活费账户'
-            }, {
-                "value": 9938,
-                "name": '风险备付金'
-            }, {
-                "value": 9938,
-                "name": '住房账户'
-            }, {
-                "value": 9938,
-                "name": '教育基金'
-            }, {
-                "value": 9938,
-                "name": '投资-现金'
-            }, {
-                "value": 9938,
-                "name": '投资股票'
-            }, {
-                "value": 9938,
-                "name": '储蓄现金'
-            }, {
-                "value": 9938,
-                "name": '储蓄烂账'
-            }]
-        }
+        for index, row in category_sum.iterrows():
+            mtype = row["type"]
+            category = row["category"]
+            money = row["money"]
+            if mtype == "支出":
+                result["spent_category"]["legend"].append(category)
+                result["spent_category"]["sumValue"]+= money
+                result["spent_category"]["data"].append({"value":money, "name":category})
+                pass
+            elif mtype == "收入":
+                result["income_category"]["legend"].append(category)
+                result["income_category"]["sumValue"] += money
+                result["income_category"]["data"].append({"value": money, "name": category})
+            elif mtype == "流入":
+                result["inflow_category"]["legend"].append(category)
+                result["inflow_category"]["sumValue"] += money
+                result["inflow_category"]["data"].append({"value": money, "name": category})
+            elif mtype == "流出":
+                result["outflow_category"]["legend"].append(category)
+                result["outflow_category"]["sumValue"] += money
+                result["outflow_category"]["data"].append({"value": money, "name": category})
+
+        last_type, last_account_name, last_index_name, last_money = None, None,None, 0
+        for index, row in account_sum.iterrows():
+            mtype = row["type"]
+            account_name = row["account_name"]
+            seconds_account_name = row["seconds_account_name"]
+            money = row["money"]
+            index_name = None;
+            if mtype == "支出":
+                index_name = "spent_account"
+            elif mtype == "收入":
+                index_name = "income_account"
+            elif mtype == "流入":
+                index_name = "inflow_account"
+            elif mtype == "流出":
+                index_name = "outflow_account"
+
+            result[index_name]["legend"].append(account_name + "-" + seconds_account_name)
+            result[index_name]["sumValue"] += money
+            result[index_name]["data2"].append(
+                {"value": money, "name": account_name + "-" + seconds_account_name})
+            # 计算account 总和
+            if (mtype=="收入" and account_name=="储蓄账户"):
+                print("break")
+            if (last_type != None and (last_type != mtype or last_account_name !=account_name)) or (index==len(account_sum)-1):
+                result[last_index_name]["data1"].append({"value": last_money, "name": last_account_name})
+                result[last_index_name]["legend"].append(last_account_name)
+                last_money = money
+            else:
+                last_money +=money
+            last_account_name = account_name
+            last_type = mtype
+            last_index_name = index_name
+
         return jsonify(result)
 
 

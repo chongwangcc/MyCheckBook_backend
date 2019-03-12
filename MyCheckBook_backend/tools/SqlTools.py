@@ -42,13 +42,13 @@ def fetch_all_checkbooks(user_id):
     return []
 
 
-def get_Details(checkbook_id, month_str, account_name=None, type=None, category=None):
+def get_Details(checkbook_id, month_str, account_name=None, mtype=None, category=None):
     """
     根据条件获得记账本明细，按照时间排序
     :param checkbook_id:
     :param month_str:
     :param account_name:
-    :param type:
+    :param mtype:
     :param category:
     :return:
     """
@@ -56,25 +56,44 @@ def get_Details(checkbook_id, month_str, account_name=None, type=None, category=
     sql = "select * from " + DetailInfo.get_table_name()
     sql += " where "
     sql += " checkbook == " + str(checkbook_id) + " and "
-    sql += " month_str == " + str(month_str)
+    sql += " month_str == '" + str(month_str) + "' "
     if account_name is not None:
         account1, account2 = account_name, None
         if "-" in str(account_name):
             account1, account2 = str(account_name).split("-")
         if account1 is not None:
-            sql += " and "+" account_name == " + str(account1) + " "
+            sql += " and "+" account_name == '" + str(account1) + "' "
         if account2 is not None:
-            sql += " and "+" seconds_account_name == " + str(account2) + " "
-    if type is not None:
-        sql += " and " + " type == " + str(type) + " "
+            sql += " and "+" seconds_account_name == '" + str(account2) + "' "
+    if mtype is not None:
+        sql += " and " + " type == '" + str(mtype) + "' "
     if category is not None:
-        sql += " and " + " category == " + str(category) + " "
+        sql += " and " + " category == '" + str(category) + "' "
 
     sql += " ORDER BY date DESC, id ASC "
 
     df = pd.read_sql_query(sql, conn)
     return df
 
+
+class UserTools:
+    my_user_map = {}
+
+    @classmethod
+    def gen_id_to_name(cls, user_id):
+        """
+        通过user_id获得user名称，
+        先查缓存，缓存不存在，在去查数据库
+        :param user_id:
+        :return:
+        """
+        user_name = cls.my_user_map.setdefault(user_id,None)
+        if user_name is None:
+            try:
+                user_name = UserInfo.get(id=user_id).user_name
+            except:
+                pass
+        return user_name
 
 if __name__ == "__main__":
     pass
