@@ -9,7 +9,7 @@
 		<title>明细管理</title>
 		<link rel="stylesheet" type="text/css" href="../../static/admin/layui/css/layui.css" />
 		<link rel="stylesheet" type="text/css" href="../../static/admin/css/admin.css" />
-
+        <script src="../../static/admin/js/jquery-3.3.1.min.js"></script>
         <script src="../../static/admin/layui/layui.js" type="text/javascript" charset="utf-8"></script>
 		<script src="../../static/admin/js/common.js" type="text/javascript" charset="utf-8"></script>
 		<script src="../../static/admin/js/echarts.min.js"></script>
@@ -30,10 +30,10 @@
                         <!--收入-->
                         <div class="layui-tab-item">
                             <div class="layui-row chart-panel panel panel-default">
-                                <div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+                                <div class="layui-col-xs4 layui-col-sm4 layui-col-md4">
                                     <div class="panel-body" id="income_category_echart" style="height: 376px;"></div>
                                 </div>
-                                <div class="layui-col-xs5 layui-col-sm5 layui-col-md5">
+                                <div class="layui-col-xs8 layui-col-sm8 layui-col-md8">
                                     <div class=" panel-body" id="income_account_echart" style="height: 376px;"></div>
                                 </div>
                             </div>
@@ -41,10 +41,10 @@
                         <!--支出-->
                         <div class="layui-tab-item layui-show">
                             <div class="layui-row chart-panel panel panel-default">
-                                <div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+                                <div class="layui-col-xs4 layui-col-sm4 layui-col-md4">
                                     <div class="panel-body" id="spent_category_echart" style="height: 376px;"></div>
                                 </div>
-                                <div class="layui-col-xs5 layui-col-sm5 layui-col-md5">
+                                <div class="layui-col-xs8 layui-col-sm8 layui-col-md8">
                                     <div class=" panel-body" id="spent_account_echart" style="height: 376px;"></div>
                                 </div>
                             </div>
@@ -52,10 +52,10 @@
                         <!-流入-->
                         <div class="layui-tab-item">
                             <div class="layui-row chart-panel panel panel-default">
-                                <div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+                                <div class="layui-col-xs4 layui-col-sm4 layui-col-md4">
                                     <div class="panel-body" id="inflow_category_echart" style="height: 376px;"></div>
                                 </div>
-                                <div class="layui-col-xs5 layui-col-sm5 layui-col-md5">
+                                <div class="layui-col-xs8 layui-col-sm8 layui-col-md8">
                                     <div class=" panel-body" id="inflow_account_echart" style="height: 376px;"></div>
                                 </div>
                             </div>
@@ -63,10 +63,10 @@
                         <!--流出-->
                         <div class="layui-tab-item">
                             <div class="layui-row chart-panel panel panel-default">
-                                <div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+                                <div class="layui-col-xs4 layui-col-sm4 layui-col-md4">
                                     <div class="panel-body" id="outflow_category_echart" style="height: 376px;"></div>
                                 </div>
-                                <div class="layui-col-xs5 layui-col-sm5 layui-col-md5">
+                                <div class="layui-col-xs8 layui-col-sm8 layui-col-md8">
                                     <div class=" panel-body" id="outflow_account_echart" style="height: 376px;"></div>
                                 </div>
                             </div>
@@ -89,14 +89,14 @@
 
         <script type="text/html" id="toolbarDemo">
 			<div class="layui-inline">
-				<select name="states" lay-filter="status" id="checkbook_selector">
-					<option value="010">CM家庭记账本</option>
+				<select lay-filter="checkbook_selector" id="checkbook_selector">
+                    checkbook_selector_replace
 				</select>
 			</div>
 			<div class="layui-inline">
         		<input type="text" class="layui-input" id="month_selector" placeholder="yyyy-MM">
 			</div>
-			<button class="layui-btn layui-btn-normal" lay-event="look-details">查看明细</button>
+			<button id="look_details" class="layui-btn layui-btn-normal" lay-event="look-details">查看明细</button>
 			<button class="layui-btn layui-btn-normal" lay-event="add-details">记一笔</button>
         </script>
 

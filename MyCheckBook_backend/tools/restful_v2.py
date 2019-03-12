@@ -358,9 +358,8 @@ class DetailsSumAPI(Resource):
             result[index_name]["data2"].append(
                 {"value": money, "name": account_name + "-" + seconds_account_name})
             # 计算account 总和
-            if (mtype=="收入" and account_name=="储蓄账户"):
-                print("break")
-            if (last_type != None and (last_type != mtype or last_account_name !=account_name)) or (index==len(account_sum)-1):
+            if (last_type is not None and (last_type != mtype or last_account_name != account_name)) \
+                    or (index == len(account_sum)-1):
                 result[last_index_name]["data1"].append({"value": last_money, "name": last_account_name})
                 result[last_index_name]["legend"].append(last_account_name)
                 last_money = money
