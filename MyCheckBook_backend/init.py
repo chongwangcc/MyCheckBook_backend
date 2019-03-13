@@ -241,9 +241,30 @@ def random_insert_details():
         t_detailInfo.save()
 
 
+def intert_category_info():
+    """
+    插入几个类别描述
+    :return:
+    """
+    mtypes= {
+        "收入":["工资", "利息","证券投资","家里给","奖金", "兼职所得"],
+        "支出":["零食", "餐饮","住房","通讯","社交","运动"],
+        "流入":["购物返现"],
+        "流出":["还信用卡"]
+    }
+    if CategoryInfo.is_empty():
+        pass
+        for key,value in mtypes.items():
+            for v in value:
+                c =  CategoryInfo()
+                c.type = key
+                c.name = v
+                c.belong_checkbook=1
+                c.save()
 
 # 插入默认的用户：cc、mm
-insert_default_user()
-create_default_checkbook()
-random_insert_details()
+# insert_default_user()
+# create_default_checkbook()
+# random_insert_details()
+intert_category_info()
 # 创建默认的记账本：CM家庭记账本

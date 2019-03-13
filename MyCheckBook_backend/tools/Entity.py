@@ -105,6 +105,44 @@ class Checkbook(Model):
         return True
 
 
+class CategoryInfo(Model):
+    """
+    描述分类的类别
+    """
+    type = CharField(8) # 类别：收入、支出、流入、流出
+    name = CharField()
+    belong_checkbook = ForeignKey(Checkbook)
+    image_base64 = CharField() # 图片logo的base64编码
+
+    def __str__(self):
+        return str(self.to_dict())
+
+    def to_dict(self):
+        dict_my = {}
+        for key, value in zip(self.field_names,self.field_values):
+            dict_my[key.replace("`", "")] = value.replace("'", "")
+        return dict_my
+
+    @staticmethod
+    def is_empty():
+        """
+        判断user_info表是否为空
+        :return:
+        """
+        try:
+            sql = "select * from %s limit 1" \
+                  % (__class__.__name__.lower())
+            cu = get_cursor()
+            execute_sql(cu, sql)
+            rows = cu.fetchall()
+            if len(rows) >= 1 :
+                return False
+        except:
+            lock.release()
+            pass
+        return True
+
+
 class AccountInfo(Model):
     """
     账户信息

@@ -138,7 +138,9 @@ class CheckbookAPI(Resource):
     def get(self):
         args = self.get_parser.parse_args()
         checkbook_id = args["checkbook_id"]
-        return jsonify({})
+        # 获得一个记账本的明细
+        checckbook_dict = CheckbookTools.get_checkbook_full(checkbook_id)
+        return jsonify(checckbook_dict)
 
     def put(self):
         pass
@@ -381,6 +383,20 @@ class DetailsAPI(Resource):
     """
     记账本明细 的操作API
     """
+
+    def __init__(self):
+        self.post_parser = reqparse.RequestParser()
+        self.post_parser.add_argument('checkbook_id', type=str, required=True)
+        self.post_parser.add_argument('date', type=str, required=True)
+        self.post_parser.add_argument('type', type=str, required=True)
+        self.post_parser.add_argument('money', type=float, required=True)
+        self.post_parser.add_argument('isCash', type=str, required=True)
+        self.post_parser.add_argument('updater', type=str, required=True)
+        self.post_parser.add_argument('category', type=str, required=True)
+        self.post_parser.add_argument('account_name', type=str, required=True)
+        self.post_parser.add_argument('remark', type=str, required=False, default="")
+
+
     def get(self, id):
         pass
 
@@ -389,24 +405,17 @@ class DetailsAPI(Resource):
 
     def post(self):
         """TODO 添加一个记账明细"""
-        get_parser = reqparse.RequestParser()
-        get_parser.add_argument('checkbook_id', type=str, required=True)
-        get_parser.add_argument('date', type=str, required=True)
-        get_parser.add_argument('type', type=str, required=True)
-        get_parser.add_argument('money', type=float, required=True)
-        get_parser.add_argument('isCash', type=str, required=True)
-        get_parser.add_argument('updater', type=str, required=True)
-        get_parser.add_argument('category', type=str, required=True)
-        get_parser.add_argument('account_name', type=str, required=True)
-        args = get_parser.parse_args()
+        args = self.post_parser.parse_args()
         print(args)
 
-        # 检查一下 格式是否正确
-
         # 构造一条记账明细
+        new_details = DetailTools.create_detail(args)
+        print(new_details.to_dict())
+        if new_details is not None:
+            return jsonify(new_details.to_dict())
 
         # 把记账明细返回
-        pass
+        return jsonify({})
 
     def delete(self):
         # 0 .取参数
@@ -462,7 +471,13 @@ class UserAPI(Resource):
     """
     对用户操作的API
     """
-    def get(self, id):
+    decorators = [login_required]
+    def get(self):
+        #TODO 获得当前登录用户的基本信息
+        user_name = current_user.user_name
+
+        return jsonify({"user_name":user_name})
+
         pass
 
     def put(self, id):
@@ -604,6 +619,8 @@ api.add_resource(CheckbookInvitationCodeAPI, '/api/v1/CheckbookInvitationCode', 
 api.add_resource(DetailsListAPI, '/api/v1/details', endpoint='details')
 api.add_resource(DetailsSumAPI, '/api/v1/detailsum', endpoint='detailsum')
 api.add_resource(DetailsAPI, '/api/v1/detail', endpoint='detail')
+
+api.add_resource(UserAPI, '/api/v1/user', endpoint='user')
 
 api.add_resource(TrendsAPI, '/api/v1/trends/checkbooks/<checkbook_id>', endpoint='trends')
 

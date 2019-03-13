@@ -6,9 +6,10 @@
 # @File : SqlTools.py 
 # @Software: PyCharm
 
+import pandas as pd
+import json
 
 from tools.Entity import *
-import pandas as pd
 
 g_sqlite3_path = "./data/sqlit3.db"
 set_db_name(g_sqlite3_path)
@@ -101,6 +102,87 @@ class CheckbookTools:
         except:
             pass
         return []
+
+    @classmethod
+    def get_checkbook_full(cls, checkbook_id):
+        """
+        获得一条记账本的详情
+        :param checkbook_id:
+        :return: 字典
+        """
+        checkbook = Checkbook.get(id=checkbook_id)
+
+        t_check = {}
+        t_check["checkbook_id"] = checkbook.id
+        t_check["checkbook_name"] = checkbook.checkbook_name
+        t_check["create_time"] = checkbook.create_time
+        t_check["last_update_time"] = checkbook.last_update_time
+        t_check["description"] = checkbook.description
+        t_check["status"] = checkbook.status
+        t_check["partner"] = []
+        user_ids = json.loads(checkbook.partners)
+        for user_id, permission in user_ids.items():
+            t_user = UserInfo.get(id=user_id.replace("user_id-", ""))
+            t_check["partner"].append(t_user.user_name)
+        t_check["creator"] = UserInfo.get(id=checkbook.creator).user_name
+        account_id_list = checkbook.account_id_list
+        t_check["accounts"] = {}
+        if account_id_list is not None and len(account_id_list)>0:
+            t_account_id_list = json.loads(account_id_list)
+            for t_account_id in t_account_id_list:
+                account_t = AccountInfo.get(id=t_account_id)
+                if len(account_t.supportType)>0:
+                    t_check["accounts"][account_t.fullname] = json.loads(account_t.supportType)
+
+        # 类别
+        t_check["category"] = {}
+        categorys = CategoryInfo.gets(checkbook_id=checkbook_id)
+        for cate in categorys:
+            ll = t_check["category"].setdefault(cate.type,[])
+            ll.append(cate.name)
+
+        return t_check
+
+
+class DetailTools:
+    """
+    明细操作
+    """
+
+    @classmethod
+    def create_detail(cls, detial_dict):
+        """
+        创建一条新的明细记录
+        :param detial_dict:
+        :return:
+        """
+        # TODO 0.检查参数格式是否正确
+
+        # 1. 构造detail
+        t_detail = DetailInfo()
+        t_detail.date = detial_dict["date"]
+        t_detail.month_str = t_detail.date[:7]
+        t_detail.money = detial_dict["money"]
+        t_detail.category = detial_dict["category"]
+        t_detail.remark = detial_dict["remark"]
+        t_detail.updater = UserTools.fetch_user_info(detial_dict["updater"]).id
+        t_detail.checkbook = int(detial_dict["checkbook_id"])
+        t_detail.type = detial_dict["type"]
+        t_detail.isCash = detial_dict["isCash"]
+        if "-" not in detial_dict["account_name"] :
+            account_name = detial_dict["account_name"]
+            seconds_account_name=""
+        else:
+            account_name,seconds_account_name = detial_dict["account_name"].split("-")
+        t_detail.account_name = account_name
+        t_detail.seconds_account_name = seconds_account_name
+
+        # 2.保存
+        dd = t_detail.save()
+        return dd
+
+
+
 
 
 if __name__ == "__main__":
