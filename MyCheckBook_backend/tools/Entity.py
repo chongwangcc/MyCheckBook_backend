@@ -73,9 +73,50 @@ class Checkbook(Model):
     description = CharField(128)  # 记账本描述
     partners = CharField(128)  # 参与者，共同编辑者
     status = CharField(128)  # 状态：正常、封账、禁用
-    rules = CharField()  # 规则描述json串
-    accounts=CharField()  # 账户描述串
     creator = ForeignKey(UserInfo)  # 创建者
+    account_id_list = CharField()  # 所有账户的id
+
+    def __str__(self):
+        return str(self.to_dict())
+
+    def to_dict(self):
+        dict_my = {}
+        for key, value in zip(self.field_names,self.field_values):
+            dict_my[key.replace("`", "")] = value.replace("'", "")
+        return dict_my
+
+    @staticmethod
+    def is_empty():
+        """
+        判断user_info表是否为空
+        :return:
+        """
+        try:
+            sql = "select * from %s limit 1" \
+                  % (__class__.__name__.lower())
+            cu = get_cursor()
+            execute_sql(cu, sql)
+            rows = cu.fetchall()
+            if len(rows) >= 1 :
+                return False
+        except:
+            lock.release()
+            pass
+        return True
+
+
+class AccountInfo(Model):
+    """
+    账户信息
+    """
+    name = CharField()
+    fullname = CharField()
+    parent_acccount = IntegerField()
+    children_account = CharField()
+    supportType = CharField()
+    isGenRport=BooleanField()
+    description = CharField()
+    belong_checkbook = ForeignKey(Checkbook)
 
     def __str__(self):
         return str(self.to_dict())
@@ -121,6 +162,9 @@ class DetailInfo(Model):
     account_name = CharField(128)  # 账户名
     seconds_account_name = CharField(128)  # 二级账户名
     updater = ForeignKey(UserInfo)  # 创建者
+    updatetime = CharField(20)  # 更新时间
+    related_details = CharField()  # 组合的记账本明细
+    activity_names = CharField()  # 活动名称
 
     def __str__(self):
         return str(self.to_dict())
