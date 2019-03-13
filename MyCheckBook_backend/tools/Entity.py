@@ -163,7 +163,7 @@ class DetailInfo(Model):
     seconds_account_name = CharField(128)  # 二级账户名
     updater = ForeignKey(UserInfo)  # 创建者
     updatetime = CharField(20)  # 更新时间
-    related_details = CharField()  # 组合的记账本明细
+    combine_details = CharField()  # 组合的记账本明细
     activity_names = CharField()  # 活动名称
 
     def __str__(self):
