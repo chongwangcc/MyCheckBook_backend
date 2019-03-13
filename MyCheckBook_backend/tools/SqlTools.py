@@ -182,9 +182,6 @@ class DetailTools:
         return dd
 
 
-
-
-
 if __name__ == "__main__":
     pass
     detias = get_Details(checkbook_id=1, month_str="2019-02")

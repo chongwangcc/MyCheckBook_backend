@@ -358,19 +358,6 @@ layui.use(['layer', 'jquery',"table", "laydate", "element"], function () {
                          iframeWin.document.getElementById("detail_category_selector").value=data.category
                          iframeWin.document.getElementById("detail_remark").value=data.remark
 
-                         console.log(body.find(".detail_money"))
-                         console.log(body.find(".detail_money")[0])
-                         // body.find(".detail_money").text(data.money)
-                         // console.log(typeof body)
-                         // console.log(document.getElementById("detail_money").html())
-                         // body.find("#checkbook_selector").text(data.checkbook_name)
-                         // body.find("#day_selector").text(data.date)
-                         // body.find("#detail_type_selector").text(data.type)
-                         // body.find("#detail_account_selector").text(data.account_name)
-                         //
-                         // body.find("#detail_iscash").text(data.isCash)
-                         // body.find("#detail_updater").text(data.updater)
-                         // body.find("#detail_category_selector").text(data.category)
                      }
                  })
                  break
