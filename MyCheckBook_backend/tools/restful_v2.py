@@ -30,7 +30,7 @@ class CheckbookListAPI(Resource):
 
     def get(self):
         #  获得用户名下所有的记账本
-        checkbooks = fetch_all_checkbooks(current_user.id)
+        checkbooks = CheckbookTools.fetch_all_checkbooks(current_user.id)
         # 转换成 web需要的格式
         checkbook_list = []
         for checkbook in checkbooks:
@@ -41,7 +41,6 @@ class CheckbookListAPI(Resource):
             t_check["last_update_time"] = checkbook.last_update_time
             t_check["description"] = checkbook.description
             t_check["status"] = checkbook.status
-            t_check["rules"] = checkbook.rules
             t_check["partner"] = []
             user_ids = json.loads(checkbook.partners)
             for user_id, permission in user_ids.items():
@@ -132,7 +131,13 @@ class CheckbookAPI(Resource):
         self.delete_parser = reqparse.RequestParser()
         self.delete_parser.add_argument('checkbook_id', type=str, location='args', required=True)
 
+        self.get_parser = reqparse.RequestParser()
+        self.get_parser.add_argument('checkbook_id', type=str, location='args', required=True)
+        self.get_parser.add_argument('type', type=str, location='args', required=False, default=None)
+
     def get(self):
+        args = self.get_parser.parse_args()
+        checkbook_id = args["checkbook_id"]
         return jsonify({})
 
     def put(self):

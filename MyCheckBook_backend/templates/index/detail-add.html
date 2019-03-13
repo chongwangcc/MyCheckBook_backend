@@ -15,7 +15,6 @@
                 <label class="layui-form-label">所属记账本：</label>
                 <div class="layui-inline">
                     <select name="checkbook_id" lay-filter="status" id="checkbook_selector">
-                        <option value="010">CM家庭记账本</option>
                     </select>
                 </div>
             </div>
@@ -113,11 +112,28 @@
                 ,value: now.getFullYear() + '-' + lay.digit(now.getMonth() + 1)+ '-'+ lay.digit(now.getDay() + 1)
             });
 
-            //TODO 记账本 selector 填充
+            //记账本 selector 填充
+            $.ajax({
+             url: "/api/v1/checkbooks",
+             type: "get",
+             dataType : "json",
+             contentType : "application/json",
+             async: false,//这得注意是同步
+             success: function (result) {
+                 resultData = result.data;
+                 for(var x=0; x<resultData.length; x++){
+                         var htmls = '<option value = "' + resultData[x].checkbook_id + '">' + resultData[x].checkbook_name + '</option>';
+                         $("#checkbook_selector").append(htmls)
+                 };
+
+                }
+           });
+
+            //TODO 所属账户填充
 
             //TODO 类别填充
 
-            //TODO 所属账户填充
+
 
             // 提交表单获得
             form.on("submit(detailform)", function(data){

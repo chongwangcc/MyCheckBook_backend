@@ -9,7 +9,7 @@
 from flask import Flask, render_template, jsonify, request, redirect
 from flask_login.login_manager import LoginManager
 
-from tools import SqlTools
+from tools.SqlTools import *
 
 
 app = Flask(__name__, static_folder='../static', template_folder="../templates")
@@ -19,4 +19,4 @@ login_manager.init_app(app)
 
 @login_manager.user_loader
 def load_user(user_name):
-    return SqlTools.fetch_user_info(user_name)
+    return UserTools.fetch_user_info(user_name)

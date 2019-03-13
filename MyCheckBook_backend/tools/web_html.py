@@ -8,7 +8,7 @@
 from flask import Flask, render_template, jsonify, request, redirect
 from flask_login import (current_user, login_required, login_user, logout_user, confirm_login, fresh_login_required)
 from tools.app import app
-from tools import SqlTools
+from tools.SqlTools import *
 
 @app.route("/", methods=["GET"])
 @login_required
@@ -131,7 +131,7 @@ def login():
             user_name = request.form["username"]
             password = request.form["password"]
             # 判断用户密码是否正确
-            m_user = SqlTools.fetch_user_info(user_name)
+            m_user = UserTools.fetch_user_info(user_name)
             if m_user is not None and m_user.password == password:
                 # 登陆成功
                 login_user(m_user, remember=True)

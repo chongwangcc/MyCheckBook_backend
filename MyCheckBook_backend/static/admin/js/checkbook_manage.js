@@ -10,7 +10,6 @@ layui.use(['table', "jquery"], function(){
       {type:'radio',fixed: 'left'}
       ,{field:'checkbook_name', width:150, title: '记账本名称', sort: true, fixed: 'left'}
       ,{field:'description', title: '描述'}
-      ,{field:'rules', width:150, title: '内置规则约束'}
       ,{field:'partner', width:150, title: '参与人'}
       ,{field:'my_permission', width:120, title: '我的权限', sort: true,}
       ,{field:'status', width:80, title: '状态', sort: true, }
