@@ -6,6 +6,16 @@ function checknum(obj){
     }
 }
 
+//记账本 selector 填充
+function initCheckbookSelector($, checkbook_fulls_json){
+    for (var prop in checkbook_fulls_json) {
+        t_id=checkbook_fulls_json[prop].checkbook_id;
+        t_name=checkbook_fulls_json[prop].checkbook_name;
+        var htmls = '<option value = "' + t_id + '">' +t_name + '</option>';
+        $("#checkbook_selector").append(htmls);
+    };
+}
+
 layui.use(['form', 'jquery',"laydate"], function() {
     // 0. 初始化 layui 的一些模块
     var form = layui.form;
@@ -15,20 +25,14 @@ layui.use(['form', 'jquery',"laydate"], function() {
 
     // 1. 自己使用的一些参数
     var form_method=JSON.stringify(detail_json).length>10 ?  "put":  "post"; ; // 判断事put操作还是post参数
-    var selected_checkbook_full = null;
-
-    checkbook_full = null;
+    var selected_checkbook = null;
 
 
-    //记账本 selector 填充
-    for (var prop in checkbook_fulls_json) {
-        t_id=checkbook_fulls_json[prop].checkbook_id;
-        t_name=checkbook_fulls_json[prop].checkbook_name;
-        var htmls = '<option value = "' + t_id + '">' +t_name + '</option>';
-        $("#checkbook_selector").append(htmls);
-    };
+
+    initCheckbookSelector($,checkbook_fulls_json)
+
     //所属账户填充
-    function checkbookChange(){
+    function onChangeCheckbook(){
         var default_checkbook_id = arguments[0] ? arguments[0] : null;
         var default_account = arguments[0] ? arguments[0] : null;
 
@@ -38,7 +42,7 @@ layui.use(['form', 'jquery',"laydate"], function() {
             $("#checkbook_selector").val(checkbook_id);
 
         }
-        checkbook_full = checkbook_fulls_json[checkbook_id+""];
+        selected_checkbook = checkbook_fulls_json[checkbook_id+""];
         accounts_data = checkbook_fulls_json[checkbook_id].accounts;
         for(var prop  in accounts_data) {
             var htmls = '<option value = "' + prop + '">' + prop + '</option>';
@@ -52,13 +56,13 @@ layui.use(['form', 'jquery',"laydate"], function() {
         form.render('radio');
     };
 
-    function ChangeSeletor(){
+    function onChangeSelector(){
         var default_type = arguments[0] ? arguments[0] : null;
         var default_category = arguments[0] ? arguments[0] : null;
         var default_cash = arguments[0] ? arguments[0] : null;
         // 明细类型
         var belong_account = $("#detail_account_selector option:selected").val();
-        var type_tt = checkbook_full.accounts[belong_account];
+        var type_tt = selected_checkbook.accounts[belong_account];
         var old_selected_type = $("#detail_type_selector option:selected").val();
         $("#detail_type_selector").empty();
         for(var prop  in type_tt) {
@@ -71,7 +75,7 @@ layui.use(['form', 'jquery',"laydate"], function() {
 
         //是否现金设置
         var detail_tapo = $("#detail_type_selector option:selected").val();
-        var isCash_value = checkbook_full.accounts[belong_account][detail_tapo];
+        var isCash_value = selected_checkbook.accounts[belong_account][detail_tapo];
         var default_select = null
 
         var radios = document.getElementsByName("isCash");
@@ -97,7 +101,7 @@ layui.use(['form', 'jquery',"laydate"], function() {
 
         //设置类别
          var selected_type = $("#detail_type_selector option:selected").val();
-         var mmmCategory = checkbook_full.category[selected_type];
+         var mmmCategory = selected_checkbook.category[selected_type];
          var old_selected_detail = $("#detail_category_selector option:selected").val();
          $("#detail_category_selector").empty()
          for(var prop  in mmmCategory) {
@@ -116,17 +120,17 @@ layui.use(['form', 'jquery',"laydate"], function() {
         //设置选中
         if(JSON.stringify(m_detail_json).length>10){
             // 设置记账本选中              //设置所属账户
-            checkbookChange(default_checkbook_id=m_detail_json.checkbook_id,
+            onChangeCheckbook(default_checkbook_id=m_detail_json.checkbook_id,
                             default_account=m_detail_json.account_name)
             //设置明细类型              //设置类别             //设置是否现金
-            ChangeSeletor(default_type=m_detail_json.type,
+            onChangeSelector(default_type=m_detail_json.type,
                 default_category=m_detail_json.category,
                 default_cash=m_detail_json.isCash
                 )
             //设置日期选中
-            aydate.render({
+            laydate.render({
                 elem: document.getElementById('day_selector')
-                ,value: $("#day_selector").val(m_detail_json.date)
+                ,value: m_detail_json.date
             });
 
             //设置金额
@@ -135,8 +139,8 @@ layui.use(['form', 'jquery',"laydate"], function() {
             //设置备注
              $("#detail_remark").val(m_detail_json.remark)
         }else{
-            checkbookChange();
-            ChangeSeletor();
+            onChangeCheckbook();
+            onChangeSelector();
             laydate.render({
                 elem: document.getElementById('day_selector')
                 ,value: getNowDate()
@@ -149,10 +153,10 @@ layui.use(['form', 'jquery',"laydate"], function() {
     //记录者
     $("#detail_updater").attr("value",current_user_json["user_name"])
 
-    form.on("select(checkbook_selector)", checkbookChange)
-    form.on("select(detail_account_selector)", ChangeSeletor)
-    form.on("select(detail_type_selector)", ChangeSeletor)
-    form.on("select(detail_category_selector)", ChangeSeletor)
+    form.on("select(checkbook_selector)", onChangeCheckbook)
+    form.on("select(detail_account_selector)", onChangeSelector)
+    form.on("select(detail_type_selector)", onChangeSelector)
+    form.on("select(detail_category_selector)", onChangeSelector)
 
     // 提交表单获得
     form.on("submit(detailform)", function(data){
