@@ -230,6 +230,7 @@ class DetailsListAPI(Resource):
             t_detail["account_name"] = row["account_name"]
             t_detail["seconds_account_name"] = row["seconds_account_name"]
             t_detail["updater"] = UserTools.gen_id_to_name(row["updater"])
+            t_detail["combine_details"] = row["combine_details"]
             t_detail["checkbook_name"] = checkbook_info.checkbook_name
             data.append(t_detail)
 
@@ -396,17 +397,22 @@ class DetailsAPI(Resource):
         self.post_parser.add_argument('account_name', type=str, required=True)
         self.post_parser.add_argument('remark', type=str, required=False, default="")
 
+        self.get_parser = reqparse.RequestParser()
+        self.get_parser.add_argument('detail_id', type=str, required=True)
 
-    def get(self, id):
-        pass
+    def get(self):
+        args = self.get_parser.parse_args()
+        detail_id = args["detail_id"]
+        detail_dict = DetailTools.get_detail(detail_id)
+        return jsonify(detail_dict)
 
-    def put(self,id):
+
+    def put(self, id):
         pass
 
     def post(self):
         """TODO 添加一个记账明细"""
         args = self.post_parser.parse_args()
-        print(args)
 
         # 构造一条记账明细
         new_details = DetailTools.create_detail(args)
@@ -425,9 +431,7 @@ class DetailsAPI(Resource):
         detail_id= int(args["detail_id"])
 
         # 1.删除
-        # TODO 如果需要同步的化，要变成“标记删除”
-        detail_info = DetailInfo.get(id=detail_id)
-        detail_info.delete()
+        DetailTools.delete_detail(detail_id)
 
         # 2.返回值
         return jsonify({"msg":"success"})

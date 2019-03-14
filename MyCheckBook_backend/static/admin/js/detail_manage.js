@@ -319,7 +319,25 @@ layui.use(['layer', 'jquery',"table", "laydate", "element"], function () {
         var data = obj.data;
         switch(obj.event){
              case 'delete':
-                 layer.confirm('真的删除明细【'+obj.data.category+ "-"+obj.data.money+'元】么', function(index){
+                 confirm_text = '真的删除如下明细么？<br/>';
+                 confirm_text += '【'+obj.data.type+ "-"+obj.data.category+ "-"+obj.data.money+'元】<br/>';
+                 try{
+                     var combine_list = eval('(' + data.combine_details + ')')
+                     for(var i=0;i< combine_list.length;i++){
+                         var detail_id = combine_list[i]
+                         $.ajax({
+                            url:"/api/v1/detail?detail_id="+detail_id,
+                            type:'GET',
+                            dataType:'json',
+                             async:false,
+                            success:function(json){ // http code 200
+                                confirm_text += '【'+json["type"]+ "-"+json["category"]+ "-"+json["money"]+'元】<br/>';
+                            },
+                        })
+                     }
+                 }catch(err){};
+                 console.log(confirm_text);
+                 layer.confirm(confirm_text, function(index){
                 // 同步服务器删除 记账本
                 $.ajax({
                     url:"/api/v1/detail?detail_id="+obj.data.detail_id,
@@ -338,14 +356,12 @@ layui.use(['layer', 'jquery',"table", "laydate", "element"], function () {
                  break;
              case "edit":
                  var url="detail_add";
-                 // var title="记一笔"
-                 // var iframeObj = $(window.frameElement).attr('name');
-                 // parent.page(title, url, iframeObj, w = "700", h = "620px");
                  layer.open({
                      type: 2,
-                     content: 'detail_add',
+                     content: 'detail_add?detail_id='+data.detail_id,
                      area: ['700px', '620px'],
                      success:function (layero,index) {
+                         console.log("parent_begin")
                          var body = layer.getChildFrame("body", index);
                          var iframeWin = window[layero.find('iframe')[0]['name']]; //得到iframe页的窗口对象
                          iframeWin.document.getElementById("checkbook_selector").value=data.checkbook_id
@@ -353,10 +369,17 @@ layui.use(['layer', 'jquery',"table", "laydate", "element"], function () {
                          iframeWin.document.getElementById("detail_type_selector").value=data.type
                          iframeWin.document.getElementById("detail_account_selector").value=data.account_name
                          iframeWin.document.getElementById("detail_money").value=data.money
-                         iframeWin.document.getElementById("detail_iscash").value=data.isCash
+                         if(data.isCash == "现金"){
+                             iframeWin.document.getElementById("radio_cash").checked=true;
+                         } else{
+                             iframeWin.document.getElementById("radio_credit").checked=true;
+                         }
+
                          iframeWin.document.getElementById("detail_updater").value=data.updater
                          iframeWin.document.getElementById("detail_category_selector").value=data.category
                          iframeWin.document.getElementById("detail_remark").value=data.remark
+                         iframeWin.document.getElementById("detail_json").value=JSON.stringify(data)
+                          console.log("parent_end")
 
                      }
                  })
