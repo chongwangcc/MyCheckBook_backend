@@ -10,9 +10,7 @@
 from flask_login import (current_user, login_required, login_user, logout_user, confirm_login, fresh_login_required)
 from flask import Flask, render_template, jsonify, request, redirect
 from flask_restful import Api, Resource,reqparse
-import json
-from datetime import datetime
-from random import choice
+
 
 from tools.app import app
 from tools.SqlTools import *
@@ -31,14 +29,12 @@ class CheckbookListAPI(Resource):
     def get(self):
         #  获得用户名下所有的记账本
         checkbook_list = CheckbookTools.fetch_all_checkbooks(current_user.id)
-
-        result ={
-            "code":0,
-            "msg":"",
-            "count":len(checkbook_list),
-            "data":checkbook_list,
+        result = {
+            "code": 0,
+            "msg": "",
+            "count": len(checkbook_list),
+            "data": checkbook_list,
         }
-
         return jsonify(result)
 
 
@@ -116,39 +112,42 @@ class CheckbookAPI(Resource):
         self.get_parser.add_argument('checkbook_id', type=str, location='args', required=True)
         self.get_parser.add_argument('type', type=str, location='args', required=False, default=None)
 
+        self.post_parser = reqparse.RequestParser()
+        self.post_parser.add_argument('name', type=str,  required=False)
+        self.post_parser.add_argument('description', type=str,  required=False)
+        self.post_parser.add_argument('owner', type=str,  required=False)
+
     def get(self):
         args = self.get_parser.parse_args()
         checkbook_id = args["checkbook_id"]
         # 获得一个记账本的明细
         checckbook_dict = CheckbookTools.get_checkbook_full(checkbook_id)
-        return jsonify(checckbook_dict)
+
+        result ={
+            "code":0,
+            "msg":"",
+            "data":checckbook_dict,
+        }
+
+        return jsonify(result)
 
     def put(self):
         pass
 
     def post(self):
         #  解析参数
-        get_parser = reqparse.RequestParser()
-        get_parser.add_argument('name', type=str,  required=False)
-        get_parser.add_argument('description', type=str,  required=False)
-        get_parser.add_argument('owner', type=str,  required=False)
-        args = get_parser.parse_args()
+        args = self.post_parser.parse_args()
 
         # 创建记账本，保存数据库
-        checkbook = Checkbook()
-        checkbook.checkbook_name = args["name"]
-        checkbook.create_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        checkbook.last_update_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        checkbook.description = args["description"]
-        checkbook.status = "正常"
-        checkbook.partners = {}
-        checkbook.partners["user_id-" + str(current_user.id)] = "all"
-        checkbook.partners = json.dumps(checkbook.partners)
-        checkbook.creator = current_user.id
-        checkbook.save()
+        CheckbookTools.save_new_checkbook(args, current_user)
 
+        result ={
+            "code":0,
+            "msg":"",
+            "data":{},
+        }
         # 返回成功
-        return jsonify({})
+        return jsonify(result)
 
     def delete(self):
         args = self.delete_parser.parse_args()
@@ -189,7 +188,7 @@ class DetailsListAPI(Resource):
         limit = args.get('limit')
 
         # 判断构造查询语句
-        detail_df = get_Details(checkbook_id, month_str, account_name, mtype, category)
+        detail_df = DetailTools.get_details_list(checkbook_id, month_str, account_name, mtype, category)
         start_index = (page-1)*limit
         end_index =len(detail_df) if page*limit > len(detail_df) else page*limit;
         all_nums = len(detail_df)
@@ -214,17 +213,13 @@ class DetailsListAPI(Resource):
             t_detail["combine_details"] = row["combine_details"]
             t_detail["checkbook_name"] = checkbook_info.checkbook_name
             data.append(t_detail)
-
-        result={
-            "code":0,
-            "msg":"",
-            "count":all_nums,
-            "data":data
+        result = {
+            "code": 0,
+            "msg": "",
+            "count": all_nums,
+            "data": data
         }
-
         return jsonify(result)
-
-        pass
 
 
 class DetailsSumAPI(Resource):
@@ -243,13 +238,13 @@ class DetailsSumAPI(Resource):
         month_str = args.get('month_str')
 
         # 1. 获得明细数据
-        detail_df = get_Details(checkbook_id, month_str, None, None, None)
+        detail_df = DetailTools.get_details_list(checkbook_id, month_str, None, None, None)
 
         # 2. 聚合 获得结果
         category_sum = detail_df.groupby(['type', 'category'])["money"].sum().reset_index()
         account_sum = detail_df.groupby(['type', 'account_name','seconds_account_name'])["money"].sum().reset_index()
         # 3.构造返回结果
-        result={
+        result = {
             "income_category":{
                 "legend":[],
                 "sumType": "总收入",
@@ -358,7 +353,12 @@ class DetailsSumAPI(Resource):
             last_type = mtype
             last_index_name = index_name
 
-        return jsonify(result)
+        my_result = {
+            "code": 0,
+            "msg": "",
+            "data": result,
+        }
+        return jsonify(my_result)
 
 
 class DetailsAPI(Resource):
@@ -393,12 +393,21 @@ class DetailsAPI(Resource):
         self.put_parser.add_argument('remark', type=str, required=False, default="")
         self.put_parser.add_argument('detail_id', type=str, required=True, default="")
 
+        self.delete_parser = reqparse.RequestParser()
+        self.delete_parser.add_argument('detail_id', type=str, required=True)
+
     def get(self):
         args = self.get_parser.parse_args()
         detail_id = args["detail_id"]
         detail_dict = DetailTools.get_detail(detail_id)
-        return jsonify(detail_dict)
 
+        my_result = {
+            "code": 0,
+            "msg": "",
+            "data": detail_dict,
+        }
+
+        return jsonify(my_result)
 
     def put(self):
         print("put")
@@ -407,7 +416,7 @@ class DetailsAPI(Resource):
         pass
 
     def post(self):
-        """TODO 添加一个记账明细"""
+        """ 添加一个记账明细"""
         args = self.post_parser.parse_args()
 
         # 构造一条记账明细
@@ -417,20 +426,28 @@ class DetailsAPI(Resource):
             return jsonify(new_details.to_dict())
 
         # 把记账明细返回
-        return jsonify({})
+        my_result = {
+            "code": 0,
+            "msg": "",
+            "data": {},
+        }
+        return jsonify(my_result)
 
     def delete(self):
         # 0 .取参数
-        get_parser = reqparse.RequestParser()
-        get_parser.add_argument('detail_id', type=str, required=True)
-        args = get_parser.parse_args()
+        args = self.delete_parser.parse_args()
         detail_id= int(args["detail_id"])
 
         # 1.删除
         DetailTools.delete_detail(detail_id)
 
         # 2.返回值
-        return jsonify({"msg":"success"})
+        my_result = {
+            "code": 0,
+            "msg": "success",
+            "data": {},
+        }
+        return jsonify(my_result)
 
 
 class ReportAPI(Resource):
@@ -472,11 +489,17 @@ class UserAPI(Resource):
     对用户操作的API
     """
     decorators = [login_required]
+
     def get(self):
-        #TODO 获得当前登录用户的基本信息
+        #获得当前登录用户的基本信息
         user_name = current_user.user_name
 
-        return jsonify({"user_name":user_name})
+        result = {
+            "code": 0,
+            "msg": "",
+            "data": {"user_name":user_name},
+        }
+        return jsonify(result)
 
         pass
 
@@ -613,12 +636,12 @@ class TrendsAPI(Resource):
 
 
 api.add_resource(CheckbookListAPI, "/api/v1/checkbooks", endpoint="checkbookList")
-api.add_resource(CheckbookAPI, '/api/v1/checkbook', endpoint='checkbook')
+api.add_resource(CheckbookAPI, '/api/v1/checkbook/<checkbook_id>', endpoint='checkbook')
 api.add_resource(CheckbookInvitationCodeAPI, '/api/v1/CheckbookInvitationCode', endpoint='CheckbookInvitationCode')
 
 api.add_resource(DetailsListAPI, '/api/v1/details', endpoint='details')
 api.add_resource(DetailsSumAPI, '/api/v1/detailsum', endpoint='detailsum')
-api.add_resource(DetailsAPI, '/api/v1/detail', endpoint='detail')
+api.add_resource(DetailsAPI, '/api/v1/detail/<checkbook_id>', endpoint='detail')
 
 api.add_resource(UserAPI, '/api/v1/user', endpoint='user')
 

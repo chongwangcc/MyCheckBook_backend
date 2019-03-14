@@ -9,45 +9,13 @@
 import pandas as pd
 import json
 import copy
+from datetime import datetime
+from random import choice
 
 from tools.Entity import *
 
 g_sqlite3_path = "./data/sqlit3.db"
 set_db_name(g_sqlite3_path)
-
-
-def get_Details(checkbook_id, month_str, account_name=None, mtype=None, category=None):
-    """
-    根据条件获得记账本明细，按照时间排序
-    :param checkbook_id:
-    :param month_str:
-    :param account_name:
-    :param mtype:
-    :param category:
-    :return:
-    """
-    conn = sqlite3.connect(g_sqlite3_path)
-    sql = "select * from " + DetailInfo.get_table_name()
-    sql += " where "
-    sql += " checkbook == " + str(checkbook_id) + " and "
-    sql += " month_str == '" + str(month_str) + "' "
-    if account_name is not None:
-        account1, account2 = account_name, None
-        if "-" in str(account_name):
-            account1, account2 = str(account_name).split("-")
-        if account1 is not None:
-            sql += " and "+" account_name == '" + str(account1) + "' "
-        if account2 is not None:
-            sql += " and "+" seconds_account_name == '" + str(account2) + "' "
-    if mtype is not None:
-        sql += " and " + " type == '" + str(mtype) + "' "
-    if category is not None:
-        sql += " and " + " category == '" + str(category) + "' "
-
-    sql += " ORDER BY date DESC, id ASC "
-
-    df = pd.read_sql_query(sql, conn)
-    return df
 
 
 class UserTools:
@@ -162,6 +130,26 @@ class CheckbookTools:
 
         return t_check
 
+    @classmethod
+    def save_new_checkbook(cls, args, creator):
+        """
+        新建一个记账本
+        :param args:
+        :return:
+        """
+        checkbook = Checkbook()
+        checkbook.checkbook_name = args["name"]
+        checkbook.create_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        checkbook.last_update_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        checkbook.description = args["description"]
+        checkbook.status = "正常"
+        checkbook.partners = {}
+        checkbook.partners["user_id-" + str(creator.id)] = "all"
+        checkbook.partners = json.dumps(checkbook.partners)
+        checkbook.creator = creator.id
+        checkbook.save()
+        return True
+
 
 class DetailTools:
     """
@@ -272,7 +260,39 @@ class DetailTools:
             pass
         return True
 
+    @classmethod
+    def get_details_list(cls, checkbook_id, month_str, account_name=None, mtype=None, category=None):
+        """
+        根据条件获得记账本明细，按照时间排序
+        :param checkbook_id:
+        :param month_str:
+        :param account_name:
+        :param mtype:
+        :param category:
+        :return:
+        """
+        conn = sqlite3.connect(g_sqlite3_path)
+        sql = "select * from " + DetailInfo.get_table_name()
+        sql += " where "
+        sql += " checkbook == " + str(checkbook_id) + " and "
+        sql += " month_str == '" + str(month_str) + "' "
+        if account_name is not None:
+            account1, account2 = account_name, None
+            if "-" in str(account_name):
+                account1, account2 = str(account_name).split("-")
+            if account1 is not None:
+                sql += " and " + " account_name == '" + str(account1) + "' "
+            if account2 is not None:
+                sql += " and " + " seconds_account_name == '" + str(account2) + "' "
+        if mtype is not None:
+            sql += " and " + " type == '" + str(mtype) + "' "
+        if category is not None:
+            sql += " and " + " category == '" + str(category) + "' "
 
+        sql += " ORDER BY date DESC, id ASC "
+
+        df = pd.read_sql_query(sql, conn)
+        return df
 
 
 if __name__ == "__main__":

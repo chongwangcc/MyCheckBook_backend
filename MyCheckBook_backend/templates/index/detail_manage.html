@@ -9,11 +9,6 @@
 		<title>明细管理</title>
 		<link rel="stylesheet" type="text/css" href="../../static/admin/layui/css/layui.css" />
 		<link rel="stylesheet" type="text/css" href="../../static/admin/css/admin.css" />
-        <script src="../../static/admin/js/jquery-3.3.1.min.js"></script>
-        <script src="../../static/admin/layui/layui.js" type="text/javascript" charset="utf-8"></script>
-		<script src="../../static/admin/js/common.js" type="text/javascript" charset="utf-8"></script>
-		<script src="../../static/admin/js/echarts.min.js"></script>
-		<script src="../../static/admin/js/detail_manage.js"></script>
 	</head>
 
 	<body>
@@ -79,6 +74,15 @@
 				</div>
 			</div>
 		</div>
+        <script type="text/javascript">
+            var checkbook_list_json =  JSON.parse('{{ checkbook_list_json|tojson }}');
+        </script>
+        <script src="../../static/admin/js/jquery-3.3.1.min.js"></script>
+        <script src="../../static/admin/layui/layui.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../../static/admin/js/common.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../../static/admin/js/echarts.min.js"></script>
+		<script src="../../static/admin/js/detail_manage.js"></script>
+
 
 		<script type="text/html" id="OperaTools">
             <div class="layui-inline">

@@ -57,8 +57,6 @@ function initCheckbookSelector($, checkbook_fulls_json){
     };
 }
 
-
-
 layui.use(['form', 'jquery',"laydate"], function() {
     // 0. 初始化 layui 的一些模块
     var form = layui.form;

@@ -90,7 +90,8 @@ def detail_manage():
     明细挂了你界面
     :return:
     """
-    return render_template('./index/detail_manage.html')
+    checkbook_list_json = CheckbookTools.fetch_all_checkbooks(current_user.id)
+    return render_template('./index/detail_manage.html', checkbook_list_json=checkbook_list_json)
 
 
 @app.route("/asset_manage", methods=["GET"])

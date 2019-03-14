@@ -1,5 +1,4 @@
 function init_pie1(mychart, mdata, callback) {
-
     var myoption = {
         color: ['#ff7f50','#87cefa','#da70d6','#32cd32','#6495ed',
             '#ff69b4','#ba55d3','#cd5c5c','#ffa500','#40e0d0',
@@ -92,24 +91,14 @@ function init_pie2(mychart, mdata, callback){
     mychart.on('click',callback);
 }
 
-layui.use(['layer', 'jquery',"table", "laydate", "element"], function () {
-    var layer = layui.layer;
-    var table = layui.table;
-    var laydate = layui.laydate;
-    var $ = layui.jquery;
-    var element = layui.element;
-    element.init();
-
-    // 自定义变量
+function init_echarts($){
     var myCharts = [];
     var mycharts_id = ["income_category_echart","income_account_echart",
         "spent_category_echart","spent_account_echart",
         "inflow_category_echart","inflow_account_echart",
         "outflow_category_echart","outflow_account_echart"
     ]
-    var now = new Date();
     var checkbook_id = "none"
-    var month_str=now.getFullYear() + '-' + lay.digit(now.getMonth() + 1)
 
     // echart 随窗口 自适应大小
     for(j=0; j<mycharts_id.length; j++){
@@ -121,28 +110,35 @@ layui.use(['layer', 'jquery',"table", "laydate", "element"], function () {
             myCharts[j].resize();
         }
     })
+    return myCharts;
+}
+
+layui.use(['layer', 'jquery',"table", "laydate", "element"], function () {
+    var layer = layui.layer;
+    var table = layui.table;
+    var laydate = layui.laydate;
+    var $ = layui.jquery;
+    var element = layui.element;
+    element.init();
+
+    // 自定义变量
+    var myCharts = init_echarts($);
 
     // 设置记账本下拉框
-    $.ajax({
-     url: "/api/v1/checkbooks",
-     type: "get",
-     dataType : "json",
-     contentType : "application/json",
-     async: false,//这得注意是同步
-     success: function (result) {
-         resultData = result.data;
-             var parent_html = $("#toolbarDemo").html();
-             var htmls =""
-         for(var x=0; x<resultData.length; x++){
-                 var htmls = '<option value = "' + resultData[x].checkbook_id + '">' + resultData[x].checkbook_name + '</option>';
-                 if(x==0){
-                     checkbook_id = resultData[x].checkbook_id
-                 };
-         };
-             parent_html = parent_html.replace("checkbook_selector_replace",htmls);
-             $("#toolbarDemo")[0].innerHTML = parent_html;
-        }
-   });
+     function init_checkbook(result) {
+     resultData = result;
+         var parent_html = $("#toolbarDemo").html();
+         var htmls =""
+     for(var x=0; x<resultData.length; x++){
+             var htmls = '<option value = "' + resultData[x].checkbook_id + '">' + resultData[x].checkbook_name + '</option>';
+             if(x==0){
+                 checkbook_id = resultData[x].checkbook_id
+             };
+     };
+         parent_html = parent_html.replace("checkbook_selector_replace",htmls);
+         $("#toolbarDemo")[0].innerHTML = parent_html;
+   };
+    init_checkbook(checkbook_list_json)
 
     // 初始化明细表
    detail_tableIns =  table.render({
@@ -150,7 +146,6 @@ layui.use(['layer', 'jquery',"table", "laydate", "element"], function () {
       ,toolbar: '#toolbarDemo'
       ,id:"detail-table-id"
       ,page: true
-      // ,url:"/api/v1/details?checkbook_id="+checkbook_id+"&month_str="+month_str
       ,cols: [[
           {type:'radio',fixed: 'left'}
           ,{field:'date', width:110, title: '日期', sort: true, fixed: 'left'}
@@ -172,7 +167,7 @@ layui.use(['layer', 'jquery',"table", "laydate", "element"], function () {
     laydate.render({
         elem: document.getElementById('month_selector')
         ,type: 'month'
-        ,value: month_str
+        ,value: getNowMonth()
     });
 
     // 默认记账本id
@@ -277,6 +272,8 @@ layui.use(['layer', 'jquery',"table", "laydate", "element"], function () {
                             }
                         }
                     }
+
+                    json = json.data
 
                     var mytype= ["收入","收入","支出","支出","流入","流入","流出","流出"]
                     var json_names = ["income_category","income_account",
