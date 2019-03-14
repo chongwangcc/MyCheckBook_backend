@@ -166,24 +166,38 @@ layui.use(['form', 'jquery',"laydate"], function() {
 
     // 提交表单获得
     form.on("submit(detailform)", function(data){
-        jsondata = $("#detail_json").val();
-        url = "/api/v1/detail";
-        if(form_method=="PUT"){
-            url+="?detail_id="+detail_json.detail_id;
+
+        function success(){
+             parent.layer.closeAll();
+             parent.layer.msg('添加明细成功');
+        };
+        function failed(){
+            parent.layer.msg('添加明细失败');
+        };
+
+        // 修改一条明细
+        if(form_method=="put"){
+            $.ajax({
+                url:"/api/v1/detail",
+                method:"put",
+                data:data.field,
+                dataType:"JSON",
+                async:"false",
+                success:success,
+                error:failed
+            });
+        }else if(form_method=="post"){
+            // 新增一条明细
+            $.ajax({
+                url:"/api/v1/detail",
+                method:"post",
+                data:data.field,
+                dataType:"JSON",
+                async:"false",
+                success:success,
+                error:failed
+            });
         }
-        $.ajax({
-            url:url,
-            method:form_method,
-            data:data.field,
-            dataType:"JSON",
-            async:"false",
-            success:function(){ // http code 200
-                 parent.layer.closeAll();
-            },
-            error:function(XMLHttpRequest, textStatus, errorThrown){
-               parent.layer.msg('添加明细失败');
-            }
-        });
 
     });
 });
