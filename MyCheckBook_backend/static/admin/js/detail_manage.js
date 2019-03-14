@@ -301,7 +301,7 @@ layui.use(['layer', 'jquery',"table", "laydate", "element"], function () {
         layer.open({
              type: 2,
              content: 'detail_add',
-             area: ['700px', '620px'],
+             area: ['500px', '700px'],
              end: function () {
                 look_details();
              }
@@ -351,7 +351,7 @@ layui.use(['layer', 'jquery',"table", "laydate", "element"], function () {
         layer.open({
              type: 2,
              content: 'detail_add?detail_id='+data.detail_id,
-             area: ['700px', '620px'],
+             area: ['500px', '700px'],
              end: function () {
                  console.log("end_edit")
                 look_details();
