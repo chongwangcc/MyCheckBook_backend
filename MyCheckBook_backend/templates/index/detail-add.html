@@ -12,7 +12,7 @@
 	<body>
 	<form class="layui-form column-content-detail">
             <!-- 设置一些隐藏的input,用来保存从父窗口获得的对象值-->
-            <input type="hidden" name="detail_json" id="detail_json" />
+            <input type="hidden" name="detail_id" id="detail_id" value=""/>
             <div class="layui-form-item">
                 <label class="layui-form-label">记账本：</label>
                 <div class="layui-inline">
@@ -55,7 +55,7 @@
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">是否现金：</label>
-                 <div class="layui-input-block">
+                 <div class="layui-input-block" id="detail_iscash">
                      <input type="radio" name="isCash" id="radio_cash" value="现金" title="现金" checked="">
                      <input type="radio" name="isCash" id="radio_credit" value="信用卡" title="信用卡">
                  </div>
@@ -78,6 +78,12 @@
                 </div>
             </div>
     </form>
+    <script type="text/javascript">
+        var detail_json = JSON.parse('{{ detail_json|tojson }}');
+        var checkbooks_json = JSON.parse( '{{ checkbooks_json|tojson }}');
+        var current_user_json =  JSON.parse('{{ current_user_json|tojson }}');
+        var checkbook_fulls_json =  JSON.parse('{{ checkbook_fulls_json|tojson }}');
+    </script>
 	<script src="../../static/admin/layui/layui.js" type="text/javascript" charset="utf-8"></script>
 	<script src="../../static/admin/js/common.js" type="text/javascript" charset="utf-8"></script>
     <script src="../../static/admin/js/detail_add.js" type="text/javascript" charset="utf-8"></script>

@@ -355,33 +355,10 @@ layui.use(['layer', 'jquery',"table", "laydate", "element"], function () {
             });
                  break;
              case "edit":
-                 var url="detail_add";
                  layer.open({
                      type: 2,
                      content: 'detail_add?detail_id='+data.detail_id,
                      area: ['700px', '620px'],
-                     success:function (layero,index) {
-                         console.log("parent_begin")
-                         var body = layer.getChildFrame("body", index);
-                         var iframeWin = window[layero.find('iframe')[0]['name']]; //得到iframe页的窗口对象
-                         iframeWin.document.getElementById("checkbook_selector").value=data.checkbook_id
-                         iframeWin.document.getElementById("day_selector").value=data.date
-                         iframeWin.document.getElementById("detail_type_selector").value=data.type
-                         iframeWin.document.getElementById("detail_account_selector").value=data.account_name
-                         iframeWin.document.getElementById("detail_money").value=data.money
-                         if(data.isCash == "现金"){
-                             iframeWin.document.getElementById("radio_cash").checked=true;
-                         } else{
-                             iframeWin.document.getElementById("radio_credit").checked=true;
-                         }
-
-                         iframeWin.document.getElementById("detail_updater").value=data.updater
-                         iframeWin.document.getElementById("detail_category_selector").value=data.category
-                         iframeWin.document.getElementById("detail_remark").value=data.remark
-                         iframeWin.document.getElementById("detail_json").value=JSON.stringify(data)
-                          console.log("parent_end")
-
-                     }
                  })
                  break
          }

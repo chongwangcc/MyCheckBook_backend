@@ -99,7 +99,25 @@ class CheckbookTools:
         """
         try:
             checkbooks = Checkbook.gets(operator="like", partners="%user_id-" + str(user_id) + "%")
-            return checkbooks
+            checkbook_list = []
+            for checkbook in checkbooks:
+                t_check = {}
+                t_check["checkbook_id"] = checkbook.id
+                t_check["checkbook_name"] = checkbook.checkbook_name
+                t_check["create_time"] = checkbook.create_time
+                t_check["last_update_time"] = checkbook.last_update_time
+                t_check["description"] = checkbook.description
+                t_check["status"] = checkbook.status
+                t_check["partner"] = []
+                user_ids = json.loads(checkbook.partners)
+                for user_id, permission in user_ids.items():
+                    t_user = UserInfo.get(id=user_id.replace("user_id-", ""))
+                    t_check["partner"].append(t_user.user_name)
+                    if t_user.id == user_id:
+                        t_check["my_permission"] = permission
+
+                checkbook_list.append(t_check)
+            return checkbook_list
         except:
             pass
         return []
@@ -225,6 +243,7 @@ class DetailTools:
         t_detail["updater"] =detailinfo.updater.user_name
         t_detail["combine_details"] = detailinfo.combine_details
         t_detail["checkbook_name"] = Checkbook.get(id=detailinfo.checkbook).checkbook_name
+        t_detail["checkbook_id"] =detailinfo.checkbook.id
 
         return t_detail
 

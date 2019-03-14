@@ -7,6 +7,7 @@
 # @Software: PyCharm
 from flask import Flask, render_template, jsonify, request, redirect
 from flask_login import (current_user, login_required, login_user, logout_user, confirm_login, fresh_login_required)
+from flask_restful import reqparse
 from tools.app import app
 from tools.SqlTools import *
 
@@ -56,7 +57,30 @@ def detail_add():
     记账本管理界面
     :return:
     """
-    return render_template('./index/detail-add.html')
+    #1.解析参数
+    get_parser = reqparse.RequestParser()
+    get_parser.add_argument('detail_id', type=str, required=False, default=None)
+    args = get_parser.parse_args()
+    # 2. 获得明细
+    detail_id = args["detail_id"]
+    checkbooks_json = CheckbookTools.fetch_all_checkbooks(current_user.id)
+    checkbook_fulls_json = {}
+    for checkbook in checkbooks_json:
+        checkbook_id = checkbook["checkbook_id"]
+        checkbook_fulls_json[checkbook_id] = CheckbookTools.get_checkbook_full(checkbook_id)
+        current_user_json = {"user_name": current_user.user_name}
+    if detail_id is None:
+        detail_json = {}
+    else:
+        detail_json = DetailTools.get_detail(detail_id)
+
+    # 3.构造返回值
+    return render_template('./index/detail-add.html',
+                           detail_json=detail_json,
+                           checkbooks_json=checkbooks_json,
+                           current_user_json=current_user_json,
+                           checkbook_fulls_json = checkbook_fulls_json)
+
 
 
 @app.route("/detail_manage", methods=["GET"])

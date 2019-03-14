@@ -30,28 +30,9 @@ class CheckbookListAPI(Resource):
 
     def get(self):
         #  获得用户名下所有的记账本
-        checkbooks = CheckbookTools.fetch_all_checkbooks(current_user.id)
-        # 转换成 web需要的格式
-        checkbook_list = []
-        for checkbook in checkbooks:
-            t_check = {}
-            t_check["checkbook_id"] = checkbook.id
-            t_check["checkbook_name"] = checkbook.checkbook_name
-            t_check["create_time"] = checkbook.create_time
-            t_check["last_update_time"] = checkbook.last_update_time
-            t_check["description"] = checkbook.description
-            t_check["status"] = checkbook.status
-            t_check["partner"] = []
-            user_ids = json.loads(checkbook.partners)
-            for user_id, permission in user_ids.items():
-                t_user = UserInfo.get(id=user_id.replace("user_id-",""))
-                t_check["partner"].append(t_user.user_name)
-                if t_user.id == current_user.id:
-                    t_check["my_permission"] = permission
+        checkbook_list = CheckbookTools.fetch_all_checkbooks(current_user.id)
 
-            checkbook_list.append(t_check)
-
-        result={
+        result ={
             "code":0,
             "msg":"",
             "count":len(checkbook_list),
@@ -400,6 +381,18 @@ class DetailsAPI(Resource):
         self.get_parser = reqparse.RequestParser()
         self.get_parser.add_argument('detail_id', type=str, required=True)
 
+        self.put_parser = reqparse.RequestParser()
+        self.put_parser.add_argument('checkbook_id', type=str, required=True)
+        self.put_parser.add_argument('date', type=str, required=True)
+        self.put_parser.add_argument('type', type=str, required=True)
+        self.put_parser.add_argument('money', type=float, required=True)
+        self.put_parser.add_argument('isCash', type=str, required=True)
+        self.put_parser.add_argument('updater', type=str, required=True)
+        self.put_parser.add_argument('category', type=str, required=True)
+        self.put_parser.add_argument('account_name', type=str, required=True)
+        self.put_parser.add_argument('remark', type=str, required=False, default="")
+        self.put_parser.add_argument('detail_id', type=str, required=True, default="")
+
     def get(self):
         args = self.get_parser.parse_args()
         detail_id = args["detail_id"]
@@ -407,7 +400,10 @@ class DetailsAPI(Resource):
         return jsonify(detail_dict)
 
 
-    def put(self, id):
+    def put(self):
+        print("put")
+        args = self.put_parser.parse_args()
+        print(args)
         pass
 
     def post(self):
