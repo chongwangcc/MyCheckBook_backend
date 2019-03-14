@@ -7,48 +7,31 @@ function checknum(obj){
 }
 
 layui.use(['form', 'jquery',"laydate"], function() {
+    // 0. 初始化 layui 的一些模块
     var form = layui.form;
     var	layer = layui.layer;
     var	$ = layui.jquery;
     var laydate = layui.laydate;
-    form.render();
-    var form_method="post";
-    if(JSON.stringify(detail_json).length>10){
-        $("#detail_id").val(detail_json.detail_id)
-        form_method="put";
-    }
 
-    // 日期选择器
+    // 1. 自己使用的一些参数
+    var form_method=JSON.stringify(detail_json).length>10 ?  "put":  "post"; ; // 判断事put操作还是post参数
+    var selected_checkbook_full = null;
 
-    Date.prototype.Format = function (fmt) { //author: meizz
-        var o = {
-            "M+": this.getMonth() + 1, //月份
-            "d+": this.getDate(), //日
-            "h+": this.getHours(), //小时
-            "m+": this.getMinutes(), //分
-            "s+": this.getSeconds(), //秒
-            "q+": Math.floor((this.getMonth() + 3) / 3), //季度
-            "S": this.getMilliseconds() //毫秒
-        };
-        if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
-        for (var k in o)
-        if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
-        return fmt;
-    }
     checkbook_full = null;
-    laydate.render({
-        elem: document.getElementById('day_selector')
-        ,value: new Date().Format("yyyy-MM-dd")
-    });
+
 
     //记账本 selector 填充
-    for(var x=0; x<checkbooks_json.length; x++){
-        var htmls = '<option value = "' + checkbooks_json[x].checkbook_id + '">' + checkbooks_json[x].checkbook_name + '</option>';
+    for (var prop in checkbook_fulls_json) {
+        t_id=checkbook_fulls_json[prop].checkbook_id;
+        t_name=checkbook_fulls_json[prop].checkbook_name;
+        var htmls = '<option value = "' + t_id + '">' +t_name + '</option>';
         $("#checkbook_selector").append(htmls);
-        //TODO 设置选中的记账本
     };
     //所属账户填充
-    function checkbookChange(default_checkbook_id=null, default_account=null){
+    function checkbookChange(){
+        var default_checkbook_id = arguments[0] ? arguments[0] : null;
+        var default_account = arguments[0] ? arguments[0] : null;
+
         var checkbook_id =  $("#checkbook_selector option:selected").val();
         if(default_checkbook_id!=null){
             checkbook_id=default_checkbook_id;
@@ -69,9 +52,10 @@ layui.use(['form', 'jquery',"laydate"], function() {
         form.render('radio');
     };
 
-    function ChangeSeletor(default_type=null,
-                           default_category=null,
-                           default_cash=null){
+    function ChangeSeletor(){
+        var default_type = arguments[0] ? arguments[0] : null;
+        var default_category = arguments[0] ? arguments[0] : null;
+        var default_cash = arguments[0] ? arguments[0] : null;
         // 明细类型
         var belong_account = $("#detail_account_selector option:selected").val();
         var type_tt = checkbook_full.accounts[belong_account];
@@ -140,7 +124,10 @@ layui.use(['form', 'jquery',"laydate"], function() {
                 default_cash=m_detail_json.isCash
                 )
             //设置日期选中
-            $("#day_selector").val(m_detail_json.date)
+            aydate.render({
+                elem: document.getElementById('day_selector')
+                ,value: $("#day_selector").val(m_detail_json.date)
+            });
 
             //设置金额
             $("#detail_money").val(m_detail_json.money)
@@ -149,10 +136,16 @@ layui.use(['form', 'jquery',"laydate"], function() {
              $("#detail_remark").val(m_detail_json.remark)
         }else{
             checkbookChange();
-            ChangeSeletor()
+            ChangeSeletor();
+            laydate.render({
+                elem: document.getElementById('day_selector')
+                ,value: getNowDate()
+            });
+
         }
     };
     init(detail_json)
+     $("#detail_id").val(detail_json.detail_id)
     //记录者
     $("#detail_updater").attr("value",current_user_json["user_name"])
 
