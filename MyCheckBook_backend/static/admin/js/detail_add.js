@@ -70,9 +70,6 @@ layui.use(['form', 'jquery',"laydate"], function() {
     var form_method=JSON.stringify(detail_json).length>10 ?  "put":  "post"; ; // 判断事put操作还是post参数
     var selected_checkbook = null;
 
-    initCheckbookSelector($,checkbook_fulls_json)
-
-    //所属账户填充
     function onChangeCheckbook(){
 
        var checkbook_id =  $("#checkbook_selector option:selected").val();
@@ -123,27 +120,31 @@ layui.use(['form', 'jquery',"laydate"], function() {
 
     //设置初始值，然后触发一下就行了
     function init(m_detail_json){
+        initCheckbookSelector($,checkbook_fulls_json)
         //设置选中
-        if(JSON.stringify(m_detail_json).length>10){
-            // 设置记账本选中              //设置所属账户
+        if(form_method=="put"){
+            // 设置记账本选中
+            // 设置所属账户
             onChangeCheckbook(default_checkbook_id=m_detail_json.checkbook_id,
-                            default_account=m_detail_json.account_name)
-            //设置明细类型              //设置类别             //设置是否现金
+                            default_account=m_detail_json.account_name);
+            //设置明细类型
+            // 设置类别
+            // 设置是否现金
             onChangeSelector(default_type=m_detail_json.type,
                 default_category=m_detail_json.category,
                 default_cash=m_detail_json.isCash
-                )
+                );
             //设置日期选中
             laydate.render({
                 elem: document.getElementById('day_selector')
                 ,value: m_detail_json.date
             });
-
             //设置金额
-            $("#detail_money").val(m_detail_json.money)
-
+            $("#detail_money").val(m_detail_json.money);
             //设置备注
-             $("#detail_remark").val(m_detail_json.remark)
+             $("#detail_remark").val(m_detail_json.remark);
+             //设置id
+            $("#detail_id").val(m_detail_json.detail_id)
         }else{
             onChangeCheckbook();
             onChangeSelector();
@@ -151,18 +152,17 @@ layui.use(['form', 'jquery',"laydate"], function() {
                 elem: document.getElementById('day_selector')
                 ,value: getNowDate()
             });
-
         }
+        //记录者
+        $("#detail_updater").attr("value",current_user_json["user_name"])
+
+        //渲染
+        form.on("select(checkbook_selector)", onChangeCheckbook)
+        form.on("select(detail_account_selector)", onChangeSelector)
+        form.on("select(detail_type_selector)", onChangeSelector)
+        form.on("select(detail_category_selector)", onChangeSelector)
     };
     init(detail_json)
-     $("#detail_id").val(detail_json.detail_id)
-    //记录者
-    $("#detail_updater").attr("value",current_user_json["user_name"])
-
-    form.on("select(checkbook_selector)", onChangeCheckbook)
-    form.on("select(detail_account_selector)", onChangeSelector)
-    form.on("select(detail_type_selector)", onChangeSelector)
-    form.on("select(detail_category_selector)", onChangeSelector)
 
     // 提交表单获得
     form.on("submit(detailform)", function(data){
