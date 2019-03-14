@@ -12,7 +12,7 @@ function init_pie1(mychart, mdata, callback) {
         tooltip: {
             show: true,
             trigger: 'item',
-            formatter: "{b}: {c} ({d}%)"
+            formatter: "{b}: {c}元 ({d}%)"
         },
         legend: {
             orient: 'vertical',
@@ -37,7 +37,7 @@ function init_pie2(mychart, mdata, callback){
         tooltip: {
             show: true,
             trigger: 'item',
-            formatter: "{b}: {c} ({d}%)"
+            formatter: "{b}: {c}元 ({d}%)"
         },
         center: ['1%', '50%'],
         legend: {
