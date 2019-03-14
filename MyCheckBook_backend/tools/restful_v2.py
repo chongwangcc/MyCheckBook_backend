@@ -361,7 +361,7 @@ class DetailsSumAPI(Resource):
         return jsonify(my_result)
 
 
-class DetailsAPI(Resource):
+class DetailAPI(Resource):
     """
     记账本明细 的操作API
     """
@@ -410,10 +410,16 @@ class DetailsAPI(Resource):
         return jsonify(my_result)
 
     def put(self):
-        print("put")
+
         args = self.put_parser.parse_args()
-        print(args)
-        pass
+        new_details = DetailTools.create_detail(args, is_edit=True)
+        # 把记账明细返回
+        my_result = {
+            "code": 0,
+            "msg": "",
+            "data": new_details,
+        }
+        return jsonify({})
 
     def post(self):
         """ 添加一个记账明细"""
@@ -421,9 +427,6 @@ class DetailsAPI(Resource):
 
         # 构造一条记账明细
         new_details = DetailTools.create_detail(args)
-        print(new_details.to_dict())
-        if new_details is not None:
-            return jsonify(new_details.to_dict())
 
         # 把记账明细返回
         my_result = {
@@ -641,7 +644,7 @@ api.add_resource(CheckbookInvitationCodeAPI, '/api/v1/CheckbookInvitationCode', 
 
 api.add_resource(DetailsListAPI, '/api/v1/details', endpoint='details')
 api.add_resource(DetailsSumAPI, '/api/v1/detailsum', endpoint='detailsum')
-api.add_resource(DetailsAPI, '/api/v1/detail/<checkbook_id>', endpoint='detail')
+api.add_resource(DetailAPI, '/api/v1/detail', endpoint='detail')
 
 api.add_resource(UserAPI, '/api/v1/user', endpoint='user')
 

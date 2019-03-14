@@ -157,7 +157,7 @@ class DetailTools:
     """
 
     @classmethod
-    def create_detail(cls, detail_dict):
+    def create_detail(cls, detail_dict, is_edit=False):
         """
         创建一条新的明细记录
         :param detail_dict:
@@ -167,6 +167,17 @@ class DetailTools:
 
         # 1. 构造detail
         t_detail = DetailInfo()
+        if is_edit:
+            t_detail.id = int(detail_dict["detail_id"])
+            # TODO 性能问题，以后再改
+            # 删除旧的明细表里相关联的记录
+            old_details = DetailInfo.get(id=t_detail.id)
+            if len(old_details.combine_details)>1:
+                combine_detail_ids = json.loads(old_details.combine_details)
+                for m_id in combine_detail_ids:
+                    t_d = DetailInfo.get(id=m_id)
+                    t_d.delete()
+
         t_detail.date = detail_dict["date"]
         t_detail.month_str = t_detail.date[:7]
         t_detail.money = detail_dict["money"]

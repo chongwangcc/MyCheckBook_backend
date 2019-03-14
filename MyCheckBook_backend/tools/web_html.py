@@ -69,7 +69,7 @@ def detail_add():
         checkbook_id = checkbook["checkbook_id"]
         checkbook_fulls_json[checkbook_id] = CheckbookTools.get_checkbook_full(checkbook_id)
         current_user_json = {"user_name": current_user.user_name}
-    if detail_id is None:
+    if detail_id is None or len(str(detail_id))==0:
         detail_json = {}
     else:
         detail_json = DetailTools.get_detail(detail_id)
