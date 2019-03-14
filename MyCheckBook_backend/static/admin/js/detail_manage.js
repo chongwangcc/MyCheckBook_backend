@@ -298,10 +298,14 @@ layui.use(['layer', 'jquery',"table", "laydate", "element"], function () {
     }
 
     function add_details(){
-        var url="detail_add";
-        var title="记一笔"
-        var iframeObj = $(window.frameElement).attr('name');
-        parent.page(title, url, iframeObj, w = "700", h = "620px");
+        layer.open({
+             type: 2,
+             content: 'detail_add',
+             area: ['700px', '620px'],
+             end: function () {
+                look_details();
+             }
+         });
     }
 
     function delete_detail(data,obj){
@@ -332,6 +336,7 @@ layui.use(['layer', 'jquery',"table", "laydate", "element"], function () {
                 success:function(){ // http code 200
                     obj.del();
                     layer.close(index);
+                    look_details();
                     parent.layer.msg('删除成功!!');
                 },
                 error:function(XMLHttpRequest, textStatus, errorThrown){
@@ -347,6 +352,10 @@ layui.use(['layer', 'jquery',"table", "laydate", "element"], function () {
              type: 2,
              content: 'detail_add?detail_id='+data.detail_id,
              area: ['700px', '620px'],
+             end: function () {
+                 console.log("end_edit")
+                look_details();
+             }
          });
     }
     //头工具栏事件

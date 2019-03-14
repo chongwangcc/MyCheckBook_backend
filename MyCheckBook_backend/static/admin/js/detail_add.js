@@ -166,12 +166,10 @@ layui.use(['form', 'jquery',"laydate"], function() {
     form.on("submit(detailform)", function(data){
 
         function success(){
-             window.parent.location.reload();//刷新父页面
              parent.layer.closeAll();
              parent.layer.msg('添加明细成功');
         };
         function failed(){
-            window.parent.location.reload();//刷新父页面
             layer.msg('添加明细失败');
             parent.layer.msg('添加明细失败');
         };

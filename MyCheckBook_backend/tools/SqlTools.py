@@ -177,6 +177,7 @@ class DetailTools:
                 for m_id in combine_detail_ids:
                     t_d = DetailInfo.get(id=m_id)
                     t_d.delete()
+            old_details.delete()
 
         t_detail.date = detail_dict["date"]
         t_detail.month_str = t_detail.date[:7]
