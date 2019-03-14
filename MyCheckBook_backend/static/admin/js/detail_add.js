@@ -6,6 +6,47 @@ function checknum(obj){
     }
 }
 
+function isArray(o){
+    return Object.prototype.toString.call(o)=='[object Array]';
+}
+
+function initSelector($,s_id, default_value, all_values){
+    var old_selected_type = $("#"+s_id).val();
+    $("#"+s_id).empty();
+    for(var v  in all_values) {
+        if(isArray(all_values)){
+            v = all_values[v];
+        }else{}
+        var htmls = '<option value = "' + v + '">' + v + '</option>';
+        if(v==default_value || v==old_selected_type){
+            var htmls = '<option selected="selected" value = "' + v + '">' + v + '</option>';
+        };
+        $("#"+s_id).append(htmls);
+    }
+}
+
+function initRadio($, name, default_cash, all_values){
+    var default_select = null;
+    var radios = document.getElementsByName("isCash");
+    for (i=0; i<radios.length; i++) {
+        if (radios[i].checked) {
+            default_select = radios[i].value
+        }
+    }
+    $("#detail_iscash").empty();
+    for(var i=0; i<all_values.length;i++){
+        var title = all_values[i];
+        var htmls = '<input type="radio" name="isCash" value="'+title+'" title="'+title+'" id="isCash_'+title+'" checked="">';
+        $("#detail_iscash").append(htmls)
+    };
+    if(default_select!=null){
+        $("#isCash_"+default_select).prop("checked", true);
+    }
+    if(default_cash!=null){
+        $("#isCash_"+default_cash).prop("checked", true);
+    }
+}
+
 //记账本 selector 填充
 function initCheckbookSelector($, checkbook_fulls_json){
     for (var prop in checkbook_fulls_json) {
@@ -15,6 +56,8 @@ function initCheckbookSelector($, checkbook_fulls_json){
         $("#checkbook_selector").append(htmls);
     };
 }
+
+
 
 layui.use(['form', 'jquery',"laydate"], function() {
     // 0. 初始化 layui 的一些模块
@@ -27,90 +70,53 @@ layui.use(['form', 'jquery',"laydate"], function() {
     var form_method=JSON.stringify(detail_json).length>10 ?  "put":  "post"; ; // 判断事put操作还是post参数
     var selected_checkbook = null;
 
-
-
     initCheckbookSelector($,checkbook_fulls_json)
 
     //所属账户填充
     function onChangeCheckbook(){
-        var default_checkbook_id = arguments[0] ? arguments[0] : null;
-        var default_account = arguments[0] ? arguments[0] : null;
 
-        var checkbook_id =  $("#checkbook_selector option:selected").val();
-        if(default_checkbook_id!=null){
+       var checkbook_id =  $("#checkbook_selector option:selected").val();
+        var default_account = null;
+        if(arguments.length==2){
             checkbook_id=default_checkbook_id;
-            $("#checkbook_selector").val(checkbook_id);
+            var default_account = arguments[1];
+        }
 
-        }
-        selected_checkbook = checkbook_fulls_json[checkbook_id+""];
+        $("#checkbook_selector").val(checkbook_id);
+        selected_checkbook = checkbook_fulls_json[checkbook_id];
         accounts_data = checkbook_fulls_json[checkbook_id].accounts;
-        for(var prop  in accounts_data) {
-            var htmls = '<option value = "' + prop + '">' + prop + '</option>';
-            if(prop==default_account){
-                var htmls = '<option selected="selected" value = "' + prop + '">' + prop + '</option>';
-            }
-            $("#detail_account_selector").append(htmls);
-        }
+        initSelector($,"detail_account_selector",default_account, accounts_data);
 
         form.render('select');
         form.render('radio');
     };
 
     function onChangeSelector(){
-        var default_type = arguments[0] ? arguments[0] : null;
-        var default_category = arguments[0] ? arguments[0] : null;
-        var default_cash = arguments[0] ? arguments[0] : null;
+        var default_type =null;
+        var default_category =null;
+        var default_cash =null;
+        if(arguments.length==3){
+            var default_type = arguments[0] ? arguments[0] : null;
+            var default_category = arguments[1] ? arguments[1] : null;
+            var default_cash = arguments[2] ? arguments[2] : null;
+        }
+
         // 明细类型
         var belong_account = $("#detail_account_selector option:selected").val();
         var type_tt = selected_checkbook.accounts[belong_account];
-        var old_selected_type = $("#detail_type_selector option:selected").val();
-        $("#detail_type_selector").empty();
-        for(var prop  in type_tt) {
-             var htmls = '<option value = "' + prop + '">' + prop + '</option>';
-             if(prop == old_selected_type || prop == default_type){
-                 htmls = '<option selected="selected"  value = "' + prop + '">' + prop + '</option>';
-             };
-            $("#detail_type_selector").append(htmls);
-        };
-
-        //是否现金设置
-        var detail_tapo = $("#detail_type_selector option:selected").val();
-        var isCash_value = selected_checkbook.accounts[belong_account][detail_tapo];
-        var default_select = null
-
-        var radios = document.getElementsByName("isCash");
-        for (i=0; i<radios.length; i++) {
-            if (radios[i].checked) {
-                default_select = radios[i].value
-            }
-        }
-        console.log(default_select)
-
-        $("#detail_iscash").empty();
-        for(var i=0; i<isCash_value.length;i++){
-            var title = isCash_value[i];
-            var htmls = '<input type="radio" name="isCash" value="'+title+'" title="'+title+'" id="isCash_'+title+'" checked="">';
-            $("#detail_iscash").append(htmls)
-        };
-        if(default_select!=null){
-            $("#isCash_"+default_select).prop("checked", true);
-        }
-        if(default_cash!=null){
-            $("#isCash_"+default_cash).prop("checked", true);
-        }
+        initSelector($,"detail_type_selector",default_type, type_tt);
 
         //设置类别
          var selected_type = $("#detail_type_selector option:selected").val();
          var mmmCategory = selected_checkbook.category[selected_type];
-         var old_selected_detail = $("#detail_category_selector option:selected").val();
-         $("#detail_category_selector").empty()
-         for(var prop  in mmmCategory) {
-             var htmls = '<option value = "' + mmmCategory[prop] + '">' + mmmCategory[prop] + '</option>';
-             if(prop == default_category || prop==old_selected_detail){
-                 htmls = '<option selected="selected"  value = "' + prop + '">' + prop + '</option>';
-             };
-            $("#detail_category_selector").append(htmls);
-        };
+         initSelector($,"detail_category_selector",default_category, mmmCategory);
+
+        //是否现金设置
+        var detail_tapo = $("#detail_type_selector option:selected").val();
+        var isCash_value = selected_checkbook.accounts[belong_account][detail_tapo];
+        initRadio($, "isCash",default_cash, isCash_value)
+
+        //重新渲染表格
         form.render('select');
         form.render('radio');
     };
