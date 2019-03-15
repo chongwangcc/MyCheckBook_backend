@@ -5,9 +5,7 @@ layui.use(['layer', 'jquery',"table", "laydate", "element"], function () {
     var $ = layui.jquery;
     var element = layui.element;
     element.init();
-
     // init 变量初始化
-
 
     // 自定义变量
     var checkbook_id = 1;
@@ -27,9 +25,35 @@ layui.use(['layer', 'jquery',"table", "laydate", "element"], function () {
         })
         return result;
     })();
-    console.log(assets_full_json)
+    console.log(assets_full_json);
 
     // 根据json串，初始化上下两个Tab
+    function init_sum_tab(account_name, account_sum){
+        return "<div class=\"layui-tab-item\"><label>"+account_name+"</label></div>";
+    };
+
+    function init_appendix_tab(account_name, account_sum){
+        return "<div class=\"layui-tab-item\"><label>"+account_name+"</label></div>";
+    };
+
+    for(var prop in assets_full_json["sum"]){
+        var account_name = prop
+        var account_sum = assets_full_json["sum"][account_name]
+        $("#sum_tab_title").append("<li>"+account_name+"</li>")
+        $("#sum_tab_content").append(init_sum_tab(account_name, account_sum))
+    }
+    for(var prop in assets_full_json["appendix"]){
+        var account_name = prop
+        var account_sum = assets_full_json["appendix"][account_name]
+        $("#appendix_tab_title").append("<li>"+account_name+"</li>")
+        $("#appendix_tab_content").append(init_appendix_tab(account_name,account_sum))
+    }
+
+
+
+
+
+
 
 
 
