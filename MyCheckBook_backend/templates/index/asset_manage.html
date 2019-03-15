@@ -31,13 +31,67 @@
 									<option value="0571">2018-03</option>
 								</select>
 							</div>
-							<button class="layui-btn layui-btn-normal" lay-submit="search">搜索</button>
+							<button class="layui-btn layui-btn-normal" lay-submit="search">查看</button>
 							<div class="layui-inline tool-btn">
-								<button class="layui-btn layui-btn-small layui-btn-normal addBtn" data-url="article-add.html"><i class="layui-icon">&#xe654;</i></button>
+								<button class="layui-btn layui-btn-small layui-btn-normal addBtn" data-url="article-add.html"><i class="layui-icon">&#xe654;</i>添加</button>
 								<button class="layui-btn layui-btn-small layui-btn-warm listOrderBtn hidden-xs" data-url="article-add.html"><i class="iconfont">&#xe656;</i></button>
 							</div>
 						</div>
 				</form>
+                 <div class="layui-tab page-content-wrap" lay-filter="test">
+                    <ul class="layui-tab-title">
+                        <li>收入</li>
+                        <li class="layui-this">支出</li>
+                        <li>流入</li>
+                        <li>流出</li>
+                    </ul>
+                    <div class="layui-tab-content">
+                        <!--收入-->
+                        <div class="layui-tab-item">
+                            <div class="layui-row chart-panel panel panel-default">
+                                <div class="layui-col-xs4 layui-col-sm4 layui-col-md4">
+                                    <div class="panel-body" id="income_category_echart" style="height: 376px;"></div>
+                                </div>
+                                <div class="layui-col-xs8 layui-col-sm8 layui-col-md8">
+                                    <div class=" panel-body" id="income_account_echart" style="height: 376px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--支出-->
+                        <div class="layui-tab-item layui-show">
+                            <div class="layui-row chart-panel panel panel-default">
+                                <div class="layui-col-xs4 layui-col-sm4 layui-col-md4">
+                                    <div class="panel-body" id="spent_category_echart" style="height: 376px;"></div>
+                                </div>
+                                <div class="layui-col-xs8 layui-col-sm8 layui-col-md8">
+                                    <div class=" panel-body" id="spent_account_echart" style="height: 376px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-流入-->
+                        <div class="layui-tab-item">
+                            <div class="layui-row chart-panel panel panel-default">
+                                <div class="layui-col-xs4 layui-col-sm4 layui-col-md4">
+                                    <div class="panel-body" id="inflow_category_echart" style="height: 376px;"></div>
+                                </div>
+                                <div class="layui-col-xs8 layui-col-sm8 layui-col-md8">
+                                    <div class=" panel-body" id="inflow_account_echart" style="height: 376px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--流出-->
+                        <div class="layui-tab-item">
+                            <div class="layui-row chart-panel panel panel-default">
+                                <div class="layui-col-xs4 layui-col-sm4 layui-col-md4">
+                                    <div class="panel-body" id="outflow_category_echart" style="height: 376px;"></div>
+                                </div>
+                                <div class="layui-col-xs8 layui-col-sm8 layui-col-md8">
+                                    <div class=" panel-body" id="outflow_account_echart" style="height: 376px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 				<div class="chart-panel panel panel-default">
 					<div class="panel-header">资产名目</div>
 					<div class="layui-form" id="asset-table-list">
