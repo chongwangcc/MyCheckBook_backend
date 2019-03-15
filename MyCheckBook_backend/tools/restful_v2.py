@@ -486,6 +486,7 @@ class AssetsAPI(Resource):
     资产负债 相关API
     """
     decorators = [login_required]
+
     def __init__(self):
         self.get_parser = reqparse.RequestParser()
         self.get_parser.add_argument('checkbook_id', type=str, required=True)
@@ -495,9 +496,7 @@ class AssetsAPI(Resource):
     def get(self):
         args = self.get_parser.parse_args()
         result = {}
-        if args["action"] == "ALL":
-            pass
-        elif args["action"] == "SUM" or args["action"]=="ALL":
+        if args["action"] == "SUM" or args["action"]=="ALL":
             t_sum = {}
             t_sum["总资产"] = {
                 "sum": 50980,
@@ -560,7 +559,7 @@ class AssetsAPI(Resource):
                 "储蓄账户":t_sum,
             }
             pass
-        elif args["action"] == "appendix" or args["action"]=="ALL":
+        if args["action"] == "appendix" or args["action"]=="ALL":
             t_appendix = {}
             t_appendix["银行卡"] = [
                 {"name":"建行银行卡（CC）", "money":1234, "account":"花销账户-Doodads账户"},
@@ -577,8 +576,6 @@ class AssetsAPI(Resource):
             result["appendix"]= t_appendix
             pass
         return jsonify(result)
-
-
 
 
 class ReportAPI(Resource):
@@ -765,6 +762,7 @@ class TrendsAPI(Resource):
 
         return jsonify(result)
 
+api.add_resource(UserAPI, '/api/v1/user', endpoint='user')
 
 api.add_resource(CheckbookListAPI, "/api/v1/checkbooks", endpoint="checkbookList")
 api.add_resource(CheckbookAPI, '/api/v1/checkbook/<checkbook_id>', endpoint='checkbook')
@@ -774,7 +772,7 @@ api.add_resource(DetailsListAPI, '/api/v1/details', endpoint='details')
 api.add_resource(DetailsSumAPI, '/api/v1/detailsum', endpoint='detailsum')
 api.add_resource(DetailAPI, '/api/v1/detail', endpoint='detail')
 
-api.add_resource(UserAPI, '/api/v1/user', endpoint='user')
+api.add_resource(AssetsAPI, '/api/v1/assets', endpoint='assets')
 
 api.add_resource(TrendsAPI, '/api/v1/trends/checkbooks/<checkbook_id>', endpoint='trends')
 
