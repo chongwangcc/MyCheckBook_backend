@@ -91,6 +91,20 @@ class CheckbookTools:
         return []
 
     @classmethod
+    def fetch_all_checkbooks_full(cls, user_id):
+        """
+        获得所有记账本的详情
+        :param user_id:
+        :return:
+        """
+        checkbooks_json = CheckbookTools.fetch_all_checkbooks(user_id)
+        checkbook_fulls_json = {}
+        for checkbook in checkbooks_json:
+            checkbook_id = checkbook["checkbook_id"]
+            checkbook_fulls_json[checkbook_id] = CheckbookTools.get_checkbook_full(checkbook_id)
+        return checkbook_fulls_json
+
+    @classmethod
     def get_checkbook_full(cls, checkbook_id):
         """
         获得一条记账本的详情

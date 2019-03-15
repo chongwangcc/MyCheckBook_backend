@@ -11,6 +11,7 @@ from flask_restful import reqparse
 from tools.app import app
 from tools.SqlTools import *
 
+
 @app.route("/", methods=["GET"])
 @login_required
 def index():
@@ -50,6 +51,7 @@ def checkbook_add():
     """
     return render_template('./index/checkbook-add.html')
 
+
 @app.route("/detail_add", methods=["GET"])
 @login_required
 def detail_add():
@@ -63,13 +65,9 @@ def detail_add():
     args = get_parser.parse_args()
     # 2. 获得明细
     detail_id = args["detail_id"]
-    checkbooks_json = CheckbookTools.fetch_all_checkbooks(current_user.id)
-    checkbook_fulls_json = {}
-    for checkbook in checkbooks_json:
-        checkbook_id = checkbook["checkbook_id"]
-        checkbook_fulls_json[checkbook_id] = CheckbookTools.get_checkbook_full(checkbook_id)
-        current_user_json = {"user_name": current_user.user_name}
-    if detail_id is None or len(str(detail_id))==0:
+    checkbook_fulls_json = CheckbookTools.fetch_all_checkbooks_full(current_user.id)
+    current_user_json = {"user_name": current_user.user_name}
+    if detail_id is None or len(str(detail_id)) == 0:
         detail_json = {}
     else:
         detail_json = DetailTools.get_detail(detail_id)
@@ -77,10 +75,8 @@ def detail_add():
     # 3.构造返回值
     return render_template('./index/detail-add.html',
                            detail_json=detail_json,
-                           checkbooks_json=checkbooks_json,
                            current_user_json=current_user_json,
                            checkbook_fulls_json = checkbook_fulls_json)
-
 
 
 @app.route("/detail_manage", methods=["GET"])

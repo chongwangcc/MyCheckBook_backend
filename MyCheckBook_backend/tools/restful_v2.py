@@ -26,9 +26,19 @@ class CheckbookListAPI(Resource):
     """
     decorators = [login_required]
 
+    def __init__(self):
+        self.get_parser = reqparse.RequestParser()
+        self.get_parser.add_argument('action', type=str, location='args', required=False, default="simple")
+
     def get(self):
         #  获得用户名下所有的记账本
-        checkbook_list = CheckbookTools.fetch_all_checkbooks(current_user.id)
+        args = self.get_parser.parse_args()
+        checkbook_list =[]
+        if args["action"] == "simple":
+            checkbook_list = CheckbookTools.fetch_all_checkbooks(current_user.id)
+        elif args["action"] == "full":
+            checkbook_list = CheckbookTools.fetch_all_checkbooks_full(current_user.id)
+
         result = {
             "code": 0,
             "msg": "",
@@ -117,6 +127,11 @@ class CheckbookAPI(Resource):
         self.post_parser.add_argument('description', type=str,  required=False)
         self.post_parser.add_argument('owner', type=str,  required=False)
 
+        self.put_parser = reqparse.RequestParser()
+        self.put_parser.add_argument('action', type=str, required=True)
+        self.put_parser.add_argument('type', type=str, required=False, default=None)
+        self.put_parser.add_argument('category', type=str, required=False, default=None)
+
     def get(self):
         args = self.get_parser.parse_args()
         checkbook_id = args["checkbook_id"]
@@ -131,7 +146,20 @@ class CheckbookAPI(Resource):
 
         return jsonify(result)
 
-    def put(self):
+    def put(self, checkbook_id):
+        print(checkbook_id)
+        args = self.put_parser.parse_args()
+        print(args)
+        if args["action"] == "addCatgory":
+            c_info = CategoryInfo()
+            c_info.type = args["type"]
+            c_info.name = args["category"]
+            c_info.save()
+            pass
+        elif args["action"] == "addAccount":
+            pass
+
+
         pass
 
     def post(self):

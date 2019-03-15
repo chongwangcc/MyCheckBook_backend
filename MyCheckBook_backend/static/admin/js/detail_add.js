@@ -70,7 +70,7 @@ layui.use(['form', 'jquery',"laydate"], function() {
 
     function onChangeCheckbook(){
 
-       var checkbook_id =  $("#checkbook_selector option:selected").val();
+        var checkbook_id =  $("#checkbook_selector option:selected").val();
         var default_account = null;
         if(arguments.length==2){
             checkbook_id=default_checkbook_id;
@@ -79,7 +79,7 @@ layui.use(['form', 'jquery',"laydate"], function() {
 
         $("#checkbook_selector").val(checkbook_id);
         selected_checkbook = checkbook_fulls_json[checkbook_id];
-        accounts_data = checkbook_fulls_json[checkbook_id].accounts;
+        accounts_data =selected_checkbook.accounts;
         initSelector($,"detail_account_selector",default_account, accounts_data);
 
         form.render('select');
@@ -154,11 +154,37 @@ layui.use(['form', 'jquery',"laydate"], function() {
         //记录者
         $("#detail_updater").attr("value",current_user_json["user_name"])
 
-        //渲染
+        // 绑定事件
         form.on("select(checkbook_selector)", onChangeCheckbook)
         form.on("select(detail_account_selector)", onChangeSelector)
         form.on("select(detail_type_selector)", onChangeSelector)
         form.on("select(detail_category_selector)", onChangeSelector)
+        $(document).on('click','#add_category',function(){
+            // 弹出添加类别窗口
+            var checkbook_id =  $("#checkbook_selector option:selected").val();
+            var type_m = $("#detail_type_selector option:selected").val();
+            layer.prompt({
+              formType: 2,
+              title: '添加【'+type_m+'】类别',
+            }, function(value, index, elem){
+                $.ajax({
+                    url:"/api/v1/checkbook/"+checkbook_id+"?action=addCatgory&type="+type_m+"&category="+value,
+                    type:'PUT',
+                    dataType:'json',
+                    async:false,
+                    success:function(json){ // http code 200
+                        parent.layer.msg("添加明细成功")
+                    }
+                });
+                // 更新类别 框
+                var htmls = '<option selected="selected" value = "' + value + '">' + value + '</option>';
+                $("#detail_category_selector").append(htmls);
+                form.render("select");
+                //关闭窗口
+                layer.close(index);
+            });
+     });
+
     };
     init(detail_json)
 
