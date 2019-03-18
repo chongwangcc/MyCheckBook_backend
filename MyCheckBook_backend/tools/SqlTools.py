@@ -435,6 +435,16 @@ class AppendixTools:
         :return:
         """
 
+    @classmethod
+    def save_appendixs(cls, checkbook_id, month_str, appendix_name, df):
+        """
+        保存一个附表
+        :param checkbook_id:
+        :param month_str:
+        :param appendix_name:
+        :param df:
+        :return:
+        """
 
 
 if __name__ == "__main__":

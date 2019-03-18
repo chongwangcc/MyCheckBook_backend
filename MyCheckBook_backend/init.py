@@ -8,6 +8,7 @@
 from datetime import datetime
 from random import choice
 import json
+import pandas as pd
 
 from tools.Entity import *
 from tools.SqlTools import *
@@ -262,9 +263,62 @@ def intert_category_info():
                 c.belong_checkbook=1
                 c.save()
 
+
+def insert_appendix_info():
+    """
+    插入一些附表的值
+    :return:
+    """
+    checkbook_id = 1
+    month_str = "2019-03"
+
+    # 1.银行卡
+    # 名称，金额，开户人，备注
+    data = {
+        "名称": ["建设银行", "中国银行", "交通银行", "农业银行"],
+        "金额": [1209, 8390, 182, 109],
+        "开户人": ["CC", "CC", "MM", "MM"],
+        "所属账户": ["花销账户-生活费", "花销账户-doodads", "花销账户-住房基金", "花销账户-风险备付金"],
+        "流动性":["流动资产","流动资产","流动资产","流动资产"],
+        "备注":["","","",""]
+    }
+    df_card = pd.DataFrame(data)
+    print(df_card)
+
+    # 2.货币基金
+    # 名称，金额，开户人，备注
+
+    # 3.外债资产
+    # 债务人名称，金额，归还日期，备注
+
+    # 4.押金资产
+    # 名称，金额，归还日期，备注
+
+    # 5. 投资资产
+    # 名称，本金，市值，可用资金，备注
+
+    # 6. 信用卡负债
+    # 名称，总欠款，当月应还，开户人，备注
+
+    # 7. 手头现金
+    # 名称金额
+
+    # 8. 定期资产
+    # 名称，金额，到期日，开户人，备注
+
+    # 9. 预付款资产
+    # 名称，金额，收货日期，供应商名称，备注
+
+    # 10.股票资产明细
+    # 股票名称，持仓，成本价，现价，市值
+
+
+
+
 # 插入默认的用户：cc、mm
 # insert_default_user()
 # create_default_checkbook()
 # random_insert_details()
-intert_category_info()
+# intert_category_info()
+insert_appendix_info()
 # 创建默认的记账本：CM家庭记账本
