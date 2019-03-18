@@ -412,12 +412,18 @@ class AppendixTools:
     @classmethod
     def get_appendix_df(cls, checkbook_id, month_str, appendix_name):
         """
-        获得一个附表记录的数据，转换为dataframe
+        获得一个附表记录的数据，转换为dataframe。
+        数据库中应该是唯一的一条记录
         :param checkbook_id:
         :param month_str:
         :param appendix_name:
         :return:
         """
+        append_info = AppendixInfo.get(checkbook=id,
+                         month=month_str,
+                         appendix_name=appendix_name)
+
+
 
     @classmethod
     def get_appendix_name_list(cls, checkbook_id, month_str):
@@ -453,16 +459,16 @@ class AppendixTools:
 
         # 1.判断有没有旧的值
         append_info = AppendixInfo()
-        old_append_info = AppendixInfo.get(checkbook=id,
-                                           month=month_str,
+        old_append_info = AppendixInfo.get(checkbook=checkbook_id,
+                                           month_str=month_str,
                                            appendix_name=appendix_name)
         # 之前有值得话，覆盖之前的值
         if old_append_info is not None:
-            old_append_info.id = old_append_info.id
+            append_info.id = old_append_info.id
 
 
         append_info.checkbook = checkbook_id
-        append_info.month = month_str
+        append_info.month_str = month_str
         append_info.appendix_name = appendix_name
         append_info.row_json = json.dumps(name_rows)
         append_info.columns_json = json.dumps(columns)
