@@ -419,9 +419,15 @@ class AppendixTools:
         :param appendix_name:
         :return:
         """
-        append_info = AppendixInfo.get(checkbook=id,
-                         month=month_str,
-                         appendix_name=appendix_name)
+        old_append_info = AppendixInfo.get(checkbook=checkbook_id,
+                                           month_str=month_str,
+                                           appendix_name=appendix_name)
+        rows = json.loads(old_append_info.row_json)
+        columns = json.loads(old_append_info.columns_json)
+        content = json.loads(old_append_info.content_json)
+        df = pd.DataFrame(content)
+
+        return df, rows, columns
 
 
 
@@ -433,6 +439,9 @@ class AppendixTools:
         :param month_str:
         :return:
         """
+        old_append_infos = AppendixInfo.gets(checkbook=checkbook_id,
+                                           month_str=month_str)
+
 
     @classmethod
     def get_empty_appendixs(cls,checkkbook_id, month_str):
@@ -484,6 +493,10 @@ if __name__ == "__main__":
     pass
     # detias = get_Details(checkbook_id=1, month_str="2019-02")
     # print(detias)
+    df,rows, columns = AppendixTools.get_appendix_df(1, "2019-03", "银行卡")
+    print(df)
+    print(rows)
+    print(columns)
 
 
 
