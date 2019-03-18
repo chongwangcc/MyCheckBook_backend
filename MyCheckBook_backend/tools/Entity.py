@@ -236,3 +236,47 @@ class DetailInfo(Model):
             pass
         return True
 
+
+class AppendixInfo(Model):
+    """
+    附表信息类
+    """
+    checkbook = ForeignKey(Checkbook)  # 归属记账本
+    month_str = CharField(7)
+    appendix_name = CharField()
+    row_json = CharField()
+    columns_json = CharField()
+    content_json = CharField()
+
+    def __str__(self):
+        return str(self.to_dict())
+
+    def to_dict(self):
+        dict_my = {}
+        for key, value in zip(self.field_names,self.field_values):
+            dict_my[key.replace("`", "")] = value.replace("'", "")
+        return dict_my
+
+    @staticmethod
+    def get_table_name():
+        return __class__.__name__.lower()
+
+    @staticmethod
+    def is_empty():
+        """
+        判断user_info表是否为空
+        :return:
+        """
+        try:
+            sql = "select * from %s limit 1" \
+                  % (__class__.__name__.lower())
+            cu = get_cursor()
+            execute_sql(cu, sql)
+            rows = cu.fetchall()
+            if len(rows) >= 1 :
+                return False
+        except:
+            lock.release()
+            pass
+        return True
+

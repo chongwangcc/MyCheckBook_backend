@@ -405,6 +405,38 @@ class AssetsTools:
         pass
 
 
+class AppendixTools:
+
+    @classmethod
+    def get_appendix_df(cls, checkbook_id, month_str, appendix_name):
+        """
+        获得一个附表记录的数据，转换为dataframe
+        :param checkbook_id:
+        :param month_str:
+        :param appendix_name:
+        :return:
+        """
+
+    @classmethod
+    def get_appendix_name_list(cls, checkbook_id, month_str):
+        """
+        获得某月的附表所有名称
+        :param checkbook_id:
+        :param month_str:
+        :return:
+        """
+
+    @classmethod
+    def get_empty_appendixs(cls,checkkbook_id, month_str):
+        """
+        制作财报是使用，获得一张空内容的附表记录，去掉金额的。
+        :param checkkbook_id:
+        :param month_str:
+        :return:
+        """
+
+
+
 if __name__ == "__main__":
     pass
     # detias = get_Details(checkbook_id=1, month_str="2019-02")

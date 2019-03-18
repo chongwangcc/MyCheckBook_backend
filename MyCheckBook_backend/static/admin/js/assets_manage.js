@@ -121,15 +121,13 @@ layui.use(['layer', 'jquery',"table", "laydate", "element"], function () {
 
     // 根据json串，初始化上下两个Tab
     var myCharts = []
+    var myTables = {}
     function init_sum_tab(account_name, account_sum){
         var t_echart1 = echarts.init(document.getElementById(account_name+"_assets_total_echarts"));
         var t_echart2 = echarts.init(document.getElementById(account_name+"_liability_total_echarts"));
         myCharts.push(t_echart1);
         myCharts.push(t_echart2);
         init_bar(t_echart1,t_echart2,account_name,account_sum);
-        console.log(account_name);
-        console.log(account_sum);
-
         table.render({
               elem: '#'+account_name+'_assets-sum'
               ,page: false
@@ -150,23 +148,36 @@ layui.use(['layer', 'jquery',"table", "laydate", "element"], function () {
             ]]
             ,data:gen_table_data(account_sum, "总负债")
         });
-
     };
+
+    function init_appendix_tab(account_name, account_sum){
+        console.log(account_name);
+        console.log(account_sum);
+        tableIns = table.render({
+              elem: '#'+account_name+'_appendix_table'
+              ,page: false
+              ,cols: [[
+                  {field:'name',title: '总资产', edit: 'text' }
+                  ,{field:'org_price', title: '原价 12003元', edit: 'text' }
+                  ,{field:'now_price', title: '现价 ', edit: 'text'}
+                ]]
+                ,data:[]
+            });
+        myTables[account_name] = tableIns;
+    }
 
     for(var prop in assets_full_json["sum"]){
         var account_name = prop
         var account_sum = assets_full_json["sum"][account_name]
         init_sum_tab(account_name,account_sum)
     }
-    // for(var prop in assets_full_json["appendix"]){
-    //     var account_name = prop
-    //     var account_sum = assets_full_json["appendix"][account_name]
-    //     $("#appendix_tab_title").append("<li>"+account_name+"</li>")
-    //     $("#appendix_tab_content").append(init_appendix_tab(account_name,account_sum))
-    // }
+    for(var prop in assets_full_json["appendix"]){
+        var account_name = prop;
+        var account_sum = assets_full_json["appendix"][account_name];
+       init_appendix_tab(account_name,account_sum);
+    }
 
     // JS 填充相关表格
-
     $(window).resize(function () {
         for (j = 0; j < myCharts.length; j++) {
             myCharts[j].resize();
@@ -183,4 +194,31 @@ layui.use(['layer', 'jquery',"table", "laydate", "element"], function () {
         //     init_sum_tab(account_name,account_sum)
         // }
     });
+     $(document).on('click','#银行卡_add_row',function(){
+        var oldData = table.cache["银行卡_appendix_table"];
+        console.log(oldData);
+        var newRow = {name: new Date().valueOf(), org_price: null, now_price: '请填写名称'};
+        oldData.push(newRow);
+        myTables["银行卡"].reload({
+            data : oldData
+        });
+         layer.msg('hello');
+     });
+     $(document).on('click','#银行卡_add_col',function(){
+          var oldData = table.cache["银行卡_appendix_table"];
+          old_cols =  myTables["银行卡"].config.cols
+         var new_cols = {field:'unname', title: 'unname', edit: 'text' }
+         old_cols[0].push(new_cols)
+         console.log(old_cols)
+         tableIns = table.render({
+              elem: '#'+'银行卡'+'_appendix_table'
+              ,page: false
+              ,cols: old_cols
+                ,data:oldData
+            });
+        myTables[account_name] = tableIns;
+         layer.msg('hello');
+     });
+
+     console.log()
 });

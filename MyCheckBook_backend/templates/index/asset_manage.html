@@ -87,6 +87,22 @@
                     {% endfor %}
                 </ul>
                 <div class="layui-tab-content" id="appendix_tab_content">
+                    {% for account_name in assets_full_json.appendix %}
+                     <div class="layui-tab-item">
+                         <div class="layui-row chart-panel panel panel-default">
+                             <button id="{{ account_name }}_add_row" class="layui-btn layui-btn-normal">
+                                 <i class="layui-icon layui-icon-add-1"></i>添加一行
+                             </button>
+                             <button id="{{ account_name }}_add_col" class="layui-btn layui-btn-normal" >
+                                  <i class="layui-icon layui-icon-add-1"></i>添加一列
+                             </button>
+                             <button id="{{ account_name }}_save" class="layui-btn layui-btn-normal" >保存</button>
+                         </div>
+                         <table class="layui-table" lay-even lay-skin="line" lay-filter="detail-table"
+                                       id="{{account_name}}_appendix_table">
+                         </table>
+                     </div>
+                    {% endfor %}
                 </div>
             </div>
         </div>
