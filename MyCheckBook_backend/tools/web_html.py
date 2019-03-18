@@ -97,7 +97,8 @@ def asset_manage():
     资产负债管理界面
     :return:
     """
-    return render_template('./index/asset_manage.html')
+    assets_full_json = AssetsTools.get_tmm();
+    return render_template('./index/asset_manage.html',assets_full_json=assets_full_json)
 
 
 @app.route("/report_manage", methods=["GET"])

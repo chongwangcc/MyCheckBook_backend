@@ -46,30 +46,35 @@
             <div class="panel-header">资产负债汇总</div>
             <div class="layui-tab page-content-wrap" lay-filter="test">
                 <ul class="layui-tab-title" id="sum_tab_title">
+                    {% for account_name in assets_full_json.sum %}
+                            <li>{{account_name}}</li>
+                    {% endfor %}
                 </ul>
                 <div class="layui-tab-content" id="sum_tab_content">
+                    {% for account_name in assets_full_json.sum %}
                     <div class="layui-tab-item">
-                        <div class="panel-body" id="total_assets_liability" style="height: 20px;"></div>
-                        <div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
-                            <table class="layui-table" lay-even lay-skin="nob" lay-filter="detail-table" id="assets-sum">
-                                <div class="layui-tab-item">
-                                    <div class="panel-body" id="spent_category_echart" style="height: 376px;"></div>
-                                    <div class="layui-row chart-panel panel panel-default">
-                                        <div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
-                                            <table class="layui-table" lay-even lay-skin="nob" lay-filter="detail-table" id="assets-sum-table"></table>
-                                        </div>
-                                        <div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
-                                            <table class="layui-table" lay-even lay-skin="nob" lay-filter="detail-table" id="liability-sum-table"></table>
-                                        </div>
-                                    </div>
-                                </div>
-					        </table>
+                        <div class="layui-row chart-panel panel panel-default">
+                            <div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+                                <div class="panel-body" id="{{account_name}}_assets_total_echarts" style="height: 100px;"></div>
+                            </div>
+                            <div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+                                <div class="panel-body" id="{{account_name}}_liability_total_echarts" style="height: 100px;"></div>
+                            </div>
                         </div>
-                        <div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
-                            <table class="layui-table" lay-even lay-skin="line" lay-filter="detail-table" id="assets-appendix">
-					        </table>
+                        <div class="layui-row chart-panel panel panel-default">
+                            <div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+                                <table class="layui-table" lay-even lay-skin="nob" lay-filter="detail-table"
+                                       id="{{account_name}}_assets-sum">
+                                </table>
+                            </div>
+                            <div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+                                <table class="layui-table" lay-even lay-skin="line" lay-filter="detail-table"
+                                       id="{{account_name}}_liability-sum">
+                                </table>
+                            </div>
                         </div>
                     </div>
+                    {% endfor %}
                 </div>
             </div>
         </div>
@@ -77,285 +82,21 @@
             <div class="panel-header">资产负债附表</div>
             <div class="layui-tab page-content-wrap" lay-filter="test">
                 <ul class="layui-tab-title" id="appendix_tab_title">
+                    {% for account_name in assets_full_json.appendix %}
+                            <li>{{ account_name}}</li>
+                    {% endfor %}
                 </ul>
                 <div class="layui-tab-content" id="appendix_tab_content">
                 </div>
             </div>
         </div>
 
-        <div class="chart-panel panel panel-default">
-            <div class="panel-header">资产名目</div>
-            <div class="layui-form" id="asset-table-list">
-                <table class="layui-table" lay-even lay-skin="nob">
-                    <colgroup>
-                        <col width="50">
-                    <thead>
-                    <tr>
-                        <th></th>
-                        <th>日期</th>
-                        <th>名称</th>
-                        <th>原价</th>
-                        <th>现价</th>
-                        <th>资产/负债</th>
-                        <th>所属记账本</th>
-                        <th>所属账户</th>
-                        <th>所属子账户</th>
-                        <th>流动资产/固定资产/投资资产</th>
-                        <th>记录者</th>
-                        <th>备注</th>
-                        <th>操作</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td><input type="checkbox" name="" lay-skin="primary" data-id="1"></td>
-                        <td class="hidden-xs">2019.2.28</td>
-                        <td class="hidden-xs">建设银行cc</td>
-                        <td class="hidden-xs">100</td>
-                        <td class="hidden-xs">100</td>
-                        <td>
-                            <button class="layui-btn layui-btn-mini layui-btn-normal">资产</button>
-                        </td>
-                        <td class="hidden-xs">CM家庭记账本</td>
-                        <td class="hidden-xs">花销账户</td>
-                        <td class="hidden-xs">doodads账户</td>
-                        <td class="hidden-xs">流动资产</td>
-                        <td class="hidden-xs">CC</td>
-                        <td class="hidden-xs">银行卡附表</td>
-                        <td>
-                            <div class="layui-inline">
-                                <button class="layui-btn layui-btn-small layui-btn-normal go-btn" data-id="1"
-                                        data-url="article-detail.html"><i class="layui-icon">&#xe642;</i></button>
-                                <button class="layui-btn layui-btn-small layui-btn-danger del-btn" data-id="1"
-                                        data-url="article-detail.html"><i class="layui-icon">&#xe640;</i></button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox" name="" lay-skin="primary" data-id="1"></td>
-                        <td class="hidden-xs">2019.2.28</td>
-                        <td class="hidden-xs">建设银行cc</td>
-                        <td class="hidden-xs">100</td>
-                        <td class="hidden-xs">100</td>
-                        <td>
-                            <button class="layui-btn layui-btn-mini layui-btn-normal">资产</button>
-                        </td>
-                        <td class="hidden-xs">CM家庭记账本</td>
-                        <td class="hidden-xs">花销账户</td>
-                        <td class="hidden-xs">doodads账户</td>
-                        <td class="hidden-xs">流动资产</td>
-                        <td class="hidden-xs">CC</td>
-                        <td class="hidden-xs">银行卡附表</td>
-                        <td>
-                            <div class="layui-inline">
-                                <button class="layui-btn layui-btn-small layui-btn-normal go-btn" data-id="1"
-                                        data-url="article-detail.html"><i class="layui-icon">&#xe642;</i></button>
-                                <button class="layui-btn layui-btn-small layui-btn-danger del-btn" data-id="1"
-                                        data-url="article-detail.html"><i class="layui-icon">&#xe640;</i></button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox" name="" lay-skin="primary" data-id="1"></td>
-                        <td class="hidden-xs">2019.2.28</td>
-                        <td class="hidden-xs">建设银行cc</td>
-                        <td class="hidden-xs">100</td>
-                        <td class="hidden-xs">100</td>
-                        <td>
-                            <button class="layui-btn layui-btn-mini layui-btn-normal">资产</button>
-                        </td>
-                        <td class="hidden-xs">CM家庭记账本</td>
-                        <td class="hidden-xs">花销账户</td>
-                        <td class="hidden-xs">doodads账户</td>
-                        <td class="hidden-xs">流动资产</td>
-                        <td class="hidden-xs">CC</td>
-                        <td class="hidden-xs">银行卡附表</td>
-                        <td>
-                            <div class="layui-inline">
-                                <button class="layui-btn layui-btn-small layui-btn-normal go-btn" data-id="1"
-                                        data-url="article-detail.html"><i class="layui-icon">&#xe642;</i></button>
-                                <button class="layui-btn layui-btn-small layui-btn-danger del-btn" data-id="1"
-                                        data-url="article-detail.html"><i class="layui-icon">&#xe640;</i></button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox" name="" lay-skin="primary" data-id="1"></td>
-                        <td class="hidden-xs">2019.2.28</td>
-                        <td class="hidden-xs">建设银行cc</td>
-                        <td class="hidden-xs">100</td>
-                        <td class="hidden-xs">100</td>
-                        <td>
-                            <button class="layui-btn layui-btn-mini layui-btn-normal">资产</button>
-                        </td>
-                        <td class="hidden-xs">CM家庭记账本</td>
-                        <td class="hidden-xs">花销账户</td>
-                        <td class="hidden-xs">doodads账户</td>
-                        <td class="hidden-xs">流动资产</td>
-                        <td class="hidden-xs">CC</td>
-                        <td class="hidden-xs">银行卡附表</td>
-                        <td>
-                            <div class="layui-inline">
-                                <button class="layui-btn layui-btn-small layui-btn-normal go-btn" data-id="1"
-                                        data-url="article-detail.html"><i class="layui-icon">&#xe642;</i></button>
-                                <button class="layui-btn layui-btn-small layui-btn-danger del-btn" data-id="1"
-                                        data-url="article-detail.html"><i class="layui-icon">&#xe640;</i></button>
-                            </div>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-                <div class="page-wrap">
-                    <ul class="pagination">
-                        <li class="disabled"><span>«</span></li>
-                        <li class="active"><span>1</span></li>
-                        <li>
-                            <a href="#">2</a>
-                        </li>
-                        <li>
-                            <a href="#">»</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-        <div class="chart-panel panel panel-default">
-            <div class="panel-header">负债名目</div>
-            <div class="layui-form" id="ablitity-table-list">
-                <table class="layui-table" lay-even lay-skin="nob">
-                    <colgroup>
-                        <col width="50">
-                    <thead>
-                    <tr>
-                        <th></th>
-                        <th>日期</th>
-                        <th>名称</th>
-                        <th>下月应还</th>
-                        <th>总欠款</th>
-                        <th>资产/负债</th>
-                        <th>所属记账本</th>
-                        <th>所属账户</th>
-                        <th>所属子账户</th>
-                        <th>记录者</th>
-                        <th>备注</th>
-                        <th>操作</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td><input type="checkbox" name="" lay-skin="primary" data-id="1"></td>
-                        <td class="hidden-xs">2019.2.28</td>
-                        <td class="hidden-xs">建设银行信用卡</td>
-                        <td class="hidden-xs">134</td>
-                        <td class="hidden-xs">456</td>
-                        <td>
-                            <button class="layui-btn layui-btn-mini layui-btn-warm">负债</button>
-                        </td>
-                        <td class="hidden-xs">CM家庭记账本</td>
-                        <td class="hidden-xs">花销账户</td>
-                        <td class="hidden-xs">doodads账户</td>
-                        <td class="hidden-xs">CC</td>
-                        <td class="hidden-xs">信用卡欠款</td>
-                        <td>
-                            <div class="layui-inline">
-                                <button class="layui-btn layui-btn-small layui-btn-normal go-btn" data-id="1"
-                                        data-url="article-detail.html"><i class="layui-icon">&#xe642;</i></button>
-                                <button class="layui-btn layui-btn-small layui-btn-danger del-btn" data-id="1"
-                                        data-url="article-detail.html"><i class="layui-icon">&#xe640;</i></button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox" name="" lay-skin="primary" data-id="1"></td>
-                        <td class="hidden-xs">2019.2.28</td>
-                        <td class="hidden-xs">建设银行信用卡</td>
-                        <td class="hidden-xs">134</td>
-                        <td class="hidden-xs">456</td>
-                        <td>
-                            <button class="layui-btn layui-btn-mini layui-btn-warm">负债</button>
-                        </td>
-                        <td class="hidden-xs">CM家庭记账本</td>
-                        <td class="hidden-xs">花销账户</td>
-                        <td class="hidden-xs">doodads账户</td>
-                        <td class="hidden-xs">CC</td>
-                        <td class="hidden-xs">信用卡欠款</td>
-                        <td>
-                            <div class="layui-inline">
-                                <button class="layui-btn layui-btn-small layui-btn-normal go-btn" data-id="1"
-                                        data-url="article-detail.html"><i class="layui-icon">&#xe642;</i></button>
-                                <button class="layui-btn layui-btn-small layui-btn-danger del-btn" data-id="1"
-                                        data-url="article-detail.html"><i class="layui-icon">&#xe640;</i></button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox" name="" lay-skin="primary" data-id="1"></td>
-                        <td class="hidden-xs">2019.2.28</td>
-                        <td class="hidden-xs">建设银行信用卡</td>
-                        <td class="hidden-xs">134</td>
-                        <td class="hidden-xs">456</td>
-                        <td>
-                            <button class="layui-btn layui-btn-mini layui-btn-warm">负债</button>
-                        </td>
-                        <td class="hidden-xs">CM家庭记账本</td>
-                        <td class="hidden-xs">花销账户</td>
-                        <td class="hidden-xs">doodads账户</td>
-                        <td class="hidden-xs">CC</td>
-                        <td class="hidden-xs">信用卡欠款</td>
-                        <td>
-                            <div class="layui-inline">
-                                <button class="layui-btn layui-btn-small layui-btn-normal go-btn" data-id="1"
-                                        data-url="article-detail.html"><i class="layui-icon">&#xe642;</i></button>
-                                <button class="layui-btn layui-btn-small layui-btn-danger del-btn" data-id="1"
-                                        data-url="article-detail.html"><i class="layui-icon">&#xe640;</i></button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox" name="" lay-skin="primary" data-id="1"></td>
-                        <td class="hidden-xs">2019.2.28</td>
-                        <td class="hidden-xs">建设银行信用卡</td>
-                        <td class="hidden-xs">134</td>
-                        <td class="hidden-xs">456</td>
-                        <td>
-                            <button class="layui-btn layui-btn-mini layui-btn-warm">负债</button>
-                        </td>
-                        <td class="hidden-xs">CM家庭记账本</td>
-                        <td class="hidden-xs">花销账户</td>
-                        <td class="hidden-xs">doodads账户</td>
-                        <td class="hidden-xs">CC</td>
-                        <td class="hidden-xs">信用卡欠款</td>
-                        <td>
-                            <div class="layui-inline">
-                                <button class="layui-btn layui-btn-small layui-btn-normal go-btn" data-id="1"
-                                        data-url="article-detail.html"><i class="layui-icon">&#xe642;</i></button>
-                                <button class="layui-btn layui-btn-small layui-btn-danger del-btn" data-id="1"
-                                        data-url="article-detail.html"><i class="layui-icon">&#xe640;</i></button>
-                            </div>
-                        </td>
-                    </tr>
-
-                    </tbody>
-                </table>
-                <div class="page-wrap">
-                    <ul class="pagination">
-                        <li class="disabled"><span>«</span></li>
-                        <li class="active"><span>1</span></li>
-                        <li>
-                            <a href="#">2</a>
-                        </li>
-                        <li>
-                            <a href="#">»</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
     </div>
 </div>
 <script type="text/javascript">
     {#var checkbook_list_json =  JSON.parse('{{ checkbook_list_json|tojson }}');#}
 </script>
+<script src="../../static/admin/js/lib/echarts.min.js"></script>
 <script src="../../static/admin/layui/layui.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../static/admin/js/common.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../static/admin/js/assets_manage.js" type="text/javascript" charset="utf-8"></script>

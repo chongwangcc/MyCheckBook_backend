@@ -496,7 +496,7 @@ class AssetsAPI(Resource):
     def get(self):
         args = self.get_parser.parse_args()
         result = {}
-        if args["action"] == "SUM" or args["action"]=="ALL":
+        if args["action"] == "SUM" or args["action"] == "ALL":
             t_sum = {}
             t_sum["总资产"] = {
                 "sum": 50980,
@@ -552,14 +552,14 @@ class AssetsAPI(Resource):
                     }
                 ],
             }
-            result["sum"]={
+            result["sum"] = {
                 "合并账户":t_sum,
                 "花销账户":t_sum,
                 "投资账户":t_sum,
                 "储蓄账户":t_sum,
             }
             pass
-        if args["action"] == "appendix" or args["action"]=="ALL":
+        if args["action"] == "appendix" or args["action"] == "ALL":
             t_appendix = {}
             t_appendix["银行卡"] = [
                 {"name":"建行银行卡（CC）", "money":1234, "account":"花销账户-Doodads账户"},

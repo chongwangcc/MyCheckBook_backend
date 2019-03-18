@@ -1,3 +1,95 @@
+function init_bar(assets_echarts, liability_echarts, account_name, account_sum){
+    var max_nums = 0;
+    var options1 =  {
+        legend: {
+            data: []
+        },
+        grid: {
+            right: '45',
+        },
+        xAxis:  {
+            inverse: true,
+            type: 'value'
+        },
+        yAxis: {
+            type: 'category',
+            position: 'right',
+            data: ['总资产']
+        },
+        series: [ ]
+    };
+    var options2 =  {
+        legend: {
+            data: []
+        },
+        grid: {
+            left: '45',
+        },
+        xAxis:  {
+            type: 'value'
+        },
+        yAxis: {
+            type: 'category',
+            data: ['总负债']
+        },
+        series: []
+    };
+
+    function gen_data(option, type){
+        var legend = [];
+        var series = [];
+        if(account_sum[type].sum>max_nums){
+            max_nums = account_sum[type].sum;
+        }
+        for(var tt in account_sum[type].data){
+            option.legend.data.push(account_sum[type].data[tt].name);
+            option.series.push({
+                name: account_sum[type].data[tt].name,
+                type: 'bar',
+                stack: '总量',
+                label: {
+                    normal: {
+                        show: true,
+                        position: 'insideRight'
+                    }
+                },
+                data: [account_sum[type].data[tt].sum]
+            });
+        }
+    }
+
+    gen_data(options1, "总资产");
+    gen_data(options2, "总负债");
+
+    options1.xAxis.max = max_nums;
+    options2.xAxis.max = max_nums;
+
+    assets_echarts.setOption(options1);
+    liability_echarts.setOption(options2);
+}
+
+function gen_table_data(account_sum, type){
+    var data = []
+    for(var i in account_sum[type].data){
+        data_1 = account_sum[type].data[i]
+       data.push({
+           "name":data_1["name"],
+           "org_price":0,
+           "now_price":data_1["sum"]
+        });
+        for(var j in data_1["data"]){
+            for(var k in data_1["data"][j]){
+                  data.push({
+                   "name":"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+k,
+                   "org_price":0,
+                   "now_price":data_1["data"][j][k]
+                });
+            }
+        }
+    }
+    return data
+}
+
 layui.use(['layer', 'jquery',"table", "laydate", "element"], function () {
     var layer = layui.layer;
     var table = layui.table;
@@ -28,38 +120,67 @@ layui.use(['layer', 'jquery',"table", "laydate", "element"], function () {
     console.log(assets_full_json);
 
     // 根据json串，初始化上下两个Tab
+    var myCharts = []
     function init_sum_tab(account_name, account_sum){
-        var htmls = "<div class=\"panel-body\" id=\"income_category_echart\" style=\"height: 376px;\"></div>"
-        return "<div class=\"layui-tab-item\"><label>"+account_name+"</label></div>";
-    };
+        var t_echart1 = echarts.init(document.getElementById(account_name+"_assets_total_echarts"));
+        var t_echart2 = echarts.init(document.getElementById(account_name+"_liability_total_echarts"));
+        myCharts.push(t_echart1);
+        myCharts.push(t_echart2);
+        init_bar(t_echart1,t_echart2,account_name,account_sum);
+        console.log(account_name);
+        console.log(account_sum);
 
-    function init_appendix_tab(account_name, account_sum){
-        return "<div class=\"layui-tab-item\"><label>"+account_name+"</label></div>";
+        table.render({
+              elem: '#'+account_name+'_assets-sum'
+              ,page: false
+              ,cols: [[
+                  {field:'name',title: '总资产' }
+                  ,{field:'org_price', title: '原价 12003元' }
+                  ,{field:'now_price', title: '现价 '+account_sum["总资产"].sum+'元'}
+                ]]
+                ,data:gen_table_data(account_sum,"总资产")
+            });
+        table.render({
+          elem: '#'+account_name+'_liability-sum'
+          ,page: false
+          ,cols: [[
+              {field:'name',title: '总负债'}
+              ,{field:'org_price', title: '原价 12003元'}
+              ,{field:'now_price', title: '现价 '+account_sum["总负债"].sum+'元'}
+            ]]
+            ,data:gen_table_data(account_sum, "总负债")
+        });
+
     };
 
     for(var prop in assets_full_json["sum"]){
         var account_name = prop
         var account_sum = assets_full_json["sum"][account_name]
-        $("#sum_tab_title").append("<li>"+account_name+"</li>")
-        $("#sum_tab_content").append(init_sum_tab(account_name, account_sum))
+        init_sum_tab(account_name,account_sum)
     }
-    for(var prop in assets_full_json["appendix"]){
-        var account_name = prop
-        var account_sum = assets_full_json["appendix"][account_name]
-        $("#appendix_tab_title").append("<li>"+account_name+"</li>")
-        $("#appendix_tab_content").append(init_appendix_tab(account_name,account_sum))
-    }
+    // for(var prop in assets_full_json["appendix"]){
+    //     var account_name = prop
+    //     var account_sum = assets_full_json["appendix"][account_name]
+    //     $("#appendix_tab_title").append("<li>"+account_name+"</li>")
+    //     $("#appendix_tab_content").append(init_appendix_tab(account_name,account_sum))
+    // }
 
     // JS 填充相关表格
 
+    $(window).resize(function () {
+        for (j = 0; j < myCharts.length; j++) {
+            myCharts[j].resize();
+        }
+    });
 
-
-
-
-
-
-
-
-
-
+    element.on('tab(test)',function (data) {
+        for (j = 0; j < myCharts.length; j++) {
+            myCharts[j].resize();
+        };
+        // for(var prop in assets_full_json["sum"]){
+        //     var account_name = prop
+        //     var account_sum = assets_full_json["sum"][account_name]
+        //     init_sum_tab(account_name,account_sum)
+        // }
+    });
 });
