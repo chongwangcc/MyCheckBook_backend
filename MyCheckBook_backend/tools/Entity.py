@@ -247,6 +247,7 @@ class AppendixInfo(Model):
     row_json = CharField()
     columns_json = CharField()
     content_json = CharField()
+    update_time_str = CharField()
 
     def __str__(self):
         return str(self.to_dict())

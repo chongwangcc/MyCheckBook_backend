@@ -13,6 +13,7 @@ from datetime import datetime
 from random import choice
 
 from tools.Entity import *
+from tools.utils import *
 
 g_sqlite3_path = "./data/sqlit3.db"
 set_db_name(g_sqlite3_path)
@@ -202,6 +203,7 @@ class DetailTools:
         t_detail.checkbook = int(detail_dict["checkbook_id"])
         t_detail.type = detail_dict["type"]
         t_detail.isCash = detail_dict["isCash"]
+        t_detail.updatetime = get_now_str()
         if "-" not in detail_dict["account_name"] :
             account_name = detail_dict["account_name"]
             seconds_account_name=""
@@ -436,7 +438,7 @@ class AppendixTools:
         """
 
     @classmethod
-    def save_appendixs(cls, checkbook_id, month_str, appendix_name, df):
+    def save_appendixs(cls, checkbook_id, month_str, appendix_name, df, name="名称"):
         """
         保存一个附表
         :param checkbook_id:
@@ -445,6 +447,31 @@ class AppendixTools:
         :param df:
         :return:
         """
+        columns = list(df.columns)
+        name_rows = list(df[name])
+        content = df.to_dict(orient="dict")
+
+        # 1.判断有没有旧的值
+        append_info = AppendixInfo()
+        old_append_info = AppendixInfo.get(checkbook=id,
+                                           month=month_str,
+                                           appendix_name=appendix_name)
+        # 之前有值得话，覆盖之前的值
+        if old_append_info is not None:
+            old_append_info.id = old_append_info.id
+
+
+        append_info.checkbook = checkbook_id
+        append_info.month = month_str
+        append_info.appendix_name = appendix_name
+        append_info.row_json = json.dumps(name_rows)
+        append_info.columns_json = json.dumps(columns)
+        append_info.content_json = json.dumps(content)
+        append_info.update_time_str = get_now_str()
+        append_info.save()
+        return True
+
+
 
 
 if __name__ == "__main__":
