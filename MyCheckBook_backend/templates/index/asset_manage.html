@@ -51,11 +51,22 @@
                     <div class="layui-tab-item">
                         <div class="panel-body" id="total_assets_liability" style="height: 20px;"></div>
                         <div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
-                            <table class="layui-table" lay-even lay-skin="nob" lay-filter="detail-table" id="detail-table">
+                            <table class="layui-table" lay-even lay-skin="nob" lay-filter="detail-table" id="assets-sum">
+                                <div class="layui-tab-item">
+                                    <div class="panel-body" id="spent_category_echart" style="height: 376px;"></div>
+                                    <div class="layui-row chart-panel panel panel-default">
+                                        <div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+                                            <table class="layui-table" lay-even lay-skin="nob" lay-filter="detail-table" id="assets-sum-table"></table>
+                                        </div>
+                                        <div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+                                            <table class="layui-table" lay-even lay-skin="nob" lay-filter="detail-table" id="liability-sum-table"></table>
+                                        </div>
+                                    </div>
+                                </div>
 					        </table>
                         </div>
                         <div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
-                            <table class="layui-table" lay-even lay-skin="line" lay-filter="detail-table" id="detail-table">
+                            <table class="layui-table" lay-even lay-skin="line" lay-filter="detail-table" id="assets-appendix">
 					        </table>
                         </div>
                     </div>

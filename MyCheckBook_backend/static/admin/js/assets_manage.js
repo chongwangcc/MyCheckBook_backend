@@ -29,6 +29,7 @@ layui.use(['layer', 'jquery',"table", "laydate", "element"], function () {
 
     // 根据json串，初始化上下两个Tab
     function init_sum_tab(account_name, account_sum){
+        var htmls = "<div class=\"panel-body\" id=\"income_category_echart\" style=\"height: 376px;\"></div>"
         return "<div class=\"layui-tab-item\"><label>"+account_name+"</label></div>";
     };
 
@@ -48,6 +49,9 @@ layui.use(['layer', 'jquery',"table", "laydate", "element"], function () {
         $("#appendix_tab_title").append("<li>"+account_name+"</li>")
         $("#appendix_tab_content").append(init_appendix_tab(account_name,account_sum))
     }
+
+    // JS 填充相关表格
+
 
 
 
