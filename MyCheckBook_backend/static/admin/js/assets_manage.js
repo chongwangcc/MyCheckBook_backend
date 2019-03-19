@@ -151,26 +151,76 @@ layui.use(['layer', 'jquery',"table", "laydate", "element"], function () {
     };
 
     function init_appendix_tab(account_name, account_sum){
-        console.log(account_name);
-        console.log(account_sum);
+
+        var cols = [];
+        var data = [];
+        for(var col in account_sum.columns){
+            col = account_sum.columns[col]
+            cols.push({field:col,title: col, edit: 'text' })
+        };
+        for(var i=0; i< account_sum.rows.length; i++){
+            var t_data = {}
+            for(var col in account_sum.columns){
+                col = account_sum.columns[col]
+                t_data[col] = account_sum.content[col][i]
+            }
+            data.push(t_data)
+        }
         tableIns = table.render({
               elem: '#'+account_name+'_appendix_table'
               ,page: false
-              ,cols: [[
-                  {field:'name',title: '总资产', edit: 'text' }
-                  ,{field:'org_price', title: '原价 12003元', edit: 'text' }
-                  ,{field:'now_price', title: '现价 ', edit: 'text'}
-                ]]
-                ,data:[]
+              ,limit:100
+              ,cols: [cols]
+              ,data:data
             });
         myTables[account_name] = tableIns;
+
+        $(document).on('click','#'+account_name+'_add_row',function(){
+            var oldData = table.cache[account_name+"_appendix_table"];
+            old_cols =  myTables[account_name].config.cols
+            var newRow = {};
+            for(var c in old_cols){
+                newRow[c] = ""
+            };
+            oldData.push(newRow);
+            myTables[account_name].reload({
+                data : oldData
+            });
+         });
+        $(document).on('click','#'+account_name+'_add_col',function(){
+             // 弹出对话框设置列名
+            layer.prompt({
+                formType:0,
+                title:"请输入列名",
+            }, function(value, index, elem){
+                // 重新渲染表格
+                var oldData = table.cache[account_name+"_appendix_table"];
+                old_cols =  myTables[account_name].config.cols;
+                var new_cols = {field:value, title:value, edit: 'text' };
+                old_cols[0].push(new_cols);
+                tableIns = table.render({
+                    elem: '#'+account_name+'_appendix_table'
+                    ,page: false
+                    ,cols: old_cols
+                    ,limit:100
+                    ,data:oldData
+                });
+                myTables[account_name] = tableIns;
+
+                //关闭窗口
+                layer.close(index);
+            });
+         });
+
+        //TODO 保存表格数据到后台
+        $(document).on('click','#'+account_name+'_save',function(){});
     }
 
-    for(var prop in assets_full_json["sum"]){
-        var account_name = prop
-        var account_sum = assets_full_json["sum"][account_name]
-        init_sum_tab(account_name,account_sum)
-    }
+    // for(var prop in assets_full_json["sum"]){
+    //     var account_name = prop
+    //     var account_sum = assets_full_json["sum"][account_name]
+    //     init_sum_tab(account_name,account_sum)
+    // }
     for(var prop in assets_full_json["appendix"]){
         var account_name = prop;
         var account_sum = assets_full_json["appendix"][account_name];
@@ -194,31 +244,7 @@ layui.use(['layer', 'jquery',"table", "laydate", "element"], function () {
         //     init_sum_tab(account_name,account_sum)
         // }
     });
-     $(document).on('click','#银行卡_add_row',function(){
-        var oldData = table.cache["银行卡_appendix_table"];
-        console.log(oldData);
-        var newRow = {name: new Date().valueOf(), org_price: null, now_price: '请填写名称'};
-        oldData.push(newRow);
-        myTables["银行卡"].reload({
-            data : oldData
-        });
-         layer.msg('hello');
-     });
-     $(document).on('click','#银行卡_add_col',function(){
-          var oldData = table.cache["银行卡_appendix_table"];
-          old_cols =  myTables["银行卡"].config.cols
-         var new_cols = {field:'unname', title: 'unname', edit: 'text' }
-         old_cols[0].push(new_cols)
-         console.log(old_cols)
-         tableIns = table.render({
-              elem: '#'+'银行卡'+'_appendix_table'
-              ,page: false
-              ,cols: old_cols
-                ,data:oldData
-            });
-        myTables[account_name] = tableIns;
-         layer.msg('hello');
-     });
+
 
      console.log()
 });

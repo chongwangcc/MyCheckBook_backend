@@ -495,86 +495,12 @@ class AssetsAPI(Resource):
 
     def get(self):
         args = self.get_parser.parse_args()
-        result = {}
-        if args["action"] == "SUM" or args["action"] == "ALL":
-            t_sum = {}
-            t_sum["总资产"] = {
-                "sum": 50980,
-                "data": [
-                    {"name": "流动资产",
-                     "sum": 300,
-                     "data": [
-                         {"银行卡": 100},
-                         {"货币基金": 200},
-                         {"手头现金": 300},
-                     ]},
-                    {
-                        "name": "固定资产",
-                     "sum": 400,
-                     "data": [
-                         {"定期存款": 400},
-                         {"外债资产": 500}
-                     ]},
-                    {
-                        "name": "投资资产",
-                        "sum": 500,
-                        "data": [
-                            {"股票资产": 400},
-                            {"定投资产": 6000}
-                        ]
-                    }
-                ],
-            }
-            t_sum["总负债"] = {
-                "sum": 5090,
-                "data": [
-                    {
-                        "name": "流动负债",
-                        "sum": 300,
-                        "data": [
-                             {"信用卡": 100},
-                             {"欠朋友": 200},
-                        ]
-                    },
-                    {
-                        "name": "长期负债",
-                        "sum": 400,
-                        "data": [
-                            {"信用卡": 400},
-                        ]
-                    },
-                    {
-                        "name": "投资负债",
-                        "sum": 500,
-                        "data": [
-                            {"股票杠杆": 400},
-                        ]
-                    }
-                ],
-            }
-            result["sum"] = {
-                "合并账户":t_sum,
-                "花销账户":t_sum,
-                "投资账户":t_sum,
-                "储蓄账户":t_sum,
-            }
-            pass
-        if args["action"] == "appendix" or args["action"] == "ALL":
-            t_appendix = {}
-            t_appendix["银行卡"] = [
-                {"name":"建行银行卡（CC）", "money":1234, "account":"花销账户-Doodads账户"},
-                {"name": "建行银行卡（MM）", "money": 1234, "account": "花销账户-Doodads账户"},
-            ]
-            t_appendix["货币基金"] = [
-                {"name":"支付宝-余额宝", "money":1234, "account":"花销账户-Doodads账户"},
-                {"name": "理财通-余额+", "money": 1234, "account": "花销账户-Doodads账户"},
-            ]
-            t_appendix["信用卡"] = [
-                {"name": "支付宝-花呗", "money":1234, "account":"花销账户-Doodads账户"},
-                {"name": "信用卡-建行（CC）", "money": 1234, "account": "花销账户-Doodads账户"},
-            ]
-            result["appendix"]= t_appendix
-            pass
+        checkbook_id = args["checkbook_id"]
+        month_str = args["month_str"]
+        action = args["action"]
+
+        result = AssetsTools.get_assets_full(checkbook_id, month_str, action)
+
         return jsonify(result)
 
 

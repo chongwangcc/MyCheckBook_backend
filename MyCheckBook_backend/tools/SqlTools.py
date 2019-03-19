@@ -406,6 +406,84 @@ class AssetsTools:
         return result
         pass
 
+    @classmethod
+    def get_assets_full(cls, checkbook_id, month_str, action="ALL"):
+        """
+        获得assets 全部内容
+        :param checkbook_id:
+        :param month_str:
+        :param action:
+        :return:
+        """
+        result = {}
+        if action == "SUM" or action == "ALL":
+            t_sum = {}
+            t_sum["总资产"] = {
+                "sum": 50980,
+                "data": [
+                    {"name": "流动资产",
+                     "sum": 300,
+                     "data": [
+                         {"银行卡": 100},
+                         {"货币基金": 200},
+                         {"手头现金": 300},
+                     ]},
+                    {
+                        "name": "固定资产",
+                     "sum": 400,
+                     "data": [
+                         {"定期存款": 400},
+                         {"外债资产": 500}
+                     ]},
+                    {
+                        "name": "投资资产",
+                        "sum": 500,
+                        "data": [
+                            {"股票资产": 400},
+                            {"定投资产": 6000}
+                        ]
+                    }
+                ],
+            }
+            t_sum["总负债"] = {
+                "sum": 5090,
+                "data": [
+                    {
+                        "name": "流动负债",
+                        "sum": 300,
+                        "data": [
+                             {"信用卡": 100},
+                             {"欠朋友": 200},
+                        ]
+                    },
+                    {
+                        "name": "长期负债",
+                        "sum": 400,
+                        "data": [
+                            {"信用卡": 400},
+                        ]
+                    },
+                    {
+                        "name": "投资负债",
+                        "sum": 500,
+                        "data": [
+                            {"股票杠杆": 400},
+                        ]
+                    }
+                ],
+            }
+            result["sum"] = {
+                "合并账户":t_sum,
+                "花销账户":t_sum,
+                "投资账户":t_sum,
+                "储蓄账户":t_sum,
+            }
+            pass
+        if action == "appendix" or action == "ALL":
+            t_appendix = AppendixTools.get_appendix_name_list(checkbook_id,month_str)
+            result["appendix"]= t_appendix
+        return result
+
 
 class AppendixTools:
 
@@ -429,8 +507,6 @@ class AppendixTools:
 
         return df, rows, columns
 
-
-
     @classmethod
     def get_appendix_name_list(cls, checkbook_id, month_str):
         """
@@ -441,7 +517,17 @@ class AppendixTools:
         """
         old_append_infos = AppendixInfo.gets(checkbook=checkbook_id,
                                            month_str=month_str)
-
+        result = {}
+        for info in old_append_infos:
+            rows = json.loads(info.row_json)
+            columns = json.loads(info.columns_json)
+            content = json.loads(info.content_json)
+            result[info.appendix_name] = {
+                "rows": rows,
+                "columns": columns,
+                "content": content
+            }
+        return result
 
     @classmethod
     def get_empty_appendixs(cls,checkkbook_id, month_str):
@@ -487,16 +573,12 @@ class AppendixTools:
         return True
 
 
-
-
 if __name__ == "__main__":
     pass
     # detias = get_Details(checkbook_id=1, month_str="2019-02")
     # print(detias)
-    df,rows, columns = AppendixTools.get_appendix_df(1, "2019-03", "银行卡")
-    print(df)
-    print(rows)
-    print(columns)
+    result = AppendixTools.get_appendix_name_list(1, "2019-03")
+    print(result)
 
 
 

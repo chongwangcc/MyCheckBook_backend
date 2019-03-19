@@ -97,7 +97,9 @@ def asset_manage():
     资产负债管理界面
     :return:
     """
-    assets_full_json = AssetsTools.get_tmm();
+    checkbook_id =1
+    month_str = "2019-03"
+    assets_full_json = AssetsTools.get_assets_full(checkbook_id, month_str)
     return render_template('./index/asset_manage.html',assets_full_json=assets_full_json)
 
 
