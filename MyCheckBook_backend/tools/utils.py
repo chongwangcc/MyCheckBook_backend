@@ -21,3 +21,28 @@ def get_now_str():
     from datetime import datetime
     now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     return now_str
+
+
+class AssetsSumUtils():
+    """
+    计算Assets 汇总信息的类
+    """
+    def __init__(self):
+        self.all_result = {}
+        self.sumName = "合并账户"
+
+    def add(self, org_price, now_price, appendix_name, fluidity, account_name):
+        """
+        添加一条记录
+        :param org_price:
+        :param now_price:
+        :param appendix_name:
+        :param fluidity:
+        :param account_name:
+        :return:
+        """
+
+    def get_final_result(self):
+        return self.all_result
+
+

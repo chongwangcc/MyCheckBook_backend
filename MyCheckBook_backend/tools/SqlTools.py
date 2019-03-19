@@ -416,7 +416,11 @@ class AssetsTools:
         :return:
         """
         result = {}
+        t_appendix = AppendixTools.get_appendix_name_list(checkbook_id, month_str)
+        if action == "appendix" or action == "ALL":
+            result["appendix"]= t_appendix
         if action == "SUM" or action == "ALL":
+            sum_entity = AssetsSumUtils()
             t_sum = {}
             t_sum["总资产"] = {
                 "sum": 50980,
@@ -478,10 +482,32 @@ class AssetsTools:
                 "投资账户":t_sum,
                 "储蓄账户":t_sum,
             }
+            for name, appendix in t_appendix.items():
+                t_row = appendix["rows"]
+                t_columns = appendix["columns"]
+                t_content = appendix["content"]
+                t_df = pd.DataFrame(t_content)
+                # TODO 遍历df, 计算各类汇总
+                for index, row in t_df.iterrows():
+                    if name in ["信用卡负债"]:
+                        sum_entity.add(row["原价"],
+                                       row["现价"],
+                                       name,
+                                       row["所属账户"],
+                                       row["流动性"])
+                        pass
+                    else:
+                        sum_entity.add(row["原价"],
+                                       row["现价"],
+                                       name,
+                                       row["所属账户"],
+                                       row["流动性"])
+
+                print(t_df)
+
+
             pass
-        if action == "appendix" or action == "ALL":
-            t_appendix = AppendixTools.get_appendix_name_list(checkbook_id,month_str)
-            result["appendix"]= t_appendix
+
         return result
 
 
