@@ -82,10 +82,14 @@ class AssetsSumUtils:
                   sum_type="总资产"):
         self.all_result[account1][sum_type]["org_sum"] += org_price
         self.all_result[account1][sum_type]["now_sum"] += now_price
+        self.all_result[account1][sum_type]["org_sum"] = round(self.all_result[account1][sum_type]["org_sum"], 2)
+        self.all_result[account1][sum_type]["now_sum"] = round(self.all_result[account1][sum_type]["now_sum"], 2)
         for t_dict in self.all_result[account1][sum_type]["data"]:
             if t_dict["name"] == fluidity:
                 t_dict["org_sum"] += org_price
                 t_dict["now_sum"] += now_price
+                t_dict["org_sum"] = round( t_dict["org_sum"], 2)
+                t_dict["now_sum"] = round(t_dict["now_sum"], 2)
                 t_apendix_dict = None
                 for tt in t_dict["data"]:
                     if tt["name"] == appendix_name:
@@ -96,6 +100,8 @@ class AssetsSumUtils:
                 else:
                     t_apendix_dict["org_sum"] += org_price
                     t_apendix_dict["now_sum"] += now_price
+                    t_apendix_dict["org_sum"] = round(t_apendix_dict["org_sum"], 2)
+                    t_apendix_dict["now_sum"] = round(t_apendix_dict["now_sum"], 2)
                 break
 
     def add(self, org_price, now_price, appendix_name, account_name, fluidity ):

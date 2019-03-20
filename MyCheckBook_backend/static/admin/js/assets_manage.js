@@ -1,6 +1,7 @@
 function init_bar(assets_echarts, liability_echarts, account_name, account_sum){
     var max_nums = 0;
     var options1 =  {
+         color: ['#00FF7F','#3CB371','#7FFF00'],
         legend: {
             data: []
         },
@@ -19,6 +20,7 @@ function init_bar(assets_echarts, liability_echarts, account_name, account_sum){
         series: [ ]
     };
     var options2 =  {
+        color: ['#FF4500','#FA8072','#BC8F8F'],
         legend: {
             data: []
         },
@@ -38,8 +40,8 @@ function init_bar(assets_echarts, liability_echarts, account_name, account_sum){
     function gen_data(option, type){
         var legend = [];
         var series = [];
-        if(account_sum[type].sum>max_nums){
-            max_nums = account_sum[type].sum;
+        if(account_sum[type].now_sum>max_nums){
+            max_nums = account_sum[type].now_sum;
         }
         for(var tt in account_sum[type].data){
             option.legend.data.push(account_sum[type].data[tt].name);
@@ -53,10 +55,11 @@ function init_bar(assets_echarts, liability_echarts, account_name, account_sum){
                         position: 'insideRight'
                     }
                 },
-                data: [account_sum[type].data[tt].sum]
+                data: [account_sum[type].data[tt].now_sum]
             });
         }
     }
+    console.log(account_sum["总资产"])
 
     gen_data(options1, "总资产");
     gen_data(options2, "总负债");
@@ -126,8 +129,6 @@ layui.use(['layer', 'jquery',"table", "laydate", "element"], function () {
         myCharts.push(t_echart1);
         myCharts.push(t_echart2);
         init_bar(t_echart1,t_echart2,account_name,account_sum);
-        console.log(account_name)
-        console.log(account_sum)
         table.render({
               elem: '#'+account_name+'_assets-sum'
               ,page: false
