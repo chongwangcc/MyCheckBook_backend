@@ -165,6 +165,18 @@ class CheckbookTools:
         checkbook.save()
         return True
 
+    @classmethod
+    def get_checkbook_account_list(cls, checkbook_id):
+        account_list = []
+        checkbook = Checkbook.get(id=checkbook_id)
+        account_id_list = checkbook.account_id_list
+        if account_id_list is not None and len(account_id_list) > 0:
+            t_account_id_list = json.loads(account_id_list)
+            for t_account_id in t_account_id_list:
+                account_t = AccountInfo.get(id=t_account_id)
+                account_list.append(account_t.fullname)
+        return account_list
+
 
 class DetailTools:
     """
@@ -204,11 +216,7 @@ class DetailTools:
         t_detail.type = detail_dict["type"]
         t_detail.isCash = detail_dict["isCash"]
         t_detail.updatetime = get_now_str()
-        if "-" not in detail_dict["account_name"] :
-            account_name = detail_dict["account_name"]
-            seconds_account_name=""
-        else:
-            account_name,seconds_account_name = detail_dict["account_name"].split("-")
+        account_name, seconds_account_name = account_split(detail_dict["account_name"])
         t_detail.account_name = account_name
         t_detail.seconds_account_name = seconds_account_name
         t_detail.combine_details = json.dumps([])
@@ -305,20 +313,16 @@ class DetailTools:
         sql += " checkbook == " + str(checkbook_id) + " and "
         sql += " month_str == '" + str(month_str) + "' "
         if account_name is not None:
-            account1, account2 = account_name, None
-            if "-" in str(account_name):
-                account1, account2 = str(account_name).split("-")
-            if account1 is not None:
+            account1, account2 = account_split(account_name)
+            if account1 is not None and len(account1)>0:
                 sql += " and " + " account_name == '" + str(account1) + "' "
-            if account2 is not None:
+            if account2 is not None and len(account1)>0:
                 sql += " and " + " seconds_account_name == '" + str(account2) + "' "
         if mtype is not None:
             sql += " and " + " type == '" + str(mtype) + "' "
         if category is not None:
             sql += " and " + " category == '" + str(category) + "' "
-
         sql += " ORDER BY date DESC, id ASC "
-
         df = pd.read_sql_query(sql, conn)
         return df
 
@@ -420,93 +424,32 @@ class AssetsTools:
         if action == "appendix" or action == "ALL":
             result["appendix"]= t_appendix
         if action == "SUM" or action == "ALL":
-            sum_entity = AssetsSumUtils()
-            t_sum = {}
-            t_sum["总资产"] = {
-                "sum": 50980,
-                "data": [
-                    {"name": "流动资产",
-                     "sum": 300,
-                     "data": [
-                         {"银行卡": 100},
-                         {"货币基金": 200},
-                         {"手头现金": 300},
-                     ]},
-                    {
-                        "name": "固定资产",
-                     "sum": 400,
-                     "data": [
-                         {"定期存款": 400},
-                         {"外债资产": 500}
-                     ]},
-                    {
-                        "name": "投资资产",
-                        "sum": 500,
-                        "data": [
-                            {"股票资产": 400},
-                            {"定投资产": 6000}
-                        ]
-                    }
-                ],
-            }
-            t_sum["总负债"] = {
-                "sum": 5090,
-                "data": [
-                    {
-                        "name": "流动负债",
-                        "sum": 300,
-                        "data": [
-                             {"信用卡": 100},
-                             {"欠朋友": 200},
-                        ]
-                    },
-                    {
-                        "name": "长期负债",
-                        "sum": 400,
-                        "data": [
-                            {"信用卡": 400},
-                        ]
-                    },
-                    {
-                        "name": "投资负债",
-                        "sum": 500,
-                        "data": [
-                            {"股票杠杆": 400},
-                        ]
-                    }
-                ],
-            }
-            result["sum"] = {
-                "合并账户":t_sum,
-                "花销账户":t_sum,
-                "投资账户":t_sum,
-                "储蓄账户":t_sum,
-            }
+            sum_entity = AssetsSumUtils(CheckbookTools.get_checkbook_account_list(checkbook_id))
             for name, appendix in t_appendix.items():
                 t_row = appendix["rows"]
                 t_columns = appendix["columns"]
                 t_content = appendix["content"]
                 t_df = pd.DataFrame(t_content)
-                # TODO 遍历df, 计算各类汇总
+                #  遍历df, 计算各类汇总
                 for index, row in t_df.iterrows():
                     if name in ["信用卡负债"]:
-                        sum_entity.add(row["原价"],
-                                       row["现价"],
+                        sum_entity.add(row["当月应还（元）"],
+                                       row["当月应还（元）"],
                                        name,
                                        row["所属账户"],
-                                       row["流动性"])
-                        pass
+                                       "流动负债")
+                        sum_entity.add(row["总欠款（元）"]-row["当月应还（元）"],
+                                       row["总欠款（元）"] - row["当月应还（元）"],
+                                       name,
+                                       row["所属账户"],
+                                       "长期负债")
                     else:
                         sum_entity.add(row["原价"],
                                        row["现价"],
                                        name,
                                        row["所属账户"],
                                        row["流动性"])
-
-                print(t_df)
-
-
-            pass
+            result["sum"] = sum_entity.get_final_result()
 
         return result
 
@@ -600,11 +543,15 @@ class AppendixTools:
 
 
 if __name__ == "__main__":
+    ree = CheckbookTools.get_checkbook_account_list(1)
+    print(ree)
     pass
     # detias = get_Details(checkbook_id=1, month_str="2019-02")
     # print(detias)
-    result = AppendixTools.get_appendix_name_list(1, "2019-03")
-    print(result)
+    # result = AppendixTools.get_appendix_name_list(1, "2019-03")
+    # print(result)
+
+
 
 
 

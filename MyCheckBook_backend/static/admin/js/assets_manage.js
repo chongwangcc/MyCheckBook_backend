@@ -74,17 +74,15 @@ function gen_table_data(account_sum, type){
         data_1 = account_sum[type].data[i]
        data.push({
            "name":data_1["name"],
-           "org_price":0,
-           "now_price":data_1["sum"]
+           "org_price":data_1["org_sum"],
+           "now_price":data_1["now_sum"]
         });
         for(var j in data_1["data"]){
-            for(var k in data_1["data"][j]){
-                  data.push({
-                   "name":"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+k,
-                   "org_price":0,
-                   "now_price":data_1["data"][j][k]
-                });
-            }
+          data.push({
+           "name":"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+data_1["data"][j]["name"],
+           "org_price":data_1["data"][j]["org_sum"],
+           "now_price":data_1["data"][j]["now_sum"]
+            });
         }
     }
     return data
@@ -128,13 +126,15 @@ layui.use(['layer', 'jquery',"table", "laydate", "element"], function () {
         myCharts.push(t_echart1);
         myCharts.push(t_echart2);
         init_bar(t_echart1,t_echart2,account_name,account_sum);
+        console.log(account_name)
+        console.log(account_sum)
         table.render({
               elem: '#'+account_name+'_assets-sum'
               ,page: false
               ,cols: [[
                   {field:'name',title: '总资产' }
-                  ,{field:'org_price', title: '原价 12003元' }
-                  ,{field:'now_price', title: '现价 '+account_sum["总资产"].sum+'元'}
+                  ,{field:'org_price', title: '原价 '+account_sum["总资产"].org_sum+'元' }
+                  ,{field:'now_price', title: '现价 '+account_sum["总资产"].now_sum+'元'}
                 ]]
                 ,data:gen_table_data(account_sum,"总资产")
             });
@@ -143,8 +143,8 @@ layui.use(['layer', 'jquery',"table", "laydate", "element"], function () {
           ,page: false
           ,cols: [[
               {field:'name',title: '总负债'}
-              ,{field:'org_price', title: '原价 12003元'}
-              ,{field:'now_price', title: '现价 '+account_sum["总负债"].sum+'元'}
+              ,{field:'org_price', title: '原价 '+ account_sum["总资产"].org_sum + '元'}
+              ,{field:'now_price', title: '现价 '+ account_sum["总负债"].now_sum + '元'}
             ]]
             ,data:gen_table_data(account_sum, "总负债")
         });
@@ -216,11 +216,11 @@ layui.use(['layer', 'jquery',"table", "laydate", "element"], function () {
         $(document).on('click','#'+account_name+'_save',function(){});
     }
 
-    // for(var prop in assets_full_json["sum"]){
-    //     var account_name = prop
-    //     var account_sum = assets_full_json["sum"][account_name]
-    //     init_sum_tab(account_name,account_sum)
-    // }
+    for(var prop in assets_full_json["sum"]){
+        var account_name = prop
+        var account_sum = assets_full_json["sum"][account_name]
+        init_sum_tab(account_name,account_sum)
+    }
     for(var prop in assets_full_json["appendix"]){
         var account_name = prop;
         var account_sum = assets_full_json["appendix"][account_name];
