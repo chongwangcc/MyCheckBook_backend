@@ -99,8 +99,11 @@ def asset_manage():
     """
     checkbook_id =1
     month_str = "2019-03"
+    checkbook_list_json = CheckbookTools.fetch_all_checkbooks(current_user.id)
     assets_full_json = AssetsTools.get_assets_full(checkbook_id, month_str)
-    return render_template('./index/asset_manage.html',assets_full_json=assets_full_json)
+    return render_template('./index/asset_manage.html',
+                           assets_full_json=assets_full_json,
+                           checkbook_list_json=checkbook_list_json)
 
 
 @app.route("/report_manage", methods=["GET"])

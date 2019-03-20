@@ -98,11 +98,34 @@ layui.use(['layer', 'jquery',"table", "laydate", "element"], function () {
     var $ = layui.jquery;
     var element = layui.element;
     element.init();
-    // init 变量初始化
-
     // 自定义变量
     var checkbook_id = 1;
-    var month_str = "2019-03"
+    var month_str = getNowMonth()
+
+    // 月份选择器
+    laydate.render({
+        elem: document.getElementById('month_selector')
+        ,type: 'month'
+        ,value: getNowMonth()
+    });
+
+        // 设置记账本下拉框
+     function init_checkbook(result) {
+     resultData = result;
+         var parent_html = $("#checkbook_selector").html();
+         var htmls =""
+     for(var x=0; x<resultData.length; x++){
+             var htmls = '<option value = "' + resultData[x].checkbook_id + '">' + resultData[x].checkbook_name + '</option>';
+             if(x==0){
+                 checkbook_id = resultData[x].checkbook_id
+             };
+     };
+         parent_html = parent_html.replace("checkbook_selector_replace",htmls);
+         $("#checkbook_selector")[0].innerHTML = parent_html;
+   };
+     init_checkbook(checkbook_list_json)
+
+
 
     //调用json
     var assets_full_json = (function () {
