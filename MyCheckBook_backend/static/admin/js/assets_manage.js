@@ -59,7 +59,6 @@ function init_bar(assets_echarts, liability_echarts, account_name, account_sum){
             });
         }
     }
-    console.log(account_sum["总资产"])
 
     gen_data(options1, "总资产");
     gen_data(options2, "总负债");
@@ -91,16 +90,14 @@ function gen_table_data(account_sum, type){
     return data
 }
 
-layui.use(['layer', 'jquery',"table", "laydate", "element"], function () {
+layui.use(['layer', 'jquery',"table", "laydate", "element", "form"], function () {
     var layer = layui.layer;
     var table = layui.table;
     var laydate = layui.laydate;
     var $ = layui.jquery;
     var element = layui.element;
-    element.init();
-    // 自定义变量
-    var checkbook_id = 1;
-    var month_str = getNowMonth()
+    var form = layui.form;
+
 
     // 月份选择器
     laydate.render({
@@ -109,8 +106,8 @@ layui.use(['layer', 'jquery',"table", "laydate", "element"], function () {
         ,value: getNowMonth()
     });
 
-        // 设置记账本下拉框
-     function init_checkbook(result) {
+    // 设置记账本下拉框
+    function init_checkbook(result) {
      resultData = result;
          var parent_html = $("#checkbook_selector").html();
          var htmls =""
@@ -122,33 +119,22 @@ layui.use(['layer', 'jquery',"table", "laydate", "element"], function () {
      };
          parent_html = parent_html.replace("checkbook_selector_replace",htmls);
          $("#checkbook_selector")[0].innerHTML = parent_html;
+         form.render();
    };
-     init_checkbook(checkbook_list_json)
-
-
-
-    //调用json
-    var assets_full_json = (function () {
-        var result;
-        $.ajax({
-            url:"/api/v1/assets?checkbook_id="+checkbook_id+"&month_str="+month_str+"&action=ALL",
-            type:'GET',
-            dataType:'json',
-            async:false,
-            success:function(json){ // http code 200
-                result = json
-            }
-        })
-        return result;
-    })();
-    console.log(assets_full_json);
+    init_checkbook(checkbook_list_json)
 
     // 根据json串，初始化上下两个Tab
     var myCharts = []
     var myTables = []
     function init_sum_tab(account_name, account_sum){
-        var t_echart1 = echarts.init(document.getElementById(account_name+"_assets_total_echarts"));
-        var t_echart2 = echarts.init(document.getElementById(account_name+"_liability_total_echarts"));
+        //1. 更新html
+
+        // 2. 更新数据
+        // var t_echart1 = echarts.init(document.getElementById(account_name+"_assets_total_echarts"));
+        // var t_echart2 = echarts.init(document.getElementById(account_name+"_liability_total_echarts"));
+        var t_echart1 =  echarts.init($("#"+account_name+"_assets_total_echarts")[0])
+        var t_echart2 =  echarts.init($("#"+account_name+"_liability_total_echarts")[0])
+
         myCharts.push(t_echart1);
         myCharts.push(t_echart2);
         init_bar(t_echart1,t_echart2,account_name,account_sum);
@@ -242,17 +228,6 @@ layui.use(['layer', 'jquery',"table", "laydate", "element"], function () {
         $(document).on('click','#'+account_name+'_save',function(){});
     }
 
-    for(var prop in assets_full_json["sum"]){
-        var account_name = prop
-        var account_sum = assets_full_json["sum"][account_name]
-        init_sum_tab(account_name,account_sum)
-    }
-    for(var prop in assets_full_json["appendix"]){
-        var account_name = prop;
-        var account_sum = assets_full_json["appendix"][account_name];
-       init_appendix_tab(account_name,account_sum);
-    }
-
     // JS 填充相关表格
     $(window).resize(function () {
         for (j = 0; j < myCharts.length; j++) {
@@ -274,6 +249,79 @@ layui.use(['layer', 'jquery',"table", "laydate", "element"], function () {
         // }
     });
 
+    $("#look-assets").click(function () {
+        // 获得参数
+        var checkbook_id = $("#checkbook_selector option:selected").val();
+        var month_str = $("#month_selector").val();
 
-     console.log()
+        //调用json
+        var assets_full_json = (function () {
+            var result;
+            $.ajax({
+                url:"/api/v1/assets?checkbook_id="+checkbook_id+"&month_str="+month_str+"&action=ALL",
+                type:'GET',
+                dataType:'json',
+                async:false,
+                success:function(json){ // http code 200
+                    result = json
+                }
+            })
+            return result;
+        })();
+        console.log(assets_full_json)
+
+        // 更新html
+        $("#sum_tab_title").empty()
+        $("#sum_tab_content").empty()
+        $("#appendix_tab_title").empty()
+        $("#appendix_tab_content").empty()
+
+        for(var prop in assets_full_json["sum"]){
+            if(prop === "合并账户"){
+                $("#sum_tab_title").append("<li  class=\"layui-this\"> "+prop+"</li>");
+            }else{
+                $("#sum_tab_title").append("<li>"+prop+"</li>");
+            }
+
+           var parent_html = $("#sum_tab_content_script").html();
+           parent_html = parent_html.replace(/account_name/g,prop);
+           if(prop === "合并账户"){
+
+           }else{
+              parent_html = parent_html.replace("layui-show","");
+           }
+           $("#sum_tab_content").append(parent_html);
+        }
+        for(var prop in assets_full_json["appendix"]){
+            var parent_html = $("#appendix_tab_content_script").html();
+           parent_html = parent_html.replace(/account_name/g,prop);
+            if(prop === "银行卡"){
+                $("#appendix_tab_title").append("<li class=\"layui-this\">"+prop+"</li>");
+
+           }else{
+                $("#appendix_tab_title").append("<li>"+prop+"</li>");
+               parent_html = parent_html.replace("layui-show","");
+           }
+           $("#appendix_tab_content").append(parent_html);
+        }
+
+        myCharts = []
+        myTables = []
+        for(var prop in assets_full_json["sum"]){
+            var account_name = prop
+            var account_sum = assets_full_json["sum"][account_name]
+            init_sum_tab(account_name,account_sum)
+        }
+        for(var prop in assets_full_json["appendix"]){
+            var account_name = prop;
+            var account_sum = assets_full_json["appendix"][account_name];
+           init_appendix_tab(account_name,account_sum);
+        }
+        element.render();
+
+        console.log(document.body)
+    });
+
+    $("#look-assets").trigger('click');
+
 });

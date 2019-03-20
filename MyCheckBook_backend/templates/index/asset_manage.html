@@ -25,83 +25,82 @@
                 <div class="layui-inline">
                     <input type="text" class="layui-input" id="month_selector" autocomplete="off" placeholder="yyyy-MM">
                 </div>
-                <button class="layui-btn layui-btn-normal" lay-submit="search">查看</button>
                 <div class="layui-inline tool-btn">
-                    <button class="layui-btn layui-btn-small layui-btn-normal addBtn" data-url="article-add.html"><i
+                    <button type = "button" class="layui-btn layui-btn-normal" id="look-assets">查看</button>
+                    <button class="layui-btn layui-btn-small layui-btn-normal addBtn" lay-event="add-assets"><i
                             class="layui-icon">&#xe654;</i>添加
                     </button>
-                    <button class="layui-btn layui-btn-small layui-btn-warm listOrderBtn hidden-xs"
-                            data-url="article-add.html"><i class="iconfont">&#xe656;</i></button>
                 </div>
             </div>
         </form>
         <div class="chart-panel panel panel-default">
             <div class="panel-header">资产负债汇总</div>
-            <div class="layui-tab page-content-wrap" lay-filter="test">
+            <div class="layui-tab page-content-wrap" lay-filter="test" id ="tab_sum">
                 <ul class="layui-tab-title" id="sum_tab_title">
-                    {% for account_name in assets_full_json.sum %}
-                            <li>{{account_name}}</li>
-                    {% endfor %}
+
                 </ul>
                 <div class="layui-tab-content" id="sum_tab_content">
-                    {% for account_name in assets_full_json.sum %}
-                    <div class="layui-tab-item">
-                        <div class="layui-row chart-panel panel panel-default">
-                            <div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
-                                <div class="panel-body" id="{{account_name}}_assets_total_echarts" style="height: 100px;"></div>
-                            </div>
-                            <div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
-                                <div class="panel-body" id="{{account_name}}_liability_total_echarts" style="height: 100px;"></div>
-                            </div>
-                        </div>
-                        <div class="layui-row chart-panel panel panel-default">
-                            <div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
-                                <table class="layui-table" lay-even lay-skin="nob" lay-filter="detail-table"
-                                       id="{{account_name}}_assets-sum">
-                                </table>
-                            </div>
-                            <div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
-                                <table class="layui-table" lay-even lay-skin="line" lay-filter="detail-table"
-                                       id="{{account_name}}_liability-sum">
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                    {% endfor %}
+
                 </div>
             </div>
         </div>
         <div class="chart-panel panel panel-default">
             <div class="panel-header">资产负债附表</div>
-            <div class="layui-tab page-content-wrap" lay-filter="test">
+            <div class="layui-tab page-content-wrap" lay-filter="test" id ="tab_appendix">
                 <ul class="layui-tab-title" id="appendix_tab_title">
-                    {% for account_name,v  in assets_full_json.appendix.items() %}
-                            <li>{{ account_name}}</li>
-                    {% endfor %}
+
                 </ul>
                 <div class="layui-tab-content" id="appendix_tab_content">
-                    {% for account_name,v in assets_full_json.appendix.items() %}
-                     <div class="layui-tab-item">
-                         <div class="layui-row chart-panel panel panel-default">
-                             <button id="{{ account_name }}_add_row" class="layui-btn layui-btn-normal">
-                                 <i class="layui-icon layui-icon-add-1"></i>行
-                             </button>
-                             <button id="{{ account_name }}_add_col" class="layui-btn layui-btn-normal" >
-                                  <i class="layui-icon layui-icon-add-1"></i>列
-                             </button>
-                             <button id="{{ account_name }}_save" class="layui-btn layui-btn-normal" >保存</button>
-                         </div>
-                         <table class="layui-table" lay-even lay-skin="line" lay-filter="detail-table"
-                                       id="{{account_name}}_appendix_table">
-                         </table>
-                     </div>
-                    {% endfor %}
+
                 </div>
             </div>
         </div>
 
     </div>
 </div>
+
+<script type="text/html" id="sum_tab_content_script">
+    <div class="layui-tab-item layui-show">
+        <div class="layui-row chart-panel panel panel-default">
+            <div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+                <div class="panel-body" id="account_name_assets_total_echarts" style="height: 100px;"></div>
+            </div>
+            <div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+                <div class="panel-body" id="account_name_liability_total_echarts" style="height: 100px;"></div>
+            </div>
+        </div>
+        <div class="layui-row chart-panel panel panel-default">
+            <div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+                <table class="layui-table" lay-even lay-skin="nob" lay-filter="detail-table"
+                       id="account_name_assets-sum">
+                </table>
+            </div>
+            <div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+                <table class="layui-table" lay-even lay-skin="line" lay-filter="detail-table"
+                       id="account_name_liability-sum">
+                </table>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script type="text/html" id="appendix_tab_content_script">
+   <div class="layui-tab-item layui-show">
+         <div class="layui-row chart-panel panel panel-default">
+             <button id="account_name_add_row" class="layui-btn layui-btn-normal">
+                 <i class="layui-icon layui-icon-add-1"></i>行
+             </button>
+             <button id="account_name_add_col" class="layui-btn layui-btn-normal" >
+                  <i class="layui-icon layui-icon-add-1"></i>列
+             </button>
+             <button id="account_name_save" class="layui-btn layui-btn-normal" >保存</button>
+         </div>
+         <table class="layui-table" lay-even lay-skin="line" lay-filter="detail-table"
+                       id="account_name_appendix_table">
+         </table>
+     </div>
+</script>
+
 <script type="text/javascript">
     var checkbook_list_json =  JSON.parse('{{ checkbook_list_json|tojson }}');
 </script>
