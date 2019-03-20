@@ -225,7 +225,28 @@ layui.use(['layer', 'jquery',"table", "laydate", "element", "form"], function ()
          });
 
         //TODO 保存表格数据到后台
-        $(document).on('click','#'+account_name+'_save',function(){});
+        $(document).on('click','#'+account_name+'_save',function(){
+             var month_str = $("#month_selector").val();
+            layer.msg(account_name);
+            all_data = table.cache[account_name+"_appendix_table"]
+            console.log(all_data)
+            $.ajax({
+                url:"/api/v1/assets",
+                type:'POST',
+                dataType:'json',
+                data: JSON.stringify({
+                    "checkbook_id":checkbook_id,
+                    "month_str":month_str,
+                    "appendix":account_name,
+                    "data":JSON.stringify(all_data)
+                    }),
+                contentType: "application/json; charset=utf-8",
+                async:false,
+                success:function(json){ // http code 200
+
+                }
+            })
+        });
     }
 
     // JS 填充相关表格
@@ -242,11 +263,6 @@ layui.use(['layer', 'jquery',"table", "laydate", "element", "form"], function ()
         for (j = 0; j < myTables.length; j++) {
             myTables[j].resize();
         };
-        // for(var prop in assets_full_json["sum"]){
-        //     var account_name = prop
-        //     var account_sum = assets_full_json["sum"][account_name]
-        //     init_sum_tab(account_name,account_sum)
-        // }
     });
 
     $("#look-assets").click(function () {
@@ -263,7 +279,7 @@ layui.use(['layer', 'jquery',"table", "laydate", "element", "form"], function ()
                 dataType:'json',
                 async:false,
                 success:function(json){ // http code 200
-                    result = json
+                    result = json.data
                 }
             })
             return result;
@@ -323,5 +339,11 @@ layui.use(['layer', 'jquery',"table", "laydate", "element", "form"], function ()
     });
 
     $("#look-assets").trigger('click');
+
+    $("#add-assets").click(function () {
+        layer.msg("hello")
+    });
+
+
 
 });

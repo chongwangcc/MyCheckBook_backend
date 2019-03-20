@@ -493,15 +493,55 @@ class AssetsAPI(Resource):
         self.get_parser.add_argument('month_str', type=str, required=True)
         self.get_parser.add_argument('action', type=str, required=False, default="ALL")
 
+        self.post_parser = reqparse.RequestParser()
+        self.post_parser.add_argument('checkbook_id', type=str, required=True)
+        self.post_parser.add_argument('month_str', type=str, required=True)
+        self.post_parser.add_argument('appendix', type=str, required=True)
+        self.post_parser.add_argument('data', type=str, required=True)
+
     def get(self):
         args = self.get_parser.parse_args()
         checkbook_id = args["checkbook_id"]
         month_str = args["month_str"]
         action = args["action"]
-
-        result = AssetsTools.get_assets_full(checkbook_id, month_str, action)
-
+        data = AssetsTools.get_assets_full(checkbook_id, month_str, action)
+        result = {
+            "code": 0,
+            "msg": "success",
+            "data": data
+        }
         return jsonify(result)
+
+    def post(self):
+        args = self.post_parser.parse_args()
+        checkbook_id = args["checkbook_id"]
+        month_str = args["month_str"]
+        appendix = args["appendix"]
+        data = json.loads(args["data"])
+
+        data_formated = {}
+        columns = []
+        for t_dict in data:
+            for key, value in t_dict.items():
+                if key not in columns and key not in ["LAY_TABLE_INDEX"]:
+                    columns.append(key)
+        for c in columns:
+            data_formated[c] = []
+            for t_dict in data:
+                v = t_dict.setdefault(c, "")
+                if v == "" and c in ["原价", "现价", "总欠款（元）", "当月应还（元）"]:
+                    v = 0
+                data_formated[c].append(v)
+
+        df_card = pd.DataFrame(data_formated)
+        AppendixTools.save_appendixs(checkbook_id, month_str,appendix, df_card)
+        result = {
+            "code": 0,
+            "msg": "success",
+        }
+        return jsonify(result)
+
+
 
 
 class ReportAPI(Resource):

@@ -80,6 +80,8 @@ class AssetsSumUtils:
                   account1,
                   fluidity,
                   sum_type="总资产"):
+        org_price = float(org_price)
+        now_price = float(now_price)
         self.all_result[account1][sum_type]["org_sum"] += org_price
         self.all_result[account1][sum_type]["now_sum"] += now_price
         self.all_result[account1][sum_type]["org_sum"] = round(self.all_result[account1][sum_type]["org_sum"], 2)

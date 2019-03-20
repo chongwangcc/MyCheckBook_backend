@@ -15,6 +15,17 @@
 <body>
 <div class="wrap-container clearfix">
     <div class="column-content-detail">
+        <div class="chart-panel panel panel-default">
+            <div class="panel-header">资产负债汇总</div>
+            <div class="layui-tab page-content-wrap" lay-filter="test" id ="tab_sum">
+                <ul class="layui-tab-title" id="sum_tab_title">
+
+                </ul>
+                <div class="layui-tab-content" id="sum_tab_content">
+
+                </div>
+            </div>
+        </div>
         <form class="layui-form" action="">
             <div class="layui-form-item">
                 <div class="layui-inline">
@@ -27,23 +38,12 @@
                 </div>
                 <div class="layui-inline tool-btn">
                     <button type = "button" class="layui-btn layui-btn-normal" id="look-assets">查看</button>
-                    <button class="layui-btn layui-btn-small layui-btn-normal addBtn" lay-event="add-assets"><i
+                    <button type = "button" class="layui-btn layui-btn-small layui-btn-normal" id="add-assets"><i
                             class="layui-icon">&#xe654;</i>添加
                     </button>
                 </div>
             </div>
         </form>
-        <div class="chart-panel panel panel-default">
-            <div class="panel-header">资产负债汇总</div>
-            <div class="layui-tab page-content-wrap" lay-filter="test" id ="tab_sum">
-                <ul class="layui-tab-title" id="sum_tab_title">
-
-                </ul>
-                <div class="layui-tab-content" id="sum_tab_content">
-
-                </div>
-            </div>
-        </div>
         <div class="chart-panel panel panel-default">
             <div class="panel-header">资产负债附表</div>
             <div class="layui-tab page-content-wrap" lay-filter="test" id ="tab_appendix">
@@ -63,10 +63,10 @@
     <div class="layui-tab-item layui-show">
         <div class="layui-row chart-panel panel panel-default">
             <div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
-                <div class="panel-body" id="account_name_assets_total_echarts" style="height: 100px;"></div>
+                <div class="panel-body" id="account_name_assets_total_echarts" style="height: 80px;"></div>
             </div>
             <div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
-                <div class="panel-body" id="account_name_liability_total_echarts" style="height: 100px;"></div>
+                <div class="panel-body" id="account_name_liability_total_echarts" style="height: 80px;"></div>
             </div>
         </div>
         <div class="layui-row chart-panel panel panel-default">
