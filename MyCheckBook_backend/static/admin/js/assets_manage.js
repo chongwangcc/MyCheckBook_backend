@@ -122,14 +122,14 @@ layui.use(['layer', 'jquery',"table", "laydate", "element"], function () {
 
     // 根据json串，初始化上下两个Tab
     var myCharts = []
-    var myTables = {}
+    var myTables = []
     function init_sum_tab(account_name, account_sum){
         var t_echart1 = echarts.init(document.getElementById(account_name+"_assets_total_echarts"));
         var t_echart2 = echarts.init(document.getElementById(account_name+"_liability_total_echarts"));
         myCharts.push(t_echart1);
         myCharts.push(t_echart2);
         init_bar(t_echart1,t_echart2,account_name,account_sum);
-        table.render({
+        tableins = table.render({
               elem: '#'+account_name+'_assets-sum'
               ,page: false
               ,cols: [[
@@ -139,16 +139,18 @@ layui.use(['layer', 'jquery',"table", "laydate", "element"], function () {
                 ]]
                 ,data:gen_table_data(account_sum,"总资产")
             });
-        table.render({
+        myTables.push(tableins);
+        tableins = table.render({
           elem: '#'+account_name+'_liability-sum'
           ,page: false
           ,cols: [[
               {field:'name',title: '总负债'}
-              ,{field:'org_price', title: '原价 '+ account_sum["总资产"].org_sum + '元'}
+              ,{field:'org_price', title: '原价 '+ account_sum["总负债"].org_sum + '元'}
               ,{field:'now_price', title: '现价 '+ account_sum["总负债"].now_sum + '元'}
             ]]
             ,data:gen_table_data(account_sum, "总负债")
         });
+        myTables.push(tableins)
     };
 
     function init_appendix_tab(account_name, account_sum){
@@ -238,6 +240,9 @@ layui.use(['layer', 'jquery',"table", "laydate", "element"], function () {
     element.on('tab(test)',function (data) {
         for (j = 0; j < myCharts.length; j++) {
             myCharts[j].resize();
+        };
+        for (j = 0; j < myTables.length; j++) {
+            myTables[j].resize();
         };
         // for(var prop in assets_full_json["sum"]){
         //     var account_name = prop
