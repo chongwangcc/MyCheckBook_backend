@@ -542,8 +542,6 @@ class AssetsAPI(Resource):
         return jsonify(result)
 
 
-
-
 class ReportAPI(Resource):
     """
     对财报操作 的API

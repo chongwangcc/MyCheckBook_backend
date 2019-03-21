@@ -262,6 +262,25 @@ class AppendixInfo(Model):
     def get_table_name():
         return __class__.__name__.lower()
 
+    @classmethod
+    def get_lastest_month(cls):
+        """
+        最近的month_str
+        :param self:
+        :return:
+        """
+        try:
+            sql = "select month_str from " + cls.get_table_name() + "  order by month_str DESC limit 1"
+            cu = get_cursor()
+            execute_sql(cu, sql)
+            rows = cu.fetchall()
+            return rows[0][0]
+        except:
+            lock.release()
+        return None
+
+
+
     @staticmethod
     def is_empty():
         """

@@ -33,6 +33,8 @@ layui.use(['layer', 'jquery',"table", "laydate", "element", "form"], function ()
     //添加 附表
      var myTables = []
     function init_appendix_tab(account_name, account_sum){
+        console.log(account_name)
+        console.log(account_sum)
         var cols = [];
         var data = [];
         for(var col in account_sum.columns){
@@ -103,11 +105,12 @@ layui.use(['layer', 'jquery',"table", "laydate", "element", "form"], function ()
         var assets_full_json = (function () {
                 var result;
                 $.ajax({
-                    url:"/api/v1/assets?checkbook_id="+checkbook_id+"&month_str="+month_str+"&action=ALL",
+                    url:"/api/v1/assets?checkbook_id="+checkbook_id+"&month_str="+month_str+"&action=empty",
                     type:'GET',
                     dataType:'json',
                     async:false,
                     success:function(json){ // http code 200
+                        console.log(json.data);
                         result = json.data
                     }
                 })
@@ -116,7 +119,7 @@ layui.use(['layer', 'jquery',"table", "laydate", "element", "form"], function ()
 
         $("#appendix_tab_title").empty()
         $("#appendix_tab_content").empty()
-        for(var prop in assets_full_json["appendix"]){
+        for(var prop in assets_full_json["empty"]){
             var parent_html = $("#appendix_tab_content_script").html();
             parent_html = parent_html.replace(/account_name/g,prop);
             if(prop === "银行卡"){
@@ -128,9 +131,9 @@ layui.use(['layer', 'jquery',"table", "laydate", "element", "form"], function ()
            }
            $("#appendix_tab_content").append(parent_html);
         }
-        for(var prop in assets_full_json["appendix"]){
+        for(var prop in assets_full_json["empty"]){
             var account_name = prop;
-            var account_sum = assets_full_json["appendix"][account_name];
+            var account_sum = assets_full_json["empty"][account_name];
            init_appendix_tab(account_name,account_sum);
         }
     }

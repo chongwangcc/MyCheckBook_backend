@@ -450,6 +450,10 @@ class AssetsTools:
                                        row["所属账户"],
                                        row["流动性"])
             result["sum"] = sum_entity.get_final_result()
+        if action == "empty":
+            result["empty"] = AppendixTools.get_empty_appendix(checkbook_id)
+
+
 
         return result
 
@@ -499,13 +503,41 @@ class AppendixTools:
         return result
 
     @classmethod
-    def get_empty_appendixs(cls,checkkbook_id, month_str):
+    def get_empty_appendix(cls, checkbook_id):
         """
-        制作财报是使用，获得一张空内容的附表记录，去掉金额的。
-        :param checkkbook_id:
+        制作财报时使用，获得一张空内容的附表记录，去掉金额的。
+        :param checkbook_id:
         :param month_str:
         :return:
         """
+        #  获得最近的附录
+        month_str = AppendixInfo.get_lastest_month()
+        if month_str is None:
+            return None
+        old_append_infos = AppendixInfo.gets(checkbook=checkbook_id,
+                                           month_str=month_str)
+        # 将其中的金额 变成0
+        result = {}
+        money_names = ["原价", "现价", "总欠款（元）", "当月应还（元）"]
+        for info in old_append_infos:
+            rows = json.loads(info.row_json)
+            columns = json.loads(info.columns_json)
+            content = json.loads(info.content_json)
+            for m in money_names:
+                if m not in columns:
+                    continue
+                c = content.setdefault(m, {})
+                new_c = {}
+                for key, value in c.items():
+                    new_c[key] = 0
+                content[m] = new_c
+
+            result[info.appendix_name] = {
+                "rows": rows,
+                "columns": columns,
+                "content": content
+            }
+        return result
 
     @classmethod
     def save_appendixs(cls, checkbook_id, month_str, appendix_name, df, name="名称"):
@@ -542,14 +574,19 @@ class AppendixTools:
         return True
 
 
+
+
+
+
 if __name__ == "__main__":
-    ree = CheckbookTools.get_checkbook_account_list(1)
-    print(ree)
-    pass
+    # ree = CheckbookTools.get_checkbook_account_list(1)
+    # print(ree)
+    # pass
     # detias = get_Details(checkbook_id=1, month_str="2019-02")
     # print(detias)
     # result = AppendixTools.get_appendix_name_list(1, "2019-03")
     # print(result)
+    print(AppendixTools.get_empty_appendix(1))
 
 
 
