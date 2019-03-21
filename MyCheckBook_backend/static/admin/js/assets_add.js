@@ -31,10 +31,9 @@ layui.use(['layer', 'jquery',"table", "laydate", "element", "form"], function ()
     init_checkbook(checkbook_list_json)
 
     //添加 附表
-     var myTables = []
+    var myTables = [];
+    var appendix_names = [];
     function init_appendix_tab(account_name, account_sum){
-        console.log(account_name)
-        console.log(account_sum)
         var cols = [];
         var data = [];
         for(var col in account_sum.columns){
@@ -120,6 +119,8 @@ layui.use(['layer', 'jquery',"table", "laydate", "element", "form"], function ()
         $("#appendix_tab_title").empty()
         $("#appendix_tab_content").empty()
         for(var prop in assets_full_json["empty"]){
+            appendix_names.push(prop)
+
             var parent_html = $("#appendix_tab_content_script").html();
             parent_html = parent_html.replace(/account_name/g,prop);
             if(prop === "银行卡"){
@@ -138,8 +139,42 @@ layui.use(['layer', 'jquery',"table", "laydate", "element", "form"], function ()
         }
     }
     init_tab()
+    $("#save_assets").click(function () {
+        var checkbook_id = $("#checkbook_selector option:selected").val();
+        var month_str = $("#month_selector").val();
+        layer.msg(checkbook_id)
+        layer.msg(month_str)
+
+        var data = {
+            "checkbook_id":checkbook_id,
+            "month_str":month_str,
+            "action":"all",
+            "data":[]
+        }
+        for(var i in appendix_names){
+            var t_name = appendix_names[i]
+            all_data = table.cache[t_name+"_appendix_table"];
+            data.data.push({
+                name:t_name,
+                data:all_data
+            })
+        }
+        data.data = JSON.stringify(data.data)
+        $.ajax({
+            url:"/api/v1/assets",
+            type:'POST',
+            dataType:'json',
+            data:JSON.stringify(data),
+            contentType: "application/json; charset=utf-8",
+            async:false,
+            success:function(json){ // http code 200
+
+            }
+        })
+
+        console.log(data)
 
 
 
-
+    });
 })

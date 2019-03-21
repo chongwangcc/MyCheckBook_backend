@@ -279,7 +279,18 @@ class AppendixInfo(Model):
             lock.release()
         return None
 
-
+    @classmethod
+    def delete_all(cls, checkbook_id, month_str):
+        try:
+            sql = "delete from " + cls.get_table_name() \
+                  + " where checkbook_id="+checkbook_id \
+                  + " and month_str='"+ month_str + "'"
+            cu = get_cursor()
+            execute_sql(cu, sql)
+            return True
+        except:
+            lock.release()
+        return False
 
     @staticmethod
     def is_empty():

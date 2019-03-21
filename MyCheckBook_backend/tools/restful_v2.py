@@ -487,6 +487,31 @@ class AssetsAPI(Resource):
     """
     decorators = [login_required]
 
+
+    def formated_dict(self, data):
+        """
+        将web传来的数据，格式化为dataframe格式
+        :param data:
+        :return:
+        """
+        data_formated = {}
+        columns = []
+        for t_dict in data:
+            for key, value in t_dict.items():
+                if key not in columns and key not in ["LAY_TABLE_INDEX"]:
+                    columns.append(key)
+        for c in columns:
+            data_formated[c] = []
+            for t_dict in data:
+                v = t_dict.setdefault(c, "")
+                if v == "" and c in ["原价", "现价", "总欠款（元）", "当月应还（元）"]:
+                    v = 0
+                data_formated[c].append(v)
+
+        df_card = pd.DataFrame(data_formated)
+        return df_card
+
+
     def __init__(self):
         self.get_parser = reqparse.RequestParser()
         self.get_parser.add_argument('checkbook_id', type=str, required=True)
@@ -496,8 +521,8 @@ class AssetsAPI(Resource):
         self.post_parser = reqparse.RequestParser()
         self.post_parser.add_argument('checkbook_id', type=str, required=True)
         self.post_parser.add_argument('month_str', type=str, required=True)
-        self.post_parser.add_argument('appendix', type=str, required=True)
         self.post_parser.add_argument('data', type=str, required=True)
+        self.post_parser.add_argument('action', type=str, required=False, default="append")
 
     def get(self):
         args = self.get_parser.parse_args()
@@ -516,25 +541,21 @@ class AssetsAPI(Resource):
         args = self.post_parser.parse_args()
         checkbook_id = args["checkbook_id"]
         month_str = args["month_str"]
-        appendix = args["appendix"]
+        action = args["action"]
         data = json.loads(args["data"])
 
-        data_formated = {}
-        columns = []
-        for t_dict in data:
-            for key, value in t_dict.items():
-                if key not in columns and key not in ["LAY_TABLE_INDEX"]:
-                    columns.append(key)
-        for c in columns:
-            data_formated[c] = []
-            for t_dict in data:
-                v = t_dict.setdefault(c, "")
-                if v == "" and c in ["原价", "现价", "总欠款（元）", "当月应还（元）"]:
-                    v = 0
-                data_formated[c].append(v)
+        # TODO 优化系统，这里操作数据库次数太多了
+        if action == "all":
+            # 传过来是全部的，要将本月份其他的记录删一删
+            AppendixTools.delete_appendix(checkbook_id, month_str)
 
-        df_card = pd.DataFrame(data_formated)
-        AppendixTools.save_appendixs(checkbook_id, month_str,appendix, df_card)
+        # 替换指定内容
+        for appendix in data:
+            name = appendix["name"]
+            appendix_data = appendix["data"]
+            df_card = self.formated_dict(appendix_data)
+            AppendixTools.save_appendix(checkbook_id, month_str, name, df_card)
+
         result = {
             "code": 0,
             "msg": "success",

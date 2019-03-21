@@ -540,7 +540,7 @@ class AppendixTools:
         return result
 
     @classmethod
-    def save_appendixs(cls, checkbook_id, month_str, appendix_name, df, name="名称"):
+    def save_appendix(cls, checkbook_id, month_str, appendix_name, df, name="名称"):
         """
         保存一个附表
         :param checkbook_id:
@@ -550,7 +550,9 @@ class AppendixTools:
         :return:
         """
         columns = list(df.columns)
-        name_rows = list(df[name])
+        name_rows = []
+        if len(df) > 0:
+            name_rows = list(df[name])
         content = df.to_dict(orient="dict")
 
         # 1.判断有没有旧的值
@@ -572,6 +574,16 @@ class AppendixTools:
         append_info.update_time_str = get_now_str()
         append_info.save()
         return True
+
+    @classmethod
+    def delete_appendix(cls, checkbook_id, month_str):
+        """
+        删除相关附表
+        :param checkbook_id:
+        :param month_str:
+        :return:
+        """
+        AppendixInfo.delete_all(checkbook_id, month_str)
 
 
 

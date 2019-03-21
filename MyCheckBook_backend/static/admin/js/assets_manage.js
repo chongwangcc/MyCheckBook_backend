@@ -224,7 +224,7 @@ layui.use(['layer', 'jquery',"table", "laydate", "element", "form"], function ()
             });
          });
 
-        //TODO 保存表格数据到后台
+        //保存表格数据到后台
         $(document).on('click','#'+account_name+'_save',function(){
              var month_str = $("#month_selector").val();
             layer.msg(account_name);
@@ -237,8 +237,11 @@ layui.use(['layer', 'jquery',"table", "laydate", "element", "form"], function ()
                 data: JSON.stringify({
                     "checkbook_id":checkbook_id,
                     "month_str":month_str,
-                    "appendix":account_name,
-                    "data":JSON.stringify(all_data)
+                    "action":"edit",
+                    "data": JSON.stringify([{
+                        "name":account_name,
+                        "data":all_data
+                    }])
                     }),
                 contentType: "application/json; charset=utf-8",
                 async:false,

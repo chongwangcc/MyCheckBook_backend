@@ -39,35 +39,10 @@
         </div>
 
      </form>
-     <button class="layui-btn layui-btn-normal layui-btn-fluid" bottom="10px">保存</button>
-
-    <script type="text/html" id="sum_tab_content_script">
-        <div class="layui-tab-item layui-show">
-            <div class="layui-row chart-panel panel panel-default">
-                <div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
-                    <div class="panel-body" id="account_name_assets_total_echarts" style="height: 80px;"></div>
-                </div>
-                <div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
-                    <div class="panel-body" id="account_name_liability_total_echarts" style="height: 80px;"></div>
-                </div>
-            </div>
-            <div class="layui-row chart-panel panel panel-default">
-                <div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
-                    <table class="layui-table" lay-even lay-skin="nob" lay-filter="detail-table"
-                           id="account_name_assets-sum">
-                    </table>
-                </div>
-                <div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
-                    <table class="layui-table" lay-even lay-skin="line" lay-filter="detail-table"
-                           id="account_name_liability-sum">
-                    </table>
-                </div>
-            </div>
-        </div>
-    </script>
+     <button id="save_assets" class="layui-btn layui-btn-normal layui-btn-fluid" bottom="10px">保存</button>
 
     <script type="text/html" id="appendix_tab_content_script">
-       <div class="layui-tab-item layui-show">
+       <div class="layui-tab-item layui-tab-brief layui-show">
              <div class="layui-row chart-panel panel panel-default">
                  <button type="button" id="account_name_add_row" class="layui-btn layui-btn-normal">
                      <i class="layui-icon layui-icon-add-1"></i>行
