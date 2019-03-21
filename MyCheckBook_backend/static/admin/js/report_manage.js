@@ -22,6 +22,8 @@ layui.use(['layer', 'jquery',"table", "laydate", "element", "form"], function ()
          form.render();
    };
     init_checkbook(checkbook_list_json)
+
+    // 出事table
     var checkbook_id = $("#checkbook_selector option:selected").val();
     function init_table(){
        detail_tableIns =  table.render({
@@ -45,5 +47,53 @@ layui.use(['layer', 'jquery',"table", "laydate", "element", "form"], function ()
         });
     }
     init_table()
+
+
+    function edit_report(data,obj){
+        layer.msg("edit_report")
+    }
+
+    function delete_report(data, obj){
+        layer.msg("delete_report")
+        confirm_text = '真的删除如下财报么？<br/>';
+        confirm_text += '【'+data.report_name+"-"+data.type+ "-"+data.period+'】<br/>';
+         layer.confirm(confirm_text, function(index){
+             $.ajax({
+                url:"/api/v1/report?report_id="+data.id,
+                type:'DELETE',
+                dataType:'json',
+                success:function(){ // http code 200
+                    obj.del();
+                    layer.close(index);
+                    parent.layer.msg('删除成功!!');
+                },
+                error:function(XMLHttpRequest, textStatus, errorThrown){
+                   parent.layer.msg('删除失败!!');
+                }
+            })
+
+         });
+    }
+
+    function  download_report(data, obj) {
+        layer.msg("download_report")
+    }
+
+    //监听行工具事件
+    table.on('tool(report_table)', function(obj){
+        var data = obj.data;
+        switch(obj.event){
+             case 'delete':
+                 delete_report(data,obj);
+                 break;
+             case "edit":
+                 edit_report(data,obj);
+                 break
+             case "download":
+                 download_report(data, obj);
+                 break;
+         }
+    });
+
 
 });

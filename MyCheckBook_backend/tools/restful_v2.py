@@ -192,7 +192,7 @@ class DetailsListAPI(Resource):
     """
     按照记账本，月份，获得所有明细
     """
-
+    decorators = [login_required]
     def __init__(self):
         self.get_parser = reqparse.RequestParser()
         self.get_parser.add_argument('checkbook_id', type=str, location='args', required=True)
@@ -565,6 +565,7 @@ class ReportAPI(Resource):
     """
     对财报操作 的API
     """
+    decorators = [login_required]
 
     def __init__(self):
         self.get_parser = reqparse.RequestParser()
@@ -572,6 +573,9 @@ class ReportAPI(Resource):
         self.get_parser.add_argument('action', type=str, required=False, default="list")
         self.get_parser.add_argument('page', type=int, location='args', required=False, default=1)
         self.get_parser.add_argument('limit', type=int, location='args', required=False, default=10)
+
+        self.delete_parser = reqparse.RequestParser()
+        self.delete_parser.add_argument('report_id', type=str, required=True)
 
     def get(self):
         args = self.get_parser.parse_args()
@@ -606,7 +610,16 @@ class ReportAPI(Resource):
         pass
 
     def delete(self):
-        pass
+        args = self.delete_parser.parse_args()
+        report_id = args["report_id"]
+
+        ReportTools.delete_report_by_id(report_id)
+
+        result = {
+            "code": 0,
+            "msg": "success",
+        }
+        return jsonify(result)
 
 
 class BudgetAPI(Resource):

@@ -614,6 +614,20 @@ class ReportTools:
             result.append(t_dict)
         return result
 
+    @classmethod
+    def delete_report_by_id(cls, report_id):
+        """
+        删除一条报告
+        :param report_id:
+        :return:
+        """
+        try:
+            info = ReportInfo.get(id = report_id)
+            info.delete()
+        except:
+            pass
+        return True
+
 
 if __name__ == "__main__":
     # ree = CheckbookTools.get_checkbook_account_list(1)
