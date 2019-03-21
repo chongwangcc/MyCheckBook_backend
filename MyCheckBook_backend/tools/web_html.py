@@ -106,6 +106,21 @@ def asset_manage():
                            checkbook_list_json=checkbook_list_json)
 
 
+@app.route("/assets_add", methods=["GET"])
+@login_required
+def assets_add():
+    """
+    记账本管理界面
+    :return:
+    """
+    #1.解析参数
+    # 2. 获得明细
+    checkbook_list_json = CheckbookTools.fetch_all_checkbooks(current_user.id)
+    # 3.构造返回值
+    return render_template('./index/asset-add.html',
+                           checkbook_list_json=checkbook_list_json)
+
+
 @app.route("/report_manage", methods=["GET"])
 @login_required
 def report_manage():

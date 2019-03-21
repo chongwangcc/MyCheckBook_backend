@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"/>
+    <title>添加资产负债</title>
+    <link rel="stylesheet" type="text/css" href="../../static/admin/layui/css/layui.css"/>
+    <link rel="stylesheet" type="text/css" href="../../static/admin/css/admin.css"/>
+</head>
+
+<body>
+     <form class="layui-form column-content-detail">
+         <div class="layui-form-item">
+            <label class="layui-form-label">记账本：</label>
+            <div class="layui-input-block">
+                <select name="checkbook_id" lay-filter="checkbook_selector" id="checkbook_selector">
+                    checkbook_selector_replace
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">日期：</label>
+            <div class="layui-input-block">
+                <input  name="date" type="text" class="layui-input" id="month_selector" autocomplete="off" placeholder="yyyy-MM">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">附表：</label>
+            <div class="layui-tab page-content-wrap" lay-filter="test" id ="tab_appendix">
+                <ul class="layui-tab-title" id="appendix_tab_title">
+                </ul>
+                <div class="layui-tab-content" id="appendix_tab_content">
+                </div>
+            </div>
+        </div>
+
+     </form>
+     <button class="layui-btn layui-btn-normal layui-btn-fluid" >保存</button>
+
+    <script type="text/html" id="sum_tab_content_script">
+        <div class="layui-tab-item layui-show">
+            <div class="layui-row chart-panel panel panel-default">
+                <div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+                    <div class="panel-body" id="account_name_assets_total_echarts" style="height: 80px;"></div>
+                </div>
+                <div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+                    <div class="panel-body" id="account_name_liability_total_echarts" style="height: 80px;"></div>
+                </div>
+            </div>
+            <div class="layui-row chart-panel panel panel-default">
+                <div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+                    <table class="layui-table" lay-even lay-skin="nob" lay-filter="detail-table"
+                           id="account_name_assets-sum">
+                    </table>
+                </div>
+                <div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+                    <table class="layui-table" lay-even lay-skin="line" lay-filter="detail-table"
+                           id="account_name_liability-sum">
+                    </table>
+                </div>
+            </div>
+        </div>
+    </script>
+
+    <script type="text/html" id="appendix_tab_content_script">
+       <div class="layui-tab-item layui-show">
+             <div class="layui-row chart-panel panel panel-default">
+                 <button id="account_name_add_row" class="layui-btn layui-btn-normal">
+                     <i class="layui-icon layui-icon-add-1"></i>行
+                 </button>
+                 <button id="account_name_add_col" class="layui-btn layui-btn-normal" >
+                      <i class="layui-icon layui-icon-add-1"></i>列
+                 </button>
+                 <button id="account_name_save" class="layui-btn layui-btn-normal" >保存</button>
+             </div>
+             <table class="layui-table" lay-even lay-skin="line" lay-filter="detail-table"
+                           id="account_name_appendix_table">
+             </table>
+         </div>
+    </script>
+
+    <script type="text/javascript">
+        var checkbook_list_json =  JSON.parse('{{ checkbook_list_json|tojson }}');
+    </script>
+    <script src="../../static/admin/layui/layui.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../static/admin/js/common.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../static/admin/js/assets_add.js" type="text/javascript" charset="utf-8"></script>
+
+</body>
+
+</html>

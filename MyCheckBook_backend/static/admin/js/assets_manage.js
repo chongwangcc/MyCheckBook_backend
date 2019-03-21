@@ -341,7 +341,15 @@ layui.use(['layer', 'jquery',"table", "laydate", "element", "form"], function ()
     $("#look-assets").trigger('click');
 
     $("#add-assets").click(function () {
-        layer.msg("hello")
+        layer.open({
+             type: 2,
+             title:"添加资产负债表",
+             content: 'assets_add',
+             area: ['500px', '700px'],
+             end: function () {
+                look_details();
+             }
+         });
     });
 
 
