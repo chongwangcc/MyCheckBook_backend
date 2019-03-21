@@ -300,7 +300,7 @@ def insert_appendix_info():
     }
     df_card = pd.DataFrame(data)
     print(df_card)
-    AppendixTools.save_appendixs(1, "2019-03", "银行卡", df_card)
+    AppendixTools.save_appendix(1, "2019-03", "银行卡", df_card)
 
     # 2.货币基金
     # 名称，金额，开户人，备注
@@ -337,7 +337,7 @@ def insert_appendix_info():
         print(key+"  "+str(len(value)))
     df_card = pd.DataFrame(data)
     print(df_card)
-    AppendixTools.save_appendixs(1, "2019-03", "货币基金", df_card)
+    AppendixTools.save_appendix(1, "2019-03", "货币基金", df_card)
 
     # 3.外债资产
     # 债务人名称，金额，归还日期，备注
@@ -357,7 +357,7 @@ def insert_appendix_info():
     }
     df_card = pd.DataFrame(data)
     print(df_card)
-    AppendixTools.save_appendixs(1, "2019-03", "外债资产", df_card)
+    AppendixTools.save_appendix(1, "2019-03", "外债资产", df_card)
 
     # 4.押金资产
     # 名称，金额，归还日期，备注
@@ -381,7 +381,7 @@ def insert_appendix_info():
     }
     df_card = pd.DataFrame(data)
     print(df_card)
-    AppendixTools.save_appendixs(1, "2019-03", "押金资产", df_card)
+    AppendixTools.save_appendix(1, "2019-03", "押金资产", df_card)
 
     # 5. 投资资产
     # 名称，本金，市值，可用资金，备注
@@ -402,7 +402,7 @@ def insert_appendix_info():
     }
     df_card = pd.DataFrame(data)
     print(df_card)
-    AppendixTools.save_appendixs(1, "2019-03", "投资资产", df_card)
+    AppendixTools.save_appendix(1, "2019-03", "投资资产", df_card)
 
     # 6. 信用卡负债
     # 名称，总欠款，当月应还，开户人，备注
@@ -433,7 +433,7 @@ def insert_appendix_info():
         print(key+"  "+str(len(value)))
     df_card = pd.DataFrame(data)
     print(df_card)
-    AppendixTools.save_appendixs(1, "2019-03", "信用卡负债", df_card)
+    AppendixTools.save_appendix(1, "2019-03", "信用卡负债", df_card)
     # 7. 手头现金
     # 名称金额
     data = {
@@ -452,7 +452,7 @@ def insert_appendix_info():
     }
     df_card = pd.DataFrame(data)
     print(df_card)
-    AppendixTools.save_appendixs(1, "2019-03", "手头现金", df_card)
+    AppendixTools.save_appendix(1, "2019-03", "手头现金", df_card)
 
     # 8. 定期资产
     # 名称，金额，到期日，开户人，备注
@@ -468,7 +468,7 @@ def insert_appendix_info():
     }
     df_card = pd.DataFrame(data)
     print(df_card)
-    AppendixTools.save_appendixs(1, "2019-03", "定期资产", df_card)
+    AppendixTools.save_appendix(1, "2019-03", "定期资产", df_card)
 
     # 9. 预付款资产
     # 名称，金额，收货日期，供应商名称，备注
@@ -484,7 +484,8 @@ def insert_appendix_info():
     }
     df_card = pd.DataFrame(data)
     print(df_card)
-    AppendixTools.save_appendixs(1, "2019-03", "预付款资产", df_card)
+    AppendixTools.save_appendix(1, "2019-03", "预付款资产", df_card)
+
 
 def insert_report_info():
     checkbook_id = 1
@@ -492,8 +493,10 @@ def insert_report_info():
 
     for p in period:
         info = ReportInfo()
+        info.report_name = "2019-03-家庭月报"
         info.mtype = "月报"
         info.period = p
+        info.checkbook=1
         info.owner = "CC&&MM"
         info.career = "程序员&&创业者"
         info.auditor = "CC"

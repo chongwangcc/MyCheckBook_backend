@@ -317,6 +317,7 @@ class ReportInfo(Model):
     财报的相关字段
     """
     checkbook = ForeignKey(Checkbook)  # 归属记账本
+    report_name = CharField()
     mtype = CharField(16)
     period = CharField(32)
     owner = CharField(32)

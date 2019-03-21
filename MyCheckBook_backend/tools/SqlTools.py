@@ -585,8 +585,34 @@ class AppendixTools:
         AppendixInfo.delete_all(checkbook_id, month_str)
 
 
-
-
+class ReportTools:
+    """
+    对财报操作的工具类
+    """
+    @classmethod
+    def get_all_report_sum(cls, checkbook_id):
+        """
+        获得某个报别的概述
+        :param checkbook_id:
+        :return:
+        """
+        reports = ReportInfo.gets(checkbook=checkbook_id)
+        result = []
+        for report in reports:
+            t_dict = {}
+            t_dict["id"] = report.id
+            t_dict["report_name"] = report.report_name
+            t_dict["type"] = report.mtype
+            t_dict["period"] = report.period
+            t_dict["own_name"] = report.owner
+            t_dict["career"] = report.career
+            t_dict["auditor"] = report.auditor
+            t_dict["suggestion"] = report.suggestion
+            t_dict["checkbook_name"] = report.checkbook.checkbook_name
+            t_dict["create_date"] = report.create_date
+            t_dict["report_file_path"] = report.report_file_path
+            result.append(t_dict)
+        return result
 
 
 if __name__ == "__main__":

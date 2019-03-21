@@ -487,7 +487,6 @@ class AssetsAPI(Resource):
     """
     decorators = [login_required]
 
-
     def formated_dict(self, data):
         """
         将web传来的数据，格式化为dataframe格式
@@ -510,7 +509,6 @@ class AssetsAPI(Resource):
 
         df_card = pd.DataFrame(data_formated)
         return df_card
-
 
     def __init__(self):
         self.get_parser = reqparse.RequestParser()
@@ -567,16 +565,47 @@ class ReportAPI(Resource):
     """
     对财报操作 的API
     """
-    def get(self, id):
-        pass
 
-    def put(self, id):
+    def __init__(self):
+        self.get_parser = reqparse.RequestParser()
+        self.get_parser.add_argument('checkbook_id', type=str, required=True)
+        self.get_parser.add_argument('action', type=str, required=False, default="list")
+        self.get_parser.add_argument('page', type=int, location='args', required=False, default=1)
+        self.get_parser.add_argument('limit', type=int, location='args', required=False, default=10)
+
+    def get(self):
+        args = self.get_parser.parse_args()
+        checkbook_id = args["checkbook_id"]
+        action = args["action"]
+        page = args["page"]
+        limit = args["limit"]
+
+        reports = []
+        all_nums = 0
+        if action == "list":
+            try:
+                reports = ReportTools.get_all_report_sum(checkbook_id)
+                all_nums = len(reports)
+                reports = reports[(page-1)*limit:page*limit]
+            except:
+                pass
+        else:
+            pass
+        result = {
+            "code": 0,
+            "msg": "success",
+            "count": all_nums,
+            "data": reports
+        }
+        return jsonify(result)
+
+    def put(self):
         pass
 
     def post(self):
         pass
 
-    def delete(self, id):
+    def delete(self):
         pass
 
 
