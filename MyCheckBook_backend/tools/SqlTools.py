@@ -564,7 +564,6 @@ class AppendixTools:
         if old_append_info is not None:
             append_info.id = old_append_info.id
 
-
         append_info.checkbook = checkbook_id
         append_info.month_str = month_str
         append_info.appendix_name = appendix_name

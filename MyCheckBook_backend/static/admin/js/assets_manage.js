@@ -98,7 +98,6 @@ layui.use(['layer', 'jquery',"table", "laydate", "element", "form"], function ()
     var element = layui.element;
     var form = layui.form;
 
-
     // 月份选择器
     laydate.render({
         elem: document.getElementById('month_selector')
@@ -353,7 +352,5 @@ layui.use(['layer', 'jquery',"table", "laydate", "element", "form"], function ()
              }
          });
     });
-
-
 
 });

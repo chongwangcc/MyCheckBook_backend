@@ -13,101 +13,98 @@
 </head>
 
 <body>
-<div class="wrap-container clearfix">
-    <div class="column-content-detail">
-        <div class="chart-panel panel panel-default">
-            <div class="panel-header">资产负债汇总</div>
-            <div class="layui-tab page-content-wrap" lay-filter="test" id ="tab_sum">
-                <ul class="layui-tab-title" id="sum_tab_title">
+    <div class="wrap-container clearfix">
+        <div class="column-content-detail">
+            <div class="chart-panel panel panel-default">
+                <div class="panel-header">资产负债汇总</div>
+                <div class="layui-tab page-content-wrap" lay-filter="test" id ="tab_sum">
+                    <ul class="layui-tab-title" id="sum_tab_title">
 
-                </ul>
-                <div class="layui-tab-content" id="sum_tab_content">
+                    </ul>
+                    <div class="layui-tab-content" id="sum_tab_content">
 
+                    </div>
                 </div>
             </div>
-        </div>
-        <form class="layui-form" action="">
-            <div class="layui-form-item">
-                <div class="layui-inline">
-                    <select lay-filter="checkbook_selector" id="checkbook_selector">
-                      checkbook_selector_replace
-				   </select>
+            <form class="layui-form" action="">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <select lay-filter="checkbook_selector" id="checkbook_selector">
+                          checkbook_selector_replace
+                       </select>
+                    </div>
+                    <div class="layui-inline">
+                        <input type="text" class="layui-input" id="month_selector" autocomplete="off" placeholder="yyyy-MM">
+                    </div>
+                    <div class="layui-inline tool-btn">
+                        <button type = "button" class="layui-btn layui-btn-normal" id="look-assets">查看</button>
+                        <button type = "button" class="layui-btn layui-btn-small layui-btn-normal" id="add-assets"><i
+                                class="layui-icon">&#xe654;</i>添加
+                        </button>
+                    </div>
                 </div>
-                <div class="layui-inline">
-                    <input type="text" class="layui-input" id="month_selector" autocomplete="off" placeholder="yyyy-MM">
-                </div>
-                <div class="layui-inline tool-btn">
-                    <button type = "button" class="layui-btn layui-btn-normal" id="look-assets">查看</button>
-                    <button type = "button" class="layui-btn layui-btn-small layui-btn-normal" id="add-assets"><i
-                            class="layui-icon">&#xe654;</i>添加
-                    </button>
-                </div>
-            </div>
-        </form>
-        <div class="chart-panel panel panel-default">
-            <div class="panel-header">资产负债附表</div>
-            <div class="layui-tab page-content-wrap" lay-filter="test" id ="tab_appendix">
-                <ul class="layui-tab-title" id="appendix_tab_title">
+            </form>
+            <div class="chart-panel panel panel-default">
+                <div class="panel-header">资产负债附表</div>
+                <div class="layui-tab page-content-wrap" lay-filter="test" id ="tab_appendix">
+                    <ul class="layui-tab-title" id="appendix_tab_title">
 
-                </ul>
-                <div class="layui-tab-content" id="appendix_tab_content">
+                    </ul>
+                    <div class="layui-tab-content" id="appendix_tab_content">
 
+                    </div>
                 </div>
             </div>
-        </div>
 
-    </div>
-</div>
-
-<script type="text/html" id="sum_tab_content_script">
-    <div class="layui-tab-item layui-tab-brief layui-show">
-        <div class="layui-row chart-panel panel panel-default">
-            <div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
-                <div class="panel-body" id="account_name_assets_total_echarts" style="height: 80px;"></div>
-            </div>
-            <div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
-                <div class="panel-body" id="account_name_liability_total_echarts" style="height: 80px;"></div>
-            </div>
-        </div>
-        <div class="layui-row chart-panel panel panel-default">
-            <div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
-                <table class="layui-table" lay-even lay-skin="nob" lay-filter="detail-table"
-                       id="account_name_assets-sum">
-                </table>
-            </div>
-            <div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
-                <table class="layui-table" lay-even lay-skin="line" lay-filter="detail-table"
-                       id="account_name_liability-sum">
-                </table>
-            </div>
         </div>
     </div>
-</script>
-
-<script type="text/html" id="appendix_tab_content_script">
-   <div class="layui-tab-item layui-tab-brief layui-show">
-         <div class="layui-row chart-panel panel panel-default">
-             <button id="account_name_add_row" class="layui-btn layui-btn-normal">
-                 <i class="layui-icon layui-icon-add-1"></i>行
-             </button>
-             <button id="account_name_add_col" class="layui-btn layui-btn-normal" >
-                  <i class="layui-icon layui-icon-add-1"></i>列
-             </button>
-             <button id="account_name_save" class="layui-btn layui-btn-normal" >保存</button>
+    <script type="text/html" id="sum_tab_content_script">
+        <div class="layui-tab-item layui-tab-brief layui-show">
+            <div class="layui-row chart-panel panel panel-default">
+                <div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+                    <div class="panel-body" id="account_name_assets_total_echarts" style="height: 80px;"></div>
+                </div>
+                <div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+                    <div class="panel-body" id="account_name_liability_total_echarts" style="height: 80px;"></div>
+                </div>
+            </div>
+            <div class="layui-row chart-panel panel panel-default">
+                <div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+                    <table class="layui-table" lay-even lay-skin="nob" lay-filter="detail-table"
+                           id="account_name_assets-sum">
+                    </table>
+                </div>
+                <div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+                    <table class="layui-table" lay-even lay-skin="line" lay-filter="detail-table"
+                           id="account_name_liability-sum">
+                    </table>
+                </div>
+            </div>
+        </div>
+    </script>
+    <script type="text/html" id="appendix_tab_content_script">
+       <div class="layui-tab-item layui-tab-brief layui-show">
+             <div class="layui-row chart-panel panel panel-default">
+                 <button id="account_name_add_row" class="layui-btn layui-btn-normal">
+                     <i class="layui-icon layui-icon-add-1"></i>行
+                 </button>
+                 <button id="account_name_add_col" class="layui-btn layui-btn-normal" >
+                      <i class="layui-icon layui-icon-add-1"></i>列
+                 </button>
+                 <button id="account_name_save" class="layui-btn layui-btn-normal" >保存</button>
+             </div>
+             <table class="layui-table" lay-even lay-skin="line" lay-filter="detail-table"
+                           id="account_name_appendix_table">
+             </table>
          </div>
-         <table class="layui-table" lay-even lay-skin="line" lay-filter="detail-table"
-                       id="account_name_appendix_table">
-         </table>
-     </div>
-</script>
-
-<script type="text/javascript">
-    var checkbook_list_json =  JSON.parse('{{ checkbook_list_json|tojson }}');
-</script>
-<script src="../../static/admin/js/lib/echarts.min.js"></script>
-<script src="../../static/admin/layui/layui.js" type="text/javascript" charset="utf-8"></script>
-<script src="../../static/admin/js/common.js" type="text/javascript" charset="utf-8"></script>
-<script src="../../static/admin/js/assets_manage.js" type="text/javascript" charset="utf-8"></script>
+    </script>
+    <script type="text/javascript">
+        var checkbook_list_json =  JSON.parse('{{ checkbook_list_json|tojson }}');
+    </script>
+    <script src="../../static/admin/js/lib/echarts.min.js"></script>
+    <script src="../../static/admin/layui/layui.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../static/admin/js/common.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../static/admin/js/assets_manage.js" type="text/javascript" charset="utf-8"></script>
 
 </body>
 

@@ -311,3 +311,56 @@ class AppendixInfo(Model):
             pass
         return True
 
+
+class ReportInfo(Model):
+    """
+    财报的相关字段
+    """
+    checkbook = ForeignKey(Checkbook)  # 归属记账本
+    mtype = CharField(16)
+    period = CharField(32)
+    owner = CharField(32)
+    career = CharField(32)
+    auditor = CharField(32)
+    suggestion = CharField()
+    create_date = CharField()
+    report_file_path = CharField()
+
+    def __str__(self):
+        return str(self.to_dict())
+
+    def to_dict(self):
+        dict_my = {}
+        for key, value in zip(self.field_names,self.field_values):
+            dict_my[key.replace("`", "")] = value.replace("'", "")
+        return dict_my
+
+    @staticmethod
+    def get_table_name():
+        return __class__.__name__.lower()
+
+
+    @staticmethod
+    def is_empty():
+        """
+        判断user_info表是否为空
+        :return:
+        """
+        try:
+            sql = "select * from %s limit 1" \
+                  % (__class__.__name__.lower())
+            cu = get_cursor()
+            execute_sql(cu, sql)
+            rows = cu.fetchall()
+            if len(rows) >= 1 :
+                return False
+        except:
+            lock.release()
+            pass
+        return True
+
+
+
+
+
+

@@ -486,12 +486,26 @@ def insert_appendix_info():
     print(df_card)
     AppendixTools.save_appendixs(1, "2019-03", "预付款资产", df_card)
 
+def insert_report_info():
+    checkbook_id = 1
+    period = ["2019.03.01-2019.03.31","2019.02.01-2019.02.31","2019.04.01-2019.04.30"]
 
+    for p in period:
+        info = ReportInfo()
+        info.mtype = "月报"
+        info.period = p
+        info.owner = "CC&&MM"
+        info.career = "程序员&&创业者"
+        info.auditor = "CC"
+        info.suggestion = "Doodads欠款太多，要节制。投资账户钱一直在趴着，多利用下"
+        info.create_date = "2019-03-01"
+        info.report_file_path = ""
+        info.save()
 
 # 插入默认的用户：cc、mm
 # insert_default_user()
 # create_default_checkbook()
 # random_insert_details()
 # intert_category_info()
-insert_appendix_info()
+insert_report_info()
 # 创建默认的记账本：CM家庭记账本

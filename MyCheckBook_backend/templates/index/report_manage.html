@@ -19,28 +19,26 @@
 					<form class="layui-form" action="">
 						<div class="layui-form-item">
 							<div class="layui-inline">
-								<select name="states" lay-filter="status">
-									<option value="">选择记账本</option>
-									<option value="010">CM家庭记账本</option>
-									<option value="021">CM工作室记账本</option>
-								</select>
+                                <select lay-filter="checkbook_selector" id="checkbook_selector">
+                                  checkbook_selector_replace
+                               </select>
 							</div>
-							<div class="layui-inline">
-								<select name="states" lay-filter="status">
-									<option value="">选择月份</option>
-									<option value="010">2018-01</option>
-									<option value="021">2018-02</option>
-									<option value="0571">2018-03</option>
-								</select>
-							</div>
-							<button class="layui-btn layui-btn-normal" lay-submit="search">查看</button>
 							<div class="layui-inline tool-btn">
-								<button class="layui-btn layui-btn-small layui-btn-normal addBtn" data-url="article-add.html"><i class="layui-icon">&#xe654;</i></button>
-								<button class="layui-btn layui-btn-small layui-btn-warm listOrderBtn hidden-xs" data-url="article-add.html"><i class="iconfont">&#xe656;</i></button>
+                                <button class="layui-btn layui-btn-normal" lay-submit="search">查看</button>
+								<button class="layui-btn layui-btn-small layui-btn-normal addBtn" data-url="article-add.html"><i class="layui-icon">&#xe654;</i>生成新财报</button>
 							</div>
 						</div>
 				</form>
-					<div class="layui-form" id="table-list">
+                    <div class="layui-form" id="table-list">
+                        <table class="layui-table" lay-even lay-skin="nob" lay-filter="report_table"
+                                               id="report_table">
+                        </table>
+                    </div>
+				</div>
+			</div>
+		</div>
+        <script type="text/html" id="appendix_tab_content_script">
+        					<div class="layui-form" id="table-list">
 					<table class="layui-table" lay-even lay-skin="nob">
 						<colgroup>
 							<col width="50">
@@ -96,17 +94,18 @@
 						</ul>
 					</div>
 				</div>
-				</div>
-			</div>
-
-		</div>
-					<!--<div class="chart-panel panel panel-default">-->
-				<!--<div class="panel-header">财报明细</div>-->
-
-			<!--</div>-->
+        </script>
+        <script type="text/javascript">
+            var checkbook_list_json =  JSON.parse('{{ checkbook_list_json|tojson }}');
+        </script>
+        <script type="text/html" id="OperaTools">
+            <div class="layui-inline">
+                <button class="layui-btn layui-btn-small layui-btn-normal" data-id="1" lay-event="download"><i class="&#xe601;">&#xe642;</i></button>
+                <button class="layui-btn layui-btn-small layui-btn-danger" data-id="2" lay-event="delete"><i class="layui-icon">&#xe640;</i></button>
+            </div>
+		</script>
 		<script src="../../static/admin/layui/layui.js" type="text/javascript" charset="utf-8"></script>
 		<script src="../../static/admin/js/common.js" type="text/javascript" charset="utf-8"></script>
-
+        <script src="../../static/admin/js/report_manage.js" type="text/javascript" charset="utf-8"></script>
 	</body>
-
 </html>

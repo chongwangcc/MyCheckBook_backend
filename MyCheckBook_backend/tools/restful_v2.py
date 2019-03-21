@@ -759,5 +759,7 @@ api.add_resource(DetailAPI, '/api/v1/detail', endpoint='detail')
 
 api.add_resource(AssetsAPI, '/api/v1/assets', endpoint='assets')
 
+api.add_resource(ReportAPI, '/api/v1/report', endpoint='report')
+
 api.add_resource(TrendsAPI, '/api/v1/trends/checkbooks/<checkbook_id>', endpoint='trends')
 

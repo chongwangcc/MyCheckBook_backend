@@ -128,7 +128,9 @@ def report_manage():
     财报管理界面
     :return:
     """
-    return render_template('./index/report_manage.html')
+    checkbook_list_json = CheckbookTools.fetch_all_checkbooks(current_user.id)
+    return render_template('./index/report_manage.html',
+                           checkbook_list_json=checkbook_list_json)
 
 
 @app.route("/budget_manage", methods=["GET"])
