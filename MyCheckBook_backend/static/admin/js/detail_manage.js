@@ -303,7 +303,7 @@ layui.use(['layer', 'jquery',"table", "laydate", "element"], function () {
              content: 'detail_add',
              area: ['500px', '700px'],
              end: function () {
-                look_details();
+                // look_details();
              }
          });
     }

@@ -30,4 +30,113 @@ layui.use(['layer', 'jquery',"table", "laydate", "element", "form"], function ()
    };
     init_checkbook(checkbook_list_json)
 
+    //添加 附表
+     var myTables = []
+    function init_appendix_tab(account_name, account_sum){
+        var cols = [];
+        var data = [];
+        for(var col in account_sum.columns){
+            col = account_sum.columns[col]
+            cols.push({field:col,title: col, edit: 'text' })
+        };
+        for(var i=0; i< account_sum.rows.length; i++){
+            var t_data = {}
+            for(var col in account_sum.columns){
+                col = account_sum.columns[col]
+                t_data[col] = account_sum.content[col][i]
+            }
+            data.push(t_data)
+        }
+        tableIns = table.render({
+              elem: '#'+account_name+'_appendix_table'
+              ,page: false
+              ,limit:100
+              ,cols: [cols]
+              ,data:data
+            });
+        myTables[account_name] = tableIns;
+
+        $(document).on('click','#'+account_name+'_add_row',function(){
+            console.log(account_name)
+            var oldData = table.cache[account_name+"_appendix_table"];
+            console.log(oldData)
+            old_cols =  myTables[account_name].config.cols
+            var newRow = {};
+            for(var c in old_cols){
+                newRow[c] = ""
+            };
+            oldData.push(newRow);
+            console.log(oldData)
+            myTables[account_name].reload({
+                data : oldData
+            });
+         });
+        $(document).on('click','#'+account_name+'_add_col',function(){
+             // 弹出对话框设置列名
+            layer.prompt({
+                formType:0,
+                title:"请输入列名",
+            }, function(value, index, elem){
+                // 重新渲染表格
+                var oldData = table.cache[account_name+"_appendix_table"];
+                old_cols =  myTables[account_name].config.cols;
+                var new_cols = {field:value, title:value, edit: 'text' };
+                old_cols[0].push(new_cols);
+                tableIns = table.render({
+                    elem: '#'+account_name+'_appendix_table'
+                    ,page: false
+                    ,cols: old_cols
+                    ,limit:100
+                    ,data:oldData
+                });
+                myTables[account_name] = tableIns;
+
+                //关闭窗口
+                layer.close(index);
+            });
+         });
+    }
+
+    function init_tab(){
+        var checkbook_id = $("#checkbook_selector option:selected").val();
+        var month_str = $("#month_selector").val();
+        var assets_full_json = (function () {
+                var result;
+                $.ajax({
+                    url:"/api/v1/assets?checkbook_id="+checkbook_id+"&month_str="+month_str+"&action=ALL",
+                    type:'GET',
+                    dataType:'json',
+                    async:false,
+                    success:function(json){ // http code 200
+                        result = json.data
+                    }
+                })
+                return result;
+            })();
+
+        $("#appendix_tab_title").empty()
+        $("#appendix_tab_content").empty()
+        for(var prop in assets_full_json["appendix"]){
+            var parent_html = $("#appendix_tab_content_script").html();
+            parent_html = parent_html.replace(/account_name/g,prop);
+            if(prop === "银行卡"){
+                $("#appendix_tab_title").append("<li class=\"layui-this\">"+prop+"</li>");
+
+           }else{
+                $("#appendix_tab_title").append("<li>"+prop+"</li>");
+               parent_html = parent_html.replace("layui-show","");
+           }
+           $("#appendix_tab_content").append(parent_html);
+        }
+        for(var prop in assets_full_json["appendix"]){
+            var account_name = prop;
+            var account_sum = assets_full_json["appendix"][account_name];
+           init_appendix_tab(account_name,account_sum);
+        }
+    }
+    init_tab()
+
+
+
+
 })

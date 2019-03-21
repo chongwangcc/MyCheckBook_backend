@@ -345,7 +345,7 @@ layui.use(['layer', 'jquery',"table", "laydate", "element", "form"], function ()
              type: 2,
              title:"添加资产负债表",
              content: 'assets_add',
-             area: ['500px', '700px'],
+             area: ['100%', '700px'],
              end: function () {
                 look_details();
              }
