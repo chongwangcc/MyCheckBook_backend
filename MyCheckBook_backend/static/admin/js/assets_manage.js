@@ -350,7 +350,6 @@ layui.use(['layer', 'jquery',"table", "laydate", "element", "form"], function ()
              content: 'assets_add',
              area: ['80%', '80%'],
              end: function () {
-                look_details();
              }
          });
     });

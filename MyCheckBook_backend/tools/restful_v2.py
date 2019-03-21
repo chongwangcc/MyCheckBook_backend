@@ -544,7 +544,7 @@ class AssetsAPI(Resource):
         action = args["action"]
         data = json.loads(args["data"])
 
-        # TODO 优化系统，这里操作数据库次数太多了
+        # 优化系统，这里操作数据库次数太多了
         if action == "all":
             # 传过来是全部的，要将本月份其他的记录删一删
             AppendixTools.delete_appendix(checkbook_id, month_str)

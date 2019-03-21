@@ -168,13 +168,9 @@ layui.use(['layer', 'jquery',"table", "laydate", "element", "form"], function ()
             contentType: "application/json; charset=utf-8",
             async:false,
             success:function(json){ // http code 200
-
+                 parent.layer.closeAll();
+                 parent.layer.msg('添加资产负债附表成功');
             }
         })
-
-        console.log(data)
-
-
-
     });
 })
