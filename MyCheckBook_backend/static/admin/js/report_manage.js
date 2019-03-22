@@ -105,7 +105,7 @@ layui.use(['layer', 'jquery',"table", "laydate", "element", "form"], function ()
 
         layer.open({
              type: 2,
-             title:"添加资产负债表",
+             title:"创建新财报",
              content: 'report_add',
              area: ['80%', '80%'],
              end: function () {
