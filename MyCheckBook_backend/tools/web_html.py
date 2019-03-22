@@ -49,7 +49,7 @@ def checkbook_add():
     记账本管理界面
     :return:
     """
-    return render_template('./index/checkbook-add.html')
+    return render_template('./index/checkbook_add.html')
 
 
 @app.route("/detail_add", methods=["GET"])
@@ -73,7 +73,7 @@ def detail_add():
         detail_json = DetailTools.get_detail(detail_id)
 
     # 3.构造返回值
-    return render_template('./index/detail-add.html',
+    return render_template('./index/detail_add.html',
                            detail_json=detail_json,
                            current_user_json=current_user_json,
                            checkbook_fulls_json = checkbook_fulls_json)
@@ -117,7 +117,7 @@ def assets_add():
     # 2. 获得明细
     checkbook_list_json = CheckbookTools.fetch_all_checkbooks(current_user.id)
     # 3.构造返回值
-    return render_template('./index/asset-add.html',
+    return render_template('./index/asset_add.html',
                            checkbook_list_json=checkbook_list_json)
 
 
