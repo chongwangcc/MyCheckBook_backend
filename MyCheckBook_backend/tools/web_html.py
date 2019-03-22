@@ -121,6 +121,17 @@ def assets_add():
                            checkbook_list_json=checkbook_list_json)
 
 
+@app.route("/report_add", methods=["GET"])
+@login_required
+def report_add():
+    """
+    财报管理界面
+    :return:
+    """
+    checkbook_list_json = CheckbookTools.fetch_all_checkbooks(current_user.id)
+    return render_template('./index/report_add.html',
+                           checkbook_list_json=checkbook_list_json)
+
 @app.route("/report_manage", methods=["GET"])
 @login_required
 def report_manage():

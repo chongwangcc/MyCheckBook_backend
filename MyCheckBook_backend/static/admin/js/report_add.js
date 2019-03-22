@@ -1,4 +1,6 @@
-layui.use(['layer', 'jquery',"table", "laydate", "element", "form"], function () {
+
+
+layui.use(['layer', 'jquery',"table", "laydate", "element", "form", 'steps'], function () {
     var layer = layui.layer;
     var table = layui.table;
     var laydate = layui.laydate;
