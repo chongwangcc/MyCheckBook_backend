@@ -94,6 +94,22 @@ layui.use(['layer', 'jquery',"table", "laydate", "element", "form"], function ()
                  break;
          }
     });
+    // 查看
+    $("#look-reports").click(function () {
+        layer.msg("查看财报");
+    });
 
+    // 生成新财报
+    $("#create-report").click(function () {
+        layer.msg("创建财报");
 
+        layer.open({
+             type: 2,
+             title:"添加资产负债表",
+             content: 'report_add',
+             area: ['80%', '80%'],
+             end: function () {
+             }
+         });
+    });
 });
