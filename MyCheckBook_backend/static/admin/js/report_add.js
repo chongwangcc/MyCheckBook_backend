@@ -20,6 +20,7 @@ layui.use(['layer', 'jquery',"table", "laydate", "element", "form",'steps'], fun
          "审计师总结",
          "完成",
     ]
+    console.log(title_list.length)
 
     // 初始化变量
     var base_info = {};
@@ -36,15 +37,15 @@ layui.use(['layer', 'jquery',"table", "laydate", "element", "form",'steps'], fun
         if(now_step<0){
             now_step = 0;
         }
+        console.log("click next "+now_step)
         init_card(now_step);
         $step.preStep();//上一步
     });
     $("#nextBtn").click(function(event) {
-        console.log("click next "+now_step)
         // end_card(now_step);
         now_step = now_step +1;
-        if(now_step>=title_list.length){
-            now_step = title_list.length-1;
+        if(now_step>title_list.length){
+            now_step = title_list.length;
         };
         init_card(now_step);
         $step.nextStep();//下一步
