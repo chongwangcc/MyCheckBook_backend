@@ -5,6 +5,17 @@ layui.config({
     steps:"steps/steps"
 });
 
+function set_select_checked(selectId, checkValue){
+    var select = document.getElementById(selectId);
+
+    for (var i = 0; i < select.options.length; i++){
+        if (select.options[i].value == checkValue){
+            select.options[i].selected = true;
+            break;
+        }
+    }
+}
+
 layui.use(['layer', 'jquery',"table", "laydate", "element", "form",'steps'], function () {
     var layer = layui.layer;
     var table = layui.table;
@@ -23,7 +34,7 @@ layui.use(['layer', 'jquery',"table", "laydate", "element", "form",'steps'], fun
 
     // 初始化变量
     var base_info = {};
-    var assets_appendix = {}
+    var assets_appendix = []
     var report_content = {}
     var audit_info = {}
 
@@ -49,7 +60,7 @@ layui.use(['layer', 'jquery',"table", "laydate", "element", "form",'steps'], fun
         $step.nextStep();//下一步
     });
 
-    //初始化web界面
+    //初始化web界面, 保留之前的数据
     function init_card(step_nums){
         $("#card_title").text(title_list[step_nums]);
         var card_id = "card" + step_nums;
@@ -57,18 +68,34 @@ layui.use(['layer', 'jquery',"table", "laydate", "element", "form",'steps'], fun
 
         switch(step_nums){
             case 0:
-                init_checkbook(checkbook_list_json);
-                laydate.render({
+                if(JSON.stringify(base_info) == '{}'){
+                    init_checkbook(checkbook_list_json);
+                    laydate.render({
                     elem: '#date_range'
                     ,range: true
                 });
-                form.render();
+                    form.render();
+                }else{
+                    init_checkbook(checkbook_list_json);
+                    laydate.render({
+                        elem: '#date_range'
+                        ,range: true
+                        ,value: base_info["date_range"]
+                    });
+                    set_select_checked("checkbook_selector", base_info["checkbook_id"]);
+                    set_select_checked("report_type_selector", base_info["report_type"]);
+                    $("#person_name").val(base_info["person_name"]);
+                    $("#career").val(base_info["career"]);
+                    $("#report_name").val(base_info["report_name"]);
+                    form.render();
+                }
                 break;
-
-
             case 2:
-
-                init_tab();
+                if(JSON.stringify(assets_appendix) == '[]'){
+                    init_tab();
+                 }else{
+                    init_tab_by_value(assets_appendix);
+                }
                 break;
         }
     }
@@ -84,15 +111,26 @@ layui.use(['layer', 'jquery',"table", "laydate", "element", "form",'steps'], fun
                 base_info["person_name"] = $("#person_name").val();
                 base_info["career"] = $("#career").val();
                 base_info["report_name"] = $("#report_name").val();
-                console.log(base_info);
                 break;
              case 1:
                 break;
              case 2:
+                 assets_appendix = []
+                 for(var i in appendix_names){
+                    var t_name = appendix_names[i]
+                    var all_data = table.cache[t_name+"_appendix_table"];
+                    assets_appendix.push({
+                        "name":t_name,
+                        "data":all_data
+                    });
+                }
                 break;
              case 3:
+
                 break;
              case 4:
+                 audit_info["audio_name"] = $("#audit_name").val();
+                 audit_info["audio_suggetions"] = $("#suggestion").val();
                 break;
              case 5:
                 break;
@@ -144,19 +182,24 @@ layui.use(['layer', 'jquery',"table", "laydate", "element", "form",'steps'], fun
         myTables[account_name] = tableIns;
 
         $(document).on('click','#'+account_name+'_add_row',function(){
-            console.log(account_name)
+
             var oldData = table.cache[account_name+"_appendix_table"];
-            console.log(oldData)
+
             old_cols =  myTables[account_name].config.cols
             var newRow = {};
             for(var c in old_cols){
                 newRow[c] = ""
             };
             oldData.push(newRow);
-            console.log(oldData)
-            myTables[account_name].reload({
-                data : oldData
+
+            tableIns = table.render({
+                    elem: '#'+account_name+'_appendix_table'
+                    ,page: false
+                    ,cols: old_cols
+                    ,limit:100
+                    ,data:oldData
             });
+            myTables[account_name] = tableIns;
          });
         $(document).on('click','#'+account_name+'_add_col',function(){
              // 弹出对话框设置列名
@@ -184,8 +227,8 @@ layui.use(['layer', 'jquery',"table", "laydate", "element", "form",'steps'], fun
          });
     }
     function init_tab(){
-        checkbook_id=1
-        month_str = "2019-03"
+        var checkbook_id = base_info["checkbook_id"];
+        var month_str=base_info["date_range"].substr(0,7);
         var assets_full_json = (function () {
                 var result;
                 $.ajax({
@@ -222,6 +265,44 @@ layui.use(['layer', 'jquery',"table", "laydate", "element", "form",'steps'], fun
             var account_sum = assets_full_json["empty"][account_name];
            init_appendix_tab(account_name,account_sum);
         }
-    }
+    };
 
+    function init_tab_by_value(table_values){
+        $("#appendix_tab_title").empty()
+        $("#appendix_tab_content").empty()
+        for(var prop in table_values){
+            prop = table_values[prop].name
+            var parent_html = $("#appendix_tab_content_script").html();
+            parent_html = parent_html.replace(/account_name/g,prop);
+            if(prop === "银行卡"){
+                $("#appendix_tab_title").append("<li class=\"layui-this\">"+prop+"</li>");
+
+           }else{
+                $("#appendix_tab_title").append("<li>"+prop+"</li>");
+               parent_html = parent_html.replace("layui-show","");
+           }
+           $("#appendix_tab_content").append(parent_html);
+        }
+
+
+        for(var prop in myTables){
+            var account_name = prop;
+            var table_temp = myTables[prop];
+            var data = []
+            for(var ii in table_values){
+                if(table_values[ii].name==prop){
+                    data = table_values[ii].data;
+                    break;
+                }
+            }
+            tableIns = table.render({
+              elem: '#'+prop+'_appendix_table'
+              ,page: false
+              ,limit:100
+              ,cols: table_temp.config.cols
+              ,data:data
+            });
+
+        }
+    }
 })
