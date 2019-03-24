@@ -17,87 +17,249 @@
 </head>
 
 <body>
-<div id="step_demo" class="step-body">
-    <div class="step-header" style="width:80%;overflow: hidden;">
-        <ul>
-            <li>
-                <span class="step-name">填写基本信息</span>
-            </li>
-            <li>
-                <span class="step-name">同步明细数据</span>
-            </li>
-            <li>
-                <span class="step-name">资产负债清查</span>
-            </li>
-            <li>
-                <span class="step-name">检查财报内容</span>
-            </li>
-            <li>
-                <span class="step-name">审计师总结</span>
-            </li>
-            <li>
-                <span class="step-name">完成</span>
-            </li>
-        </ul>
-    </div>
-    <div class="step-content">
-        <div class="step-list">
-
+    <div id="step_demo" class="step-body">
+        <div class="step-header" style="width:80%;overflow: hidden;">
+            <ul>
+                <li>
+                    <span class="step-name">填写基本信息</span>
+                </li>
+                <li>
+                    <span class="step-name">同步明细数据</span>
+                </li>
+                <li>
+                    <span class="step-name">资产负债清查</span>
+                </li>
+                <li>
+                    <span class="step-name">检查财报内容</span>
+                </li>
+                <li>
+                    <span class="step-name">审计师总结</span>
+                </li>
+                <li>
+                    <span class="step-name">完成</span>
+                </li>
+            </ul>
         </div>
-        <div class="step-list">
+        <div class="step-content">
+            <div class="step-list">
 
-        </div>
-        <div class="step-list">
-
-        </div>
-        <div class="step-list">
-
-        </div>
-        <div class="step-list">
-
-        </div>
-        <div class="step-list">
-
-        </div>
-    </div>
-    <div style="padding: 20px; height:80%; background-color: #F2F2F2;">
-      <div class="layui-row layui-col-space15">
-        <div class="layui-col-md12">
-          <div class="layui-card" style=" height:80%">
-            <div class="layui-card-header" id="card_title">填写基本信息</div>
-            <div class="layui-card-body" id="card_content" style=" height:400px">
             </div>
-          </div>
+            <div class="step-list">
+
+            </div>
+            <div class="step-list">
+
+            </div>
+            <div class="step-list">
+
+            </div>
+            <div class="step-list">
+
+            </div>
+            <div class="step-list">
+
+            </div>
         </div>
-      </div>
+        <div class="layui-row chart-panel panel panel-default">
+            <button id="preBtn" class="layui-btn layui-btn-small layui-btn-normal">
+                <i class="layui-icon">&#xe642;</i>上一步
+            </button>
+            <button id="nextBtn" class="layui-btn layui-btn-small layui-btn-normal">
+                <i class="layui-icon">&#xe642;</i>下一步
+            </button>
+        </div>
+        <div style="padding: 20px; height:80%; background-color: #F2F2F2;">
+            <div class="layui-row layui-col-space15">
+                <div class="layui-col-md12">
+                    <div class="layui-card" style=" height:80%">
+                        <div class="layui-card-header" id="card_title">填写基本信息</div>
+                        <div class="layui-card-body" id="card_content">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-</div>
 
-<div class="layui-row chart-panel panel panel-default">
-         <button id="preBtn" class="layui-btn layui-btn-small layui-btn-normal">
-             <i class="layui-icon">&#xe642;</i>上一步</button>
-        <button id="nextBtn" class="layui-btn layui-btn-small layui-btn-normal">
-             <i class="layui-icon">&#xe642;</i>下一步</button>
-</div>
+    <script type="text/javascript">
+        var checkbook_list_json =  JSON.parse('{{ checkbook_list_json|tojson }}');
+    </script>
 
-<script type="text/html" id="card0">
-    <div>card0</div>
-</script>
-<script type="text/html" id="card1">
-<div>card1</div>
-</script>
-<script type="text/html" id="card2">
-<div>card2</div>
-</script>
-<script type="text/html" id="card3">
-<div>card3</div>
-</script>
-<script type="text/html" id="card4">
-<div>card4</div>
-</script>
-<script type="text/html" id="card5">
-<div>card5</div>
-</script>
+    <script type="text/html" id="card0">
+        <form class="layui-form column-content-detail">
+            <div class="layui-form-item">
+                <label class="layui-form-label">财报名称：</label>
+                <div class="layui-inline">
+                   <input type="text" name="remark" id="report_name" value="" autocomplete="off"  class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">记账本：</label>
+                <div class="layui-inline">
+                    <select name="checkbook_id" lay-filter="checkbook_selector" id="checkbook_selector">
+                    checkbook_selector_replace
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">财报类型：</label>
+                <div class="layui-inline">
+                    <select name="account_name" lay-filter="report_type_selector" id="report_type_selector">
+                        <option value = "月报">月报 </option>;
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">统计时段：</label>
+                <div class="layui-inline">
+                    <input type="text" class="layui-input" id="date_range" autocomplete="off" placeholder="yyyy-MM-dd">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">个人名称：</label>
+                <div class="layui-inline">
+                   <input type="text" name="remark" id="name" value="" autocomplete="off"  class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">职业：</label>
+                <div class="layui-inline">
+                   <input type="text" name="remark" id="career" value="" autocomplete="off"  class="layui-input">
+                </div>
+            </div>
+    </form>
+    </script>
+
+    <script type="text/html" id="card1">
+        <div  class="layui-input-block">
+            <label > 打开手机APP端， 确认明细数据已同步</label>
+        </div>
+    </script>
+
+    <script type="text/html" id="card2">
+        <div class="layui-tab page-content-wrap" lay-filter="test" id ="tab_appendix">
+            <ul class="layui-tab-title" id="appendix_tab_title">
+            </ul>
+            <div class="layui-tab-content" id="appendix_tab_content">
+            </div>
+        </div>
+    </script>
+    <script type="text/html" id="card3">
+        <!--<div class="layui-tab page-content-wrap" lay-filter="test" id ="tab_report">-->
+            <!--<ul class="layui-tab-title" id="report_tab_title">-->
+            <!--</ul>-->
+            <!--<div class="layui-tab-content" id="report_tab_content">-->
+            <!--</div>-->
+        <!--</div>-->
+        <div  class="layui-input-block">
+            <label > 下载财报，确认财报无误后，点击下一步</label>
+        </div>
+
+    </script>
+    <script type="text/html" id="card4">
+         <form class="layui-form column-content-detail">
+             <div class="layui-form-item">
+                <label class="layui-form-label">审计师名称：</label>
+                <div class="layui-inline">
+                   <input type="text"  id="audit_name" value="" autocomplete="off"  class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">审计师总结：</label>
+                <div class="layui-inline">
+                   <input type="text" id="suggestion" value="" autocomplete="off"  class="layui-input">
+                </div>
+            </div>
+         </form>
+    </script>
+    <script type="text/html" id="card5">
+        <div  class="layui-input-block">
+            <label > 完成财报制作</label>
+        </div>
+    </script>
+
+    <script type="text/html" id="appendix_tab_content_script">
+       <div class="layui-tab-item layui-tab-brief layui-show">
+             <div class="layui-row chart-panel panel panel-default">
+                 <button type="button" id="account_name_add_row" class="layui-btn layui-btn-normal">
+                     <i class="layui-icon layui-icon-add-1"></i>行
+                 </button>
+                 <button type="button"  id="account_name_add_col" class="layui-btn layui-btn-normal" >
+                      <i class="layui-icon layui-icon-add-1"></i>列
+                 </button>
+             </div>
+             <table class="layui-table" lay-even lay-skin="line" lay-filter="detail-table"
+                           id="account_name_appendix_table">
+             </table>
+         </div>
+    </script>
+
+    <script type="text/html" id="report_tab_content_script">
+       <div class="layui-tab-item layui-tab-brief layui-show">
+           <div class="layui-collapse" lay-filter="test">
+              <div class="layui-colla-item">
+                <h2 class="layui-colla-title">损益表</h2>
+                <div class="layui-colla-content">
+                    <div class="layui-row chart-panel panel panel-default">
+                        <div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+                            <table class="layui-table" lay-even lay-skin="nob" lay-filter="detail-table"
+                                   id="account_name_income_table">
+                            </table>
+                        </div>
+                        <div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+                            <table class="layui-table" lay-even lay-skin="nob" lay-filter="detail-table"
+                                   id="account_name_outcome_table">
+                            </table>
+                        </div>
+                    </div>
+                </div>
+              </div>
+              <div class="layui-colla-item">
+                <h2 class="layui-colla-title">资产负债表</h2>
+                <div class="layui-colla-content">
+                    <div class="layui-row chart-panel panel panel-default">
+                        <div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+                            <table class="layui-table" lay-even lay-skin="nob" lay-filter="detail-table"
+                                   id="account_name_assets_table">
+                            </table>
+                        </div>
+                        <div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+                            <table class="layui-table" lay-even lay-skin="nob" lay-filter="detail-table"
+                                   id="account_name_liability_table">
+                            </table>
+                        </div>
+                    </div>
+                 </div>
+              </div>
+              <div class="layui-colla-item">
+                <h2 class="layui-colla-title">现金流量表</h2>
+                <div class="layui-colla-content">
+                    <div class="layui-row chart-panel panel panel-default">
+                        <div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+                            <table class="layui-table" lay-even lay-skin="nob" lay-filter="detail-table"
+                                   id="account_name_inflow_table">
+                            </table>
+                        </div>
+                        <div class="layui-col-xs6 layui-col-sm6 layui-col-md6">
+                            <table class="layui-table" lay-even lay-skin="nob" lay-filter="detail-table"
+                                   id="account_name_outflow_table">
+                            </table>
+                        </div>
+                    </div>
+                </div>
+              </div>
+            </div>
+         </div>
+    </script>
+
+    <script type="text/html" id="sum_tab_content_script">
+        财报的概况
+    </script>
+
+    <script type="text/html" id="appendix_tab_script">
+        财报的附表/ 明细附表 资产负债附表
+    </script>
 
 </body>
 
