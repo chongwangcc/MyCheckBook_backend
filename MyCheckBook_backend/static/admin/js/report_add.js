@@ -65,6 +65,7 @@ layui.use(['layer', 'jquery',"table", "laydate", "element", "form",'steps'], fun
         $("#card_title").text(title_list[step_nums]);
         var card_id = "card" + step_nums;
         $("#card_content").html($("#"+card_id).html())
+        $("#nextBtn").html("<i class=\"layui-icon\">&#xe602;</i>下一步");
 
         switch(step_nums){
             case 0:
@@ -90,6 +91,8 @@ layui.use(['layer', 'jquery',"table", "laydate", "element", "form",'steps'], fun
                     form.render();
                 }
                 break;
+            case 1:
+                break;
             case 2:
                 if(JSON.stringify(assets_appendix) == '[]'){
                     init_tab();
@@ -97,13 +100,21 @@ layui.use(['layer', 'jquery',"table", "laydate", "element", "form",'steps'], fun
                     init_tab_by_value(assets_appendix);
                 }
                 break;
+            case 3:
+                break;
             case 4:
                  if(JSON.stringify(audit_info) == '{}'){
 
                  }else{
                      $("#audit_name").val(audit_info["audio_name"]);
                      $("#suggestion").val(audit_info["audio_suggetions"]);
-                 }
+                 };
+                 break;
+            case 5:
+            case 6:
+            case 7:
+                 $("#nextBtn").html("<i class=\"layui-icon\">&#xe605;</i>完成");
+                 break;
         }
     }
     init_card(now_step);
