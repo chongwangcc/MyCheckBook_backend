@@ -20,7 +20,6 @@ layui.use(['layer', 'jquery',"table", "laydate", "element", "form",'steps'], fun
          "审计师总结",
          "完成",
     ]
-    console.log(title_list.length)
 
     // 初始化变量
     var base_info = {};
@@ -32,17 +31,16 @@ layui.use(['layer', 'jquery',"table", "laydate", "element", "form",'steps'], fun
     var now_step = 0;
     var $step= $("#step_demo").step();
     $("#preBtn").click(function(event) {
-        // end_card(now_step);
+        end_card(now_step);
         now_step = now_step -1;
         if(now_step<0){
             now_step = 0;
         }
-        console.log("click next "+now_step)
         init_card(now_step);
         $step.preStep();//上一步
     });
     $("#nextBtn").click(function(event) {
-        // end_card(now_step);
+        end_card(now_step);
         now_step = now_step +1;
         if(now_step>title_list.length){
             now_step = title_list.length;
@@ -78,16 +76,16 @@ layui.use(['layer', 'jquery',"table", "laydate", "element", "form",'steps'], fun
 
     //离开界面是触发，保存值
     function end_card(step_nums){
-        console.log(step_nums)
          switch(step_nums) {
              case 0:
-                 base_info["checkbook_id"] = $("#checkbook_selector option:selected").val();
+                base_info["checkbook_id"] = $("#checkbook_selector option:selected").val();
                 base_info["report_type"] = $("#report_type_selector option:selected").val();
-                base_info["date_range"] = $("#date_range").text();
-                base_info["name"] = $("#name").text();
-                base_info["career"] = $("#career").text();
-                console.log(base_info)
-                 break;
+                base_info["date_range"] = $("#date_range").val();
+                base_info["person_name"] = $("#person_name").val();
+                base_info["career"] = $("#career").val();
+                base_info["report_name"] = $("#report_name").val();
+                console.log(base_info);
+                break;
              case 1:
                 break;
              case 2:
