@@ -97,6 +97,13 @@ layui.use(['layer', 'jquery',"table", "laydate", "element", "form",'steps'], fun
                     init_tab_by_value(assets_appendix);
                 }
                 break;
+            case 4:
+                 if(JSON.stringify(audit_info) == '{}'){
+
+                 }else{
+                     $("#audit_name").val(audit_info["audio_name"]);
+                     $("#suggestion").val(audit_info["audio_suggetions"]);
+                 }
         }
     }
     init_card(now_step);
