@@ -624,7 +624,7 @@ class ReportAPI(Resource):
             return_value["excel_path"] = "/download/test.xls"
             return_value["report_id"] = "123"
 
-        elif action in ["add_audio"]:
+        elif action in ["add_audit"]:
             report_id = mydata["report_id"]
             audit_info = mydata["audit_info"]
             pass

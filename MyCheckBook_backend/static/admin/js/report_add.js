@@ -14,7 +14,7 @@ function set_select_checked(selectId, checkValue){
             break;
         }
     }
-}
+};
 
 layui.use(['layer', 'jquery',"table", "laydate", "element", "form",'steps'], function () {
     var layer = layui.layer;
@@ -30,7 +30,7 @@ layui.use(['layer', 'jquery',"table", "laydate", "element", "form",'steps'], fun
         "检查财报内容",
          "审计师总结",
          "完成",
-    ]
+    ];
 
     // 初始化变量
     var base_info = {};
@@ -55,7 +55,29 @@ layui.use(['layer', 'jquery',"table", "laydate", "element", "form",'steps'], fun
         now_step = now_step +1;
         if(now_step>title_list.length){
             now_step = title_list.length;
+            //点击了完成按钮？
         };
+        if(now_step == title_list.length){
+            console.log("完成 click")
+            // 把财报数据保存到后台
+            mydata = {
+                report_id:report_content["report_id"],
+                "audit_info":audit_info
+            }
+            $.ajax({
+                url:"/api/v1/report?"+"action=add_audit",
+                type:'PUT',
+                dataType:'json',
+                data:{"data":JSON.stringify(mydata)},
+                async:false,
+                success:function(json){ // http code 200
+                    result = json.data
+                }
+            });
+
+            //关闭界面
+             parent.layer.closeAll();
+        }
         enter_card(now_step);
         $step.nextStep();//下一步
     });
@@ -108,8 +130,7 @@ layui.use(['layer', 'jquery',"table", "laydate", "element", "form",'steps'], fun
                     base_info:base_info,
                     assets_appendix:assets_appendix,
                 };
-                console.log(mydata)
-                var report_excel_json = (function () {
+                report_content = (function () {
                     var result;
                     $.ajax({
                             url:"/api/v1/report?"+"action=gen_report",
@@ -118,18 +139,14 @@ layui.use(['layer', 'jquery',"table", "laydate", "element", "form",'steps'], fun
                             data:{"data":JSON.stringify(mydata)},
                             async:false,
                             success:function(json){ // http code 200
-                                console.log(json);
                                 result = json.data
                             }
                         });
                         return result;
                     })();
                 $("#report_path").click(function(event) {
-                    console.log(report_excel_json["excel_path"]);
-                    window.open(report_excel_json["excel_path"]);
+                    window.open(report_content["excel_path"]);
                 });
-
-
                 break;
             case 4:
                  if(JSON.stringify(audit_info) == '{}'){
@@ -145,7 +162,7 @@ layui.use(['layer', 'jquery',"table", "laydate", "element", "form",'steps'], fun
                  $("#nextBtn").html("<i class=\"layui-icon\">&#xe605;</i>完成");
                  break;
         }
-    }
+    };
     enter_card(now_step);
 
     //离开界面是触发，保存值
@@ -175,6 +192,7 @@ layui.use(['layer', 'jquery',"table", "laydate", "element", "form",'steps'], fun
              case 3:
                  // 检查财报内容
 
+
                 break;
              case 4:
                  audit_info["audio_name"] = $("#audit_name").val();
@@ -183,7 +201,7 @@ layui.use(['layer', 'jquery',"table", "laydate", "element", "form",'steps'], fun
              case 5:
                 break;
          }
-    }
+    };
 
     // 设置记账本下拉框
     function init_checkbook(result) {
@@ -272,7 +290,7 @@ layui.use(['layer', 'jquery',"table", "laydate", "element", "form",'steps'], fun
                 layer.close(index);
             });
          });
-    }
+    };
     function init_tab(){
         var checkbook_id = base_info["checkbook_id"];
         var month_str=base_info["date_range"].substr(0,7);
@@ -313,7 +331,6 @@ layui.use(['layer', 'jquery',"table", "laydate", "element", "form",'steps'], fun
            init_appendix_tab(account_name,account_sum);
         }
     };
-
     function init_tab_by_value(table_values){
         $("#appendix_tab_title").empty()
         $("#appendix_tab_content").empty()
@@ -330,7 +347,6 @@ layui.use(['layer', 'jquery',"table", "laydate", "element", "form",'steps'], fun
            }
            $("#appendix_tab_content").append(parent_html);
         }
-
 
         for(var prop in myTables){
             var account_name = prop;
@@ -351,5 +367,5 @@ layui.use(['layer', 'jquery',"table", "laydate", "element", "form",'steps'], fun
             });
 
         }
-    }
+    };
 })
