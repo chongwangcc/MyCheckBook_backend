@@ -628,6 +628,15 @@ class ReportTools:
             pass
         return True
 
+    @classmethod
+    def gen_report(cls, base_info, assets_appendix):
+        """
+        生成财报，excel文件
+        :param base_info:
+        :return:
+        """
+
+
 
 if __name__ == "__main__":
     # ree = CheckbookTools.get_checkbook_account_list(1)
