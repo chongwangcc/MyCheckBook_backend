@@ -5,7 +5,9 @@
 # @Email: chongwangcc@gmail.com
 # @File : web_html.py 
 # @Software: PyCharm
-from flask import Flask, render_template, jsonify, request, redirect
+import os
+
+from flask import Flask, render_template, jsonify, request, redirect, send_from_directory
 from flask_login import (current_user, login_required, login_user, logout_user, confirm_login, fresh_login_required)
 from flask_restful import reqparse
 from tools.app import app
@@ -132,6 +134,7 @@ def report_add():
     return render_template('./index/report_add.html',
                            checkbook_list_json=checkbook_list_json)
 
+
 @app.route("/report_manage", methods=["GET"])
 @login_required
 def report_manage():
@@ -173,6 +176,15 @@ def trends_img():
     """
     return render_template('./index/trends_img.html')
 
+
+@app.route("/download/<path:filename>")
+def downloader(filename):
+    """
+    下载文件
+    :return:
+    """
+    dirpath = os.path.join(app.root_path, '../data/reports')  # 这里是下在目录，从工程的根目录写起，比如你要下载static/js里面的js文件，这里就要写“static/js”
+    return send_from_directory(dirpath, filename, as_attachment=True)  # as_attachment=True 一定要写，不然会变成打开，而不是下载
 
 
 @app.route("/login", methods=['GET', 'POST'])

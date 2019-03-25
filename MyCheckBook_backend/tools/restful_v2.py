@@ -577,6 +577,10 @@ class ReportAPI(Resource):
         self.delete_parser = reqparse.RequestParser()
         self.delete_parser.add_argument('report_id', type=str, required=True)
 
+        self.put_parser = reqparse.RequestParser()
+        self.put_parser.add_argument('data', type=str, required=True)
+        self.put_parser.add_argument("action", type=str, required=True)
+
     def get(self):
         args = self.get_parser.parse_args()
         checkbook_id = args["checkbook_id"]
@@ -604,7 +608,33 @@ class ReportAPI(Resource):
         return jsonify(result)
 
     def put(self):
-        pass
+        """
+        创建新的财报内容
+        :return:
+        """
+        args = self.put_parser.parse_args()
+        mydata = json.loads(args["data"])
+        action = args["action"]
+        print(mydata)
+        return_value = {}
+
+        if action in ["gen_report"]:
+            base_info = mydata["base_info"]
+            assets_appendix = mydata["assets_appendix"]
+            return_value["excel_path"] = "/download/test.xls"
+            return_value["report_id"] = "123"
+
+        elif action in ["add_audio"]:
+            report_id = mydata["report_id"]
+            audit_info = mydata["audit_info"]
+            pass
+
+        result = {
+            "code": 0,
+            "msg": "success",
+            "data": return_value
+        }
+        return jsonify(result)
 
     def post(self):
         pass
@@ -788,6 +818,7 @@ class TrendsAPI(Resource):
 
 
         return jsonify(result)
+
 
 api.add_resource(UserAPI, '/api/v1/user', endpoint='user')
 

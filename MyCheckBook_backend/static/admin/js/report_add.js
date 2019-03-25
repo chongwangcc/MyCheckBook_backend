@@ -42,26 +42,26 @@ layui.use(['layer', 'jquery',"table", "laydate", "element", "form",'steps'], fun
     var now_step = 0;
     var $step= $("#step_demo").step();
     $("#preBtn").click(function(event) {
-        end_card(now_step);
+        exit_card(now_step);
         now_step = now_step -1;
         if(now_step<0){
             now_step = 0;
         }
-        init_card(now_step);
+        enter_card(now_step);
         $step.preStep();//上一步
     });
     $("#nextBtn").click(function(event) {
-        end_card(now_step);
+        exit_card(now_step);
         now_step = now_step +1;
         if(now_step>title_list.length){
             now_step = title_list.length;
         };
-        init_card(now_step);
+        enter_card(now_step);
         $step.nextStep();//下一步
     });
 
     //初始化web界面, 保留之前的数据
-    function init_card(step_nums){
+    function enter_card(step_nums){
         $("#card_title").text(title_list[step_nums]);
         var card_id = "card" + step_nums;
         $("#card_content").html($("#"+card_id).html())
@@ -69,14 +69,16 @@ layui.use(['layer', 'jquery',"table", "laydate", "element", "form",'steps'], fun
 
         switch(step_nums){
             case 0:
-                if(JSON.stringify(base_info) == '{}'){
+                if(JSON.stringify(base_info) == '{}')
+                {
                     init_checkbook(checkbook_list_json);
                     laydate.render({
                     elem: '#date_range'
                     ,range: true
                 });
                     form.render();
-                }else{
+                }
+                else {
                     init_checkbook(checkbook_list_json);
                     laydate.render({
                         elem: '#date_range'
@@ -101,6 +103,33 @@ layui.use(['layer', 'jquery',"table", "laydate", "element", "form",'steps'], fun
                 }
                 break;
             case 3:
+                // 检查财报内容
+                var mydata = {
+                    base_info:base_info,
+                    assets_appendix:assets_appendix,
+                };
+                console.log(mydata)
+                var report_excel_json = (function () {
+                    var result;
+                    $.ajax({
+                            url:"/api/v1/report?"+"action=gen_report",
+                            type:'PUT',
+                            dataType:'json',
+                            data:{"data":JSON.stringify(mydata)},
+                            async:false,
+                            success:function(json){ // http code 200
+                                console.log(json);
+                                result = json.data
+                            }
+                        });
+                        return result;
+                    })();
+                $("#report_path").click(function(event) {
+                    console.log(report_excel_json["excel_path"]);
+                    window.open(report_excel_json["excel_path"]);
+                });
+
+
                 break;
             case 4:
                  if(JSON.stringify(audit_info) == '{}'){
@@ -117,10 +146,10 @@ layui.use(['layer', 'jquery',"table", "laydate", "element", "form",'steps'], fun
                  break;
         }
     }
-    init_card(now_step);
+    enter_card(now_step);
 
     //离开界面是触发，保存值
-    function end_card(step_nums){
+    function exit_card(step_nums){
          switch(step_nums) {
              case 0:
                 base_info["checkbook_id"] = $("#checkbook_selector option:selected").val();
@@ -144,6 +173,7 @@ layui.use(['layer', 'jquery',"table", "laydate", "element", "form",'steps'], fun
                 }
                 break;
              case 3:
+                 // 检查财报内容
 
                 break;
              case 4:
@@ -154,7 +184,6 @@ layui.use(['layer', 'jquery',"table", "laydate", "element", "form",'steps'], fun
                 break;
          }
     }
-
 
     // 设置记账本下拉框
     function init_checkbook(result) {
@@ -258,7 +287,7 @@ layui.use(['layer', 'jquery',"table", "laydate", "element", "form",'steps'], fun
                         console.log(json.data);
                         result = json.data
                     }
-                })
+                });
                 return result;
             })();
 
