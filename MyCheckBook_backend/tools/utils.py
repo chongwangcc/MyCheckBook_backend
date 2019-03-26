@@ -138,6 +138,109 @@ class AssetsSumUtils:
 
         return True
 
+    def get_final_result(self):
+        return self.all_result
+
+
+class ProfitSumUtils:
+    """
+    损益表、现金流量表的求和工具类
+    """
+
+    def __init__(self, account_enums=[], income_enum=[], outcome_enum=[]):
+        self.all_result = {}
+        self.sumName = "合并账户"
+        self.income_enum = income_enum
+        self.outcome_enum = income_enum
+        self.account_enums = account_enums
+        self.account_list_level1 = [self.sumName]
+        for a in self.account_enums:
+            if "-" not in str(a):
+                self.account_list_level1.append(a)
+
+        # 创建整个字典结构，只是没有数据而已
+        for a in self.account_list_level1:
+            self.all_result[a] = {}
+            self.all_result[a]["总收入"] = {"data": [], "org_sum": 0, "now_sum": 0}
+            self.all_result[a]["总支出"] = {"data": [], "org_sum": 0, "now_sum": 0}
+            for income in self.income_enum:
+                self.all_result[a]["总收入"]["data"].append({
+                    "name": income,
+                    "org_sum": 0,
+                    "now_sum": 0,
+                    "data": []
+                });
+            for outcome in self.outcome_enum:
+                self.all_result[a]["总支出"]["data"].append({
+                    "name": outcome,
+                    "org_sum": 0,
+                    "now_sum": 0,
+                    "data": []
+                });
+
+    def __add_one(self, org_price,
+                  now_price,
+                  appendix_name,
+                  account1,
+                  flow_type,
+                  sum_type="总收入"):
+        org_price = float(org_price)
+        now_price = float(now_price)
+        self.all_result[account1][sum_type]["org_sum"] += org_price
+        self.all_result[account1][sum_type]["now_sum"] += now_price
+        self.all_result[account1][sum_type]["org_sum"] = round(self.all_result[account1][sum_type]["org_sum"], 2)
+        self.all_result[account1][sum_type]["now_sum"] = round(self.all_result[account1][sum_type]["now_sum"], 2)
+        for t_dict in self.all_result[account1][sum_type]["data"]:
+            if t_dict["name"] == flow_type:
+                t_dict["org_sum"] += org_price
+                t_dict["now_sum"] += now_price
+                t_dict["org_sum"] = round( t_dict["org_sum"], 2)
+                t_dict["now_sum"] = round(t_dict["now_sum"], 2)
+                t_apendix_dict = None
+                for tt in t_dict["data"]:
+                    if tt["name"] == appendix_name:
+                        t_apendix_dict = tt
+                if t_apendix_dict is None:
+                    t_dict["data"].append({"name": appendix_name, "org_sum": org_price, "now_sum": now_price})
+                    pass
+                else:
+                    t_apendix_dict["org_sum"] += org_price
+                    t_apendix_dict["now_sum"] += now_price
+                    t_apendix_dict["org_sum"] = round(t_apendix_dict["org_sum"], 2)
+                    t_apendix_dict["now_sum"] = round(t_apendix_dict["now_sum"], 2)
+                break
+
+    def add(self, org_price, now_price, appendix_name, account_name, fluidity ):
+        """
+        添加一条记录
+        :param org_price:
+        :param now_price:
+        :param appendix_name:
+        :param fluidity:
+        :param account_name:
+        :return:
+        """
+        if account_name is None or len(account_name) == 0:
+            account_name = "default"
+        account1, account2 = account_split(account_name)
+        if account1 not in self.account_enums:
+            print(account1+ "  非法的账户名")
+            return False
+        if fluidity in self.income_enum:
+            # 资产项目
+            self.__add_one(org_price, now_price, appendix_name, account1, fluidity, "总收入")
+            self.__add_one(org_price, now_price, appendix_name, self.sumName, fluidity, "总收入")
+            pass
+        elif fluidity in self.outcome_enum:
+            # 负债项目
+            self.__add_one(org_price, now_price, appendix_name, account1, fluidity, "总支出")
+            self.__add_one(org_price, now_price, appendix_name, self.sumName, fluidity, "总支出")
+            pass
+        else:
+            print(fluidity + " error flowtype ")
+            return False
+
+        return True
 
     def get_final_result(self):
         return self.all_result

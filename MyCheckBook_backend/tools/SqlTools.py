@@ -326,6 +326,36 @@ class DetailTools:
         df = pd.read_sql_query(sql, conn)
         return df
 
+    @classmethod
+    def get_details_list(cls, checkbook_id, start_date, end_data):
+        """
+        获得明细
+        :param checkbook_id:
+        :param start_date:
+        :param end_data:
+        :return:
+        """
+        conn = sqlite3.connect(g_sqlite3_path)
+        sql = "select * from " + DetailInfo.get_table_name()
+        sql += " where "
+        sql += " checkbook == " + str(checkbook_id) + " and "
+        sql += " date >= '" + str(start_date) + "' and "
+        sql += " date <= '" + str(end_data) + "' "
+        sql += " ORDER BY date DESC, id ASC "
+        df = pd.read_sql_query(sql, conn)
+        return df
+
+    @classmethod
+    def gen_detail_report_sum(cls, checkbook_id, start_date, end_date):
+        """
+        生成 明细的 汇总信息：损益表，现金流量表
+        :param checkbook_id:
+        :param start_date:
+        :param end_date:
+        :return:
+        """
+        # 0. 获得
+
 
 class AssetsTools:
 
@@ -646,7 +676,10 @@ if __name__ == "__main__":
     # print(detias)
     # result = AppendixTools.get_appendix_name_list(1, "2019-03")
     # print(result)
-    print(AppendixTools.get_empty_appendix(1))
+    # print(AppendixTools.get_empty_appendix(1))
+
+    df = DetailTools.get_details_list(1, "2019-02-01", "2019-03-15")
+    print(df)
 
 
 
