@@ -6,13 +6,6 @@
 # @File : setup.py.py 
 # @Software: PyCharm
 
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-# @Time : 2019/1/16 14:02
-# @Author : wangchong
-# @Email: chongwangcc@gmail.com
-# @File : App.py
-# @Software: PyCharm
 from setuptools import setup, find_packages
 
 requires=[]
