@@ -327,7 +327,7 @@ class DetailTools:
         return df
 
     @classmethod
-    def get_details_list(cls, checkbook_id, start_date, end_data):
+    def get_details_list_by_time(cls, checkbook_id, start_date, end_data):
         """
         获得明细
         :param checkbook_id:
